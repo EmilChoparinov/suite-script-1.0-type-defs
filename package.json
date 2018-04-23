@@ -1,0 +1,7 @@
+{
+  "name": "suite-script-1.0-typings",
+  "version": "1.0.0",
+  "description": "The SuiteScript 1.0 API type declared",
+  "author": "Emil Choparinov",
+  "license": "ISC"
+}
