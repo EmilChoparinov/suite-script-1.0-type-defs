@@ -2,7 +2,7 @@
 /*
    --------------------------------------------------------------------------------------
 
-        GLOBAL METHODS AND CONSTANTS
+                        GLOBAL METHODS AND CONSTANTS
 
    --------------------------------------------------------------------------------------
 */
@@ -630,6 +630,548 @@ declare interface nlobjRecord {
         linenum: number
     ): string | null;
 
+
+    /**
+     * Returns the value of a sublist line item field.
+     * 
+     * Note that NetSuite recommends you read the topic 
+     * [Getting Field Values in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2945065.html#bridgehead_N2945106),
+     * which addresses the rare instances in which the value returned by this 
+     * API is inconsistent.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). 
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param name The name of the sublist field whose value is being returned
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is **1** (not 0).
+     * 
+     * @returns The string value of the sublist field name
+     * 
+     * @since 2008.1
+     */
+    getLineItemValue(group: string, name: string, linenum: number): string;
+
+
+    /**
+     * Returns the values of a multiselect sublist field on a selected line. One
+     *  example of a multiselect sublist field is the Serial Numbers field on 
+     * the Items sublist.
+     * 
+     * This function is not supported in client SuiteScript. It is meant to be 
+     * used in user event scripts.
+     * 
+     * @param type The sublist internal ID (for example, use addressbook as the 
+     * ID for the Address sublist). 
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html) 
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist 
+     * field IDs.
+     * 
+     * @param fldnam The internal ID of the multiselect field
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     *  on a sublist is 1 (not 0).
+     * 
+     * @returns An array of string values for the multiselect sublist field
+     * 
+     * @since 2012.1
+     */
+    getLineItemValues(type: string, fldnam: string, linenum: number): string[];
+
+    /**
+     * Use this API in a matrix sublist to get the number of columns for a 
+     * specific matrix field.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). 
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param fldnam The field internal ID of the matrix field.
+     * 
+     * @returns The integer value for the number of columns of a specified 
+     * matrix field
+     * 
+     * @since 2009.2
+     */
+    getMatrixCount(group: string, fldnam: string): number;
+
+    /**
+     * Use this API to get field metadata for a matrix “header” field in a 
+     * matrix sublist. This method is only supported with server-side scripts.
+     * 
+     * @param group The sublist internal ID. In the NetSuite Help Center, see 
+     * [Pricing Sublist Internal IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+     * to determine the correct internal ID of your pricing list.
+     * 
+     * @param fldname The internal ID of the matrix header field.
+     * 
+     * @param column The column number for this field. Column numbers start at 1
+     * (not 0).
+     * 
+     * @since 2009.2
+     */
+    getMatrixField(group: string, fldname: string, column: number): nlobjField;
+
+    /**
+     * Use this API to get the value of a matrix “header” field in a matrix 
+     * sublist.
+     * @param group The sublist internal ID. In the NetSuite Help Center, see 
+     * [Pricing Sublist Internal IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+     * to determine the correct internal ID of your pricing list.
+     * @param fldnam 
+     * 
+     * @param column The column number for this field. Column numbers start at 1
+     * (not 0).
+     * 
+     * @returns The string value of a matrix header field
+     * 
+     * @since 2009.2
+     */
+    getMatrixValue(group: string, fldnam: string, column: number): string;
+
+    /**
+     * Returns the record type (for example assembly unbuild would be returned 
+     * for the Assembly Unbuild record type; salesorder would be returned for 
+     * the Sales Order record type).
+     * 
+     * @returns The string value of the record name internal ID
+     */
+    getRecordType(): string;
+
+    /**
+     * Inserts a new line into a sublist. This function is only supported for 
+     * edit sublists (inlineeditor, editor). Note, however, this API will work 
+     * on list sublists that have been added via the UI object nlobjSubList
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist).
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param linenum Line index at which to insert the line. Note that in 
+     * sublists, the first line number is 1 (not 0). If the number is greater 
+     * than the number of lines on the sublist, an error is returned.
+     * 
+     * @param ignoreRecalc If set to true, the total is not recalculated upon
+     * execution. Use this parameter if you are inserting multiple line items on
+     * the same sublist and you need to improve performance. Do not use this
+     * option on the last line item insert of the sublist; the last
+     * insertLineItem call must recalculate the total. An error is thrown upon
+     * record submit if you do not recalculate the total on the last
+     * insertLineItem of the sublist. This parameter is only supported with
+     * server-side scripts.
+     */
+    insertLineItem(
+        group: string,
+        linenum: number,
+        ignoreRecalc?: boolean
+    ): void;
+
+    /**
+     * Use this method to remove an existing line from a sublist.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist).
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param linenum Line index at which to insert the line. Note that in 
+     * sublists, the first line number is 1 (not 0). If the number is greater 
+     * than the number of lines on the sublist, an error is returned.
+     * 
+     * @param ignoreRecalc If set to true, the total is not recalculated upon
+     * execution. Use this parameter if you are inserting multiple line items on
+     * the same sublist and you need to improve performance. Do not use this
+     * option on the last line item insert of the sublist; the last
+     * insertLineItem call must recalculate the total. An error is thrown upon
+     * record submit if you do not recalculate the total on the last
+     * insertLineItem of the sublist. This parameter is only supported with
+     * server-side scripts. 
+     * 
+     * @since 2009.2
+     */
+    removeLineItem(
+        group: string,
+        linenum: number,
+        ignoreRecalc?: boolean
+    ): void;
+
+    /**
+     * Returns a nlobjSubrecord object. Use this API to remove a subrecord from 
+     * a sublist field on the parent record.
+     * 
+     * See [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html)
+     * for general information on working with subrecords in NetSuite.
+     * 
+     * @param sublist The sublist internal ID on the parent record (for example,
+     * use item as the ID for the Items sublist).
+     * 
+     * @param fldname The internal ID of the “subrecord field” on the sublist of
+     * the parent record (for example, inventorydetail as the ID for the 
+     * Inventory Details sublist field).
+     */
+    removeCurrentLineItemSubrecord(sublist: string, fldname: string): void;
+
+    /**
+     * Returns a nlobjSubrecord object. Use this API to remove a subrecord from 
+     * a body field on the parent record.
+     * 
+     * See [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html)
+     * for general information on working with subrecords in NetSuite.
+     * 
+     * @param fldname The internal ID of the “subrecord field” on the body of
+     * the parent record (for example, inventorydetail as the ID for the
+     * Inventory Details body field).
+     * 
+     * @since 2011.2
+     */
+    removeSubrecord(fldname: string): void;
+
+    /**
+     * Use this method to select an existing line in a sublist.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). 
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     * 
+     * @since 2009.2
+     */
+    selectLineItem(group: string, linenum: number): void;
+
+    /**
+     * Use this method to insert and select a new line in a sublist.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). 
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html) 
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist 
+     * field IDs.
+     * 
+     * @since 2009.2
+     */
+    selectNewLineItem(group: string): void;
+
+    /**
+     * Sets the value of a datetime field on the currently selected line of a 
+     * sublist. If timeZone is passed in, the datetime value is converted to 
+     * that time zone and then set. If timeZone is not passed in, the datetime
+     * value is set in the default time zone.
+     * 
+     * @param type The internal sublist ID
+     * 
+     * @param fieldId The internal field ID. The field ID passed in must point 
+     * to a datetime formatted field.
+     * 
+     * @param dateTime The date and time in format mm/dd/yyyy hh:mm:ss am|pm 
+     * (for example, ‘09/25/2013 06:00:01 am’).
+     * 
+     * @param timeZone If a string is passed in, it must match one of the Olson 
+     * Values listed in the
+     * [Olson Values](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html)
+     * table (values are case-insensitive). If an integer is passed in, it must
+     * match one of the Key values listed in the 
+     * [Olson Values](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html)
+     * table.
+     * 
+     * @throws SSS_INVALID_ARG_TYPE
+     * 
+     * @since 2013.2
+     */
+    setCurrentLineItemDateTimeValue(
+        type: string,
+        fieldId: string,
+        dateTime: string,
+        timeZone?: string | number
+    ): void;
+
+    /**
+     * Use this API to set the value of a matrix sublist field. Also note that 
+     * it should be used on matrix sublists only.
+     * 
+     * @param group The sublist internal ID. In the NetSuite Help Center,
+     * see [Pricing Sublist Internal IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+     * to determine the correct internal ID of your pricing list.
+     * 
+     * @param fldnam The internal ID of the matrix field.
+     * 
+     * @param column The column number for this field. Column numbers start at 1
+     * (not 0).
+     * 
+     * @param value The value the field is being set to.
+     * 
+     * @since 2009.2
+     */
+    setCurrentLineItemMatrixValue(
+        group: string,
+        fldnam: string,
+        column: number,
+        value: string | number
+    ): void;
+
+    /**
+     * Use this method to set the value of a sublist line item field.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as 
+     * the ID for the Address sublist).
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist 
+     * field IDs.
+     * 
+     * @param name The name of the field being set
+     * 
+     * @param value The value the field is being set to.
+     * 
+     * @since 2009.2
+     */
+    setCurrentLineItemValue(group: string, name: string, value: string): void;
+
+    /**
+     * Sets the value of a datetime field. If timeZone is passed in, the 
+     * datetime value is converted to that time zone and then set. If timeZone 
+     * is not passed in, the datetime value is set in the default time zone.
+     * 
+     * @param fieldId The internal field ID. The field ID passed in must point 
+     * to a datetime formatted field.
+     * 
+     * @param dateTime The date and time in format mm/dd/yyyy hh:mm:ss am|pm 
+     * (for example, ‘09/25/2013 06:00:01 am’).
+     * 
+     * @param timeZone If a string is passed in, it must match one of the Olson
+     * Values listed in the 
+     * [Olson Values](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html)
+     * table (values are case-insensitive). If an integer is passed in, it must
+     * match one of the Key values listed in the
+     * [Olson Values](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html)
+     * table.
+     * 
+     * @throws SSS_INVALID_ARG_TYPE
+     * 
+     * @since 2013.2
+     */
+    setDateTimeValue(
+        fieldId: string,
+        dateTime: string,
+        timeZone?: number | string
+    ): void;
+
+    /**
+     * Sets the value of a select field using its corresponding display value.
+     * This method is only supported with server-side scripts.
+     * 
+     * @param name The internal ID of the field being set
+     * 
+     * @param text The display value corresponding to the value the field is 
+     * being set to
+     * 
+     * @since 2009.1
+     */
+    setFieldText(name: string, text: string): void;
+
+    /**
+     * Sets the values for a multiselect field from their display values. This
+     * method is only supported with server-side scripts.
+     * 
+     * @param name The internal ID of the field being set
+     * 
+     * @param text The display values corresponding to the values the field is 
+     * being set to
+     * 
+     * @since 2009.1
+     */
+    setFieldTexts(name: string, text: string[]): void;
+
+    /**
+     * Sets the value of a field
+     * @param name The name of the field being set
+     * @param value The value the field is being set to
+     */
+    setFieldValue(name: string, value: string): void;
+
+    /**
+     * Sets the value of a multi-select field
+     * 
+     * @param name The name of the field being set
+     * 
+     * @param value String array containing field values
+     */
+    setFieldValues(name: string, value: string[]): void;
+
+    /**
+     * Sets the value of a datetime field on a sublist. If timeZone is passed 
+     * in, the datetime value is converted to that time zone and then set. If 
+     * timeZone is not passed in, the datetime value is set in the default time 
+     * zone.
+     * 
+     * @param type The internal sublist ID
+     * 
+     * @param fieldId The internal field ID. The field ID passed in must point 
+     * to a datetime formatted field.
+     * 
+     * @param lineNum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     * 
+     * @param dateTime The date and time in format mm/dd/yyyy hh:mm:ss am|pm 
+     * (for example, ‘09/25/2013 06:00:01 am’).
+     * 
+     * @param timeZone If a string is passed in, it must match one of the 
+     * Olson Values listed in the
+     * [Olson Values](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html)
+     * table (values are case-insensitive). If an integer is passed in, it must
+     * match one of the Key values listed in the 
+     * [Olson Values](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html)
+     * table.
+     * 
+     * @throws SSS_INVALID_ARG_TYPE
+     * 
+     * @since 2013.2
+     */
+    setLineItemDateTimeValue(
+        type: string,
+        fieldId: string,
+        lineNum: number,
+        dateTime: string,
+        timeZone?: string | number
+    ): void;
+
+    /**
+     * Sets the value of a sublist line item.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). 
+     * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param name The name of the field being set
+     * 
+     * @param linenum The line number for this field. Note the first line in a
+     * sublist is 1 (not 0).
+     * 
+     * @param value The value the field is being set to. If a valid value is not
+     * specified an error will be thrown.
+     * 
+     * @since 2008.1
+     */
+    setLineItemValue(
+        group: string,
+        name: string,
+        linenum: number,
+        value: string
+    ): void;
+
+    /**
+     * This API is used to set a header field in a matrix sublist. Also note 
+     * that this API should be used on matrix sublists only.
+     * 
+     * @param group The sublist internal ID. In the NetSuite Help Center, see 
+     * Pricing Sublist Internal IDs to determine the correct internal ID of your
+     * pricing list.
+     * 
+     * @param fldnam The name of the field being set.
+     * 
+     * @param column The column number for this field. Column numbers start at 1
+     * (not 0).
+     * 
+     * @param value The value the field is being set to.
+     * 
+     * @since 2009.2
+     */
+    setMatrixValue(
+        group: string,
+        fldnam: string,
+        column: number,
+        value: string
+    ): void;
+
+    /**
+     * Returns a nlobjSubrecord object. Use this API to view a subrecord from a 
+     * sublist field on the parent record. Calling this API analogous to doing a
+     * “get” on a subrecord, however, the nlobjSubrecord object returned is in 
+     * read-only mode. Therefore, an error is thrown if you attempt to edit a 
+     * subrecord returned by this API.
+     * 
+     * You can call this API when you want your script to read the 
+     * [nlobjSubrecord](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3126577.html)
+     * object of the current sublist line you are on.
+     * 
+     * See [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html)
+     * for general information on working with subrecords in NetSuite.
+     * 
+     * @param sublist The sublist internal ID on the parent record (for example,
+     * use item as the ID for the Items sublist).
+     * 
+     * @param fldname The internal ID of the “subrecord field” on the sublist of
+     * the parent record (for example, **inventorydetail** as the ID for the
+     * Inventory Details sublist field).
+     * 
+     * @since 2011.2
+     */
+    viewCurrentLineItemSubrecord(
+        sublist: string,
+        fldname: string
+    ): nlobjSubrecord;
+
+    /**
+     * Returns a nlobjSubrecord object. Use this API to view a subrecord from a 
+     * sublist field on the parent record. Calling this API analogous to doing a
+     *  “get” on a subrecord, however, the nlobjSubrecord object returned is in 
+     * read-only mode. Therefore, an error is thrown if you attempt to edit a 
+     * subrecord returned by this function.
+     * 
+     * You can call this API when you want to read the value of a line you are 
+     * not currently on. For example, if you are editing line 2, you can call 
+     * this API on line 1 to get the value of line 1.
+     * 
+     * See [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html)
+     * for general information on working with subrecords in NetSuite.
+     * 
+     * @param sublist The sublist internal ID on the parent record (for example,
+     *  use item as the ID for the Items sublist).
+     * 
+     * @param fldname The internal ID of the “subrecord field” on the sublist of
+     *  the parent record (for example, inventorydetail as the ID for the 
+     * Inventory Details sublist field).
+     * 
+     * @param linenum The line number for the sublist field. Note the first line
+     *  number on a sublist is 1 (not 0).
+     * 
+     * @since 2011.2
+     */
+    viewLineItemSubrecord(
+        sublist: string,
+        fldname: string,
+        linenum: number
+    ): nlobjSubrecord;
+
+    /**
+     * Returns a nlobjSubrecord object. Use this API to view a subrecord from a 
+     * body field on the parent record. Calling this API analogous to doing a 
+     * “get” on a subrecord, however, the nlobjSubrecord object returned is in 
+     * read-only mode. Therefore, an error is thrown if you attempt to edit a 
+     * subrecord returned by this function.
+     * 
+     * See [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html)
+     * for general information on working with subrecords in NetSuite.
+     * @param fldname The internal ID of the “subrecord field” on the body of
+     * the parent record (for example, inventorydetail as the ID for the
+     * Inventory Details body field).
+     * 
+     * @since 2011.2
+     */
+    viewSubrecord(fldname: string): nlobjSubrecord;
 }
 
 /**
@@ -897,7 +1439,7 @@ declare interface nlobjField {
         type:
             'outside' | 'outsidebelow' | 'outsideabove' | 'startrow' |
             'midrow' | 'endrow' | 'normal',
-        breaktype: 
+        breaktype:
             'startcol' | 'startrow' | 'none'
     ): nlobjField;
 
