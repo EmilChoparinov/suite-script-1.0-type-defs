@@ -1628,7 +1628,73 @@ declare interface nlobjAssistant {
         group?: string
     ): nlobjField;
 
+    /**
+     * Use this method to add a field group to an assistant page. Note that when
+     * a field group is added to an assistant, by default it is collapsible.
+     * Also, by default, it will appear as uncollapsed when the page loads. If 
+     * you want to change these behaviors, you will use the
+     * [nlobjFieldGroup.setCollapsible(collapsible, hidden)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3143883.html#bridgehead_N3144022)
+     * method.
+     * @param name The internal ID for the field group
+     * @param label The UI label for the field group
+     */
     addFieldGroup(name: string, label: string): nlobjFieldGroup;
+
+    addStep(name: string, label: string): void;
+
+    addSubList(name, type, label)
+
+    getAllFields()
+
+    getAllFieldGroups()
+
+    getAllSteps()
+
+    getAllSubLists()
+
+    getCurrentStep()
+
+    getField(name)
+
+    getFieldGroup(name)
+
+    getLastAction()
+
+    getLastStep()
+
+    getNextStep()
+
+    getStep(name)
+
+    getStepCount()
+
+    getSubList(name)
+
+    hasError()
+
+    isFinished()
+
+    sendRedirect(response)
+
+    setCurrentStep(step)
+
+    setError(html)
+
+    setFieldValues(values)
+
+    setFinished(html)
+
+    setNumbered(hasStepNumber)
+
+    setOrdered(ordered)
+
+    setScript(script)
+
+    setShortcut(show)
+
+    setSplash(title, text1, text2)
+
+    setTitle(title)
 }
 
 /**
@@ -1699,4 +1765,136 @@ declare interface nlobjFieldGroup {
      * fields and the width of your screen.
      */
     setSingleColumn(column: boolean): void;
+}
+
+/**
+ * Primary object used to encapulate a step within a custom NetSuite assistant.
+ * 
+ * For information on working with nlobjAssistantStep objects, as well as
+ * information on building an assistant using other UI objects, see 
+ * [Building a NetSuite Assistant with UI Objects](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html).
+ */
+declare interface nlobjAssistantStep {
+
+    /**
+     * Use this method to get all fields entered by the user during the step.
+     * 
+     * @returns String[] of all fields entered by the user during the step
+     * 
+     * @since - 2009.2
+     */
+    getAllFields(): string[];
+
+    /**
+     * Use this method to get all sublist fields entered by the user during this step.
+     * 
+     * @param group The sublist internal ID
+     * 
+     * @returns String[] of all sublist fields entered by the user during the 
+     * step
+     * 
+     * @since 2009.2
+     */
+    getAllLineItemFields(group: string): string[];
+
+    /**
+     * Use this method to get all sublists entered by the user during this step.
+     * 
+     * @returns String[] of all sublists entered by the user during this step
+     * 
+     * @since 2009.2
+     */
+    getAllLineItems(): string[];
+
+    /**
+     * Use this method to get the value of a field entered by the user during 
+     * this step.
+     * 
+     * @param name The internal ID of the field whose value is being returned
+     * 
+     * @returns The internal ID (string) value for the field
+     * 
+     * @since 2009.2
+     */
+    getFieldValue(name: string): string;
+
+    /**
+     * Use this method to get the selected values of a multi-select field as an
+     * Array.
+     * 
+     * @param name The name of the multi-select field
+     * 
+     * @returns String[] of field IDs. Returns `null` if field is not on the
+     * record. Note the values returned are **read-only**.
+     * 
+     * @since 2009.2
+     */
+    getFieldValues(name): string[] | null;
+
+    /**
+     * Use the method to get the number of lines previously entered by the user 
+     * in this step.
+     * 
+     * @param group The sublist internal ID
+     * 
+     * @returns The integer value of the number of line items on a sublist. 
+     * Note that -1 is returned if the sublist does not exist.
+     * 
+     * @since 2009.2
+     */
+    getLineItemCount(group: string): number;
+
+    /**
+     * Use this method to get the value of a line item (sublist) field entered 
+     * by the user during this step.
+     * 
+     * @param group The sublist internal ID
+     * 
+     * @param name The name of the sublist field whose value is being returned
+     * 
+     * @param line The line number for this field. Note the first line number 
+     * on a sublist is **1** (not 0).
+     * 
+     * @returns The string value of the sublist field
+     * 
+     * @since 2009.2
+     */
+    getLineItemValue(group: string, name: string, line: number): string;
+
+    /**
+     * Use this method to get a step number. The number returned represents 
+     * where this step appears sequentially in the assistant.
+     * 
+     * @returns The index of this step in the assistant page (1-based)
+     * 
+     * @since 2009.2
+     */
+    getStepNumber(): number;
+
+
+    /**
+     * Use this method to set help text for an assistant step.
+     * 
+     * @param help The help text for the step
+     * 
+     * @since 2009.2
+     */
+    setHelpText(help: string): nlobjAssistantStep; // the return was misspelled
+                                                   // as **nlobjAssistantSte**
+                                                   // and there was no doc link.
+                                                   // I am assuming that they
+                                                   // meant 
+                                                   // **nlobjAssistantStep**
+
+    /**
+     * Use this method to set the label for an assistant step. Note that you can
+     * also create a label for a step when the step is first added to the
+     * assistant. Do this using nlobjAssistant
+     * [.addStep(name, label)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3129563).
+     * 
+     * @param label The UI label for this step
+     * 
+     * @since 2009.2
+     */
+    setLabel(label: string): nlobjAssistantStep;
 }
