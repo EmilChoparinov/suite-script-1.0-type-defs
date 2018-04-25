@@ -1944,34 +1944,162 @@ declare interface nlobjAssistantStep {
 declare interface nlobjSubList {
     /**
      * Adds a button to a sublist
+     * 
      * @param name The internal ID name of the button. Internal ID names must be
      * in lowercase and contain no spaces.
+     * 
      * @param label The UI label for the button
+     * 
      * @param script The onclick script function name
+     * 
+     * @since 2008.2
      */
-    addButton(name?: string, label?: string, script?: string): void;
+    addButton(name?: string, label?: string, script?: string): nlobjButton;
 
-    addField(name, type, label, source)
+    /**
+     * Adds a field (column) to a sublist
+     * 
+     * @param name The internal ID name of the field. Internal ID names must be 
+     * in lowercase and contain no spaces.
+     * 
+     * @param type The field type for this field. Use any of the following 
+     * types:
+     * - text
+     * - email
+     * - phone
+     * - date
+     * - datetimetz - This field type lets you combine date and time values in one field. For example, you may want a single field to contain date and time “timestamp” data. After a user enters a date/time value, the data is rendered in the user's preferred date and time format, as well as the user's time zone. Also note that time values are stored in NetSuite down to the second.
+     * - currency
+     * - float
+     * - integer
+     * - checkbox
+     * - select
+     * - url
+     * - image - This field type is available **only** for fields appearing on list/staticlist sublists. You cannot specify an **image** field on a form.
+     * - timeofday
+     * - textarea
+     * - percent
+     * - radio - only supported for sublists of type list
+     * @param label The UI label for this field
+     * 
+     * @param source The internalId or scriptId of the source list for this
+     * field if it's a select (List/Record) field. In the NetSuite Help Center,
+     * see [List/Record Type IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
+     * for the internal IDs of all supported list/record types.
+     * 
+     * @since 2008.2
+     */
+    addField(
+        name: string,
+        type: string,
+        label: string,
+        source?: number | string
+    ): nlobjField;
 
-    addMarkAllButtons()
+    /**
+     * Adds a "Mark All" and an "Unmark All" button to a sublist. Only valid on
+     * scriptable sublists of type **LIST**. Requires a check box column to
+     * exist on the form, which will be automatically checked/unchecked
+     * depending on what the end user does.
+     * 
+     * @since 2008.2
+     */
+    addMarkAllButtons(): void;
 
-    addRefreshButton()
+    /**
+     * Adds a Refresh button to sublists of type `list` or `staticlist` to
+     * auto-refresh the sublist if its contents are dynamic. In this case, the
+     * sublist is refreshed without having to reload the contents of the entire
+     * page.
+     * 
+     * @since 2009.1
+     */
+    addRefreshButton(): nlobjButton;
 
-    getLineItemCount()
+    /**
+     * Returns the number of lines on a sublist
+     * 
+     * @return The integer value of the number of line items on a sublist
+     */
+    getLineItemCount(): number;
 
-    getLineItemValue(group, fldnam, linenum)
+    /**
+     * Returns string value of a sublist field. Note that you cannot set default
+     * line item values when the line is not in edit mode.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). See
+     * [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param fldnam The internal ID of the field (line item) whose value is
+     * being returned
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     */
+    getLineItemValue(group: string, fldnam: string, linenum: number): string;
 
-    setAmountField(field)
+    /**
+     * Designates a particular column as the totalling column, which is used to 
+     * calculate and display a running total for the sublist
+     * 
+     * @param field The internal ID name of the field on this sublist used to 
+     * calculate running total
+     * 
+     * @since 2010.1
+     */
+    setAmountField(field: string): void;
 
-    setDisplayType(type)
+    /**
+     * Sets the display style for this sublist. This method is only supported on
+     * scripted or staticlist sublists via the UI Object API.
+     * 
+     * @param type The display type for this sublist. Use either of the
+     * following two values:
+     * - hidden
+     * - normal - (default)
+     * 
+     * @since 2008.2
+     */
+    setDisplayType(type?: 'hidden' | 'normal'): void;
 
-    setHelpText(help)
+    /**
+     * Adds inline help text to this sublist. This method is only supported on 
+     * sublists via the UI Object API.
+     * 
+     * @param help Inline help text used for this sublist
+     * 
+     * @since 2008.2
+     */
+    setHelpText(help: string): void;
 
-    setLabel(label)
+    /**
+     * Sets the label for this sublist. This method is only supported on
+     * sublists via the UI Object API.
+     * 
+     * @param label The UI label for this sublist
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): void;
 
-    setLineItemValue(name, linenum, value)
+    /**
+     * Sets the value of a cell in a sublist field.
+     * 
+     * @param name The internal ID name of the line item field being set
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     * 
+     * @param value The value the field is being set to
+     * 
+     * @since 2008.2
+     */
+    setLineItemValue(name: string, linenum: number, value: string): void;
 
-    setLineItemValues(values)
+    setLineItemValues(values: { string: string }[] | nlobjSearchResult[]): void;
 
     setUniqueField(name)
 }
@@ -1983,7 +2111,7 @@ declare interface nlobjSubList {
  * added to a record or form in **beforeLoad** user event scripts.
  */
 declare interface nlobjButton {
-    
+
     /**
      * Disables the button. When using this API, the assumption is that you have
      * already defined the button's UI label when you created the button using
@@ -2032,4 +2160,8 @@ declare interface nlobjButton {
      * @since 2010.2
      */
     setVisible(visible?: boolean): nlobjButton;
+}
+
+declare interface nlobjSearchResult {
+
 }
