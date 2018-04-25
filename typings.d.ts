@@ -2181,17 +2181,86 @@ declare interface nlobjSearchResult {
      */
     getAllColumns(): nlobjSearchColumn[];
 
-    getId()
+    /**
+     * Returns the internal ID for the returned record
+     * 
+     * @returns The record internal ID as an integer
+     */
+    getId(): number;
 
-    getRecordType()
+    /**
+     * Returns the record type for the returned record
+     * 
+     * @returns The name of the record type as a string - for example, customer,
+     * assemblyitem, contact, or projecttask
+     */
+    getRecordType(): string;
 
-    getText(column)
+    /**
+     * Returns the text value for this 
+     * [nlobjSearchColumn(name, join, summary)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html) if
+     * it is a select field
+     * 
+     * @param column The name of the search result column.
+     * 
+     * @since 2009.2
+     */
+    getText(column: nlobjSearchColumn): string;
 
-    getText(name, join, summary)
+    /**
+     * Returns the UI display name (ie,. the text value) for this 
+     * nlobjSearchColumn. Note that this method is supported on **non-stored**
+     * select, image, document fields only.
+     * 
+     * @param name name of the search column
+     * @param join The join internalId for this search column
+     * @param summary The summary type used for this search column. Use any of 
+     * the following types:
+     * - group
+     * - sum
+     * - count
+     * - avg
+     * - min
+     * - max
+     * 
+     * @returns The UI display name for this nlobjSearchColumn as a string
+     * 
+     * @since 2008.1
+     */
+    getText(name: string, join?: string, summary?: string): string;
 
-    getValue(name, join, summary)
+    /**
+     * Returns the value for the nlobjSearchColumn
+     * 
+     * @param name The name of the search column
+     * 
+     * @param join The join internalId for this search column
+     * 
+     * @param summary The summary type used for this search column. Types are:
+     * - group
+     * - sum
+     * - count
+     * - avg
+     * - min
+     * - max
+     * 
+     * @returns The value for a search return column as a string
+     * 
+     * @since 2008.1
+     */
+    getValue(name: string, join?: string, summary?: string): string;
 
-    getValue(column)
+    /**
+     * Can be used on formula fields and non-formula (standard) fields to get
+     * the value of a specified search return column
+     * 
+     * @param column Search return column object whose value you want to return
+     * 
+     * @returns String value of the search return column
+     * 
+     * @since 2009.1
+     */
+    getValue(column: nlobjSearchColumn): string;
 }
 
 /**
