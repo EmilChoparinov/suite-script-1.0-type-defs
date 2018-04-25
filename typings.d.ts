@@ -1640,9 +1640,35 @@ declare interface nlobjAssistant {
      */
     addFieldGroup(name: string, label: string): nlobjFieldGroup;
 
-    addStep(name: string, label: string): void;
+    /**
+     * Use this method to add a step to an assistant.
+     * 
+     * @param name The internal ID for this step (for example, 'entercontacts').
+     * 
+     * @param label The UI label for the step (for example, 'Enter Contacts'). 
+     * By default, the step will appear vertically in the left panel of the 
+     * assistant (see figure).
+     * 
+     * @since 2009.2
+     */
+    addStep(name: string, label: string): nlobjAssistantStep;
 
-    addSubList(name, type, label)
+    /**
+     * Use this method to add a sublist to an assistant page and return an
+     * [nlobjSubList](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3161033.html)
+     * object. Note that only inlineeditor sublists can be added to assistant
+     * pages.
+     * 
+     * @param name The internal ID for the sublist
+     * 
+     * @param type The sublist type. Currently, only a value of **inlineeditor**
+     * can be set.
+     * 
+     * @param label The UI label for the sublist
+     * 
+     * @since 2009.2
+     */
+    addSubList(name: string, type: string, label: string): void;
 
     getAllFields()
 
@@ -1880,11 +1906,11 @@ declare interface nlobjAssistantStep {
      * @since 2009.2
      */
     setHelpText(help: string): nlobjAssistantStep; // the return was misspelled
-                                                   // as **nlobjAssistantSte**
-                                                   // and there was no doc link.
-                                                   // I am assuming that they
-                                                   // meant 
-                                                   // **nlobjAssistantStep**
+    // as **nlobjAssistantSte**
+    // and there was no doc link.
+    // I am assuming that they
+    // meant 
+    // **nlobjAssistantStep**
 
     /**
      * Use this method to set the label for an assistant step. Note that you can
@@ -1897,4 +1923,113 @@ declare interface nlobjAssistantStep {
      * @since 2009.2
      */
     setLabel(label: string): nlobjAssistantStep;
+}
+
+/**
+ * Primary object used to encapsulate a NetSuite sublist. This object is 
+ * **read-only** except for instances created via the UI Object API using
+ * Suitelets or beforeLoad user event scripts.
+ * 
+ * To add a sublist, you must first create a custom form using
+ * [nlapiCreateForm(title, hideNavbar)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
+ * which returns an 
+ * [nlobjForm](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object.
+ * 
+ * After the form object is instantiated, you can add a new sublist to the form
+ * using the nlobjForm
+ * [.addSubList(name, type, label, tab)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3150667)
+ * method, which returns a reference to nlobSublist.
+ */
+declare interface nlobjSubList {
+    /**
+     * Adds a button to a sublist
+     * @param name The internal ID name of the button. Internal ID names must be
+     * in lowercase and contain no spaces.
+     * @param label The UI label for the button
+     * @param script The onclick script function name
+     */
+    addButton(name?: string, label?: string, script?: string): void;
+
+    addField(name, type, label, source)
+
+    addMarkAllButtons()
+
+    addRefreshButton()
+
+    getLineItemCount()
+
+    getLineItemValue(group, fldnam, linenum)
+
+    setAmountField(field)
+
+    setDisplayType(type)
+
+    setHelpText(help)
+
+    setLabel(label)
+
+    setLineItemValue(name, linenum, value)
+
+    setLineItemValues(values)
+
+    setUniqueField(name)
+}
+
+/**
+ * Primary object used to encapsulate custom buttons. Note that custom buttons 
+ * only appear in the UI when the record is in Edit mode. Custom buttons do not 
+ * appear in View mode. Also note that in SuiteScript, buttons are typically 
+ * added to a record or form in **beforeLoad** user event scripts.
+ */
+declare interface nlobjButton {
+    
+    /**
+     * Disables the button. When using this API, the assumption is that you have
+     * already defined the button's UI label when you created the button using
+     * nlobjForm
+     * [.addButton(name, label, script)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147271).
+     * The `setDisabled()` method grays-out the button's appearance in the UI.
+     * 
+     * @param disabled If set to true, the button will still appear on the form,
+     * however, the button label will be grayed-out.
+     * 
+     * @since 2008.2
+     */
+    setDisabled(disabled: boolean): nlobjButton;
+
+    /**
+     * Sets the UI label for the button. When using this API, the assumption is 
+     * that you have already defined the button's UI label when you created the
+     * button using nlobjForm
+     * [.addButton(name, label, script)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147271).
+     * You can set `setLabel()` to trigger based on the execution context. For
+     * example, based on the user viewing a page, you can use `setLabel()` to
+     * re-label a button's UI label so that the label is meaningful to that
+     * particular user.
+     * 
+     * This API is supported on standard NetSuite buttons as well as on custom
+     * buttons. For a list of standard buttons that support this API, see
+     * [Button IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param label The UI label for the custom button
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): nlobjButton;
+
+    /**
+     * Sets the button as hidden in the UI. This API is supported on custom
+     * buttons and on some standard NetSuite buttons. For a list of standard
+     * buttons that support this API, see 
+     * [Button IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param visible Defaults to true if not set. If set to false,
+     * the button will be hidden in the UI.
+     * 
+     * @since 2010.2
+     */
+    setVisible(visible?: boolean): nlobjButton;
 }
