@@ -1905,12 +1905,15 @@ declare interface nlobjAssistantStep {
      * 
      * @since 2009.2
      */
-    setHelpText(help: string): nlobjAssistantStep; // the return was misspelled
-    // as **nlobjAssistantSte**
-    // and there was no doc link.
-    // I am assuming that they
-    // meant 
-    // **nlobjAssistantStep**
+    setHelpText(help: string):
+
+        // the return was misspelled
+        // as **nlobjAssistantSte**
+        // and there was no doc link.
+        // I am assuming that they
+        // meant 
+        // **nlobjAssistantStep**
+        nlobjAssistantStep;
 
     /**
      * Use this method to set the label for an assistant step. Note that you can
@@ -2162,6 +2165,184 @@ declare interface nlobjButton {
     setVisible(visible?: boolean): nlobjButton;
 }
 
+/**
+ * Primary object used to encapsulate a search result row. For information on
+ * executing NetSuite searches using SuiteScript, see Searching Overview in the 
+ * NetSuite Help Center.
+ */
 declare interface nlobjSearchResult {
 
+    /**
+     * Returns an array of
+     * [nlobjSearchColumn(name, join, summary)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html)
+     * objects containing all the columns returned in a specified search
+     * 
+     * @since 2009.2
+     */
+    getAllColumns(): nlobjSearchColumn[];
+
+    getId()
+
+    getRecordType()
+
+    getText(column)
+
+    getText(name, join, summary)
+
+    getValue(name, join, summary)
+
+    getValue(column)
+}
+
+/**
+ * Primary object used to encapsulate search return columns. For information on
+ * executing NetSuite searches using SuiteScript, see Searching Overview in the
+ * NetSuite Help Center.
+ */
+declare class nlobjSearchColumn {
+
+    /**
+     * Primary object used to encapsulate search return columns. For information
+     * on executing NetSuite searches using SuiteScript, see 
+     * [Searching Overview](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3000275.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param name The search return column name
+     * 
+     * @param join The join id for this search return column
+     * 
+     * @param summary The summary type for this column; see 
+     * [Search Summary Types](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3010474.html)
+     * for additional information. Available types are:
+     * - group
+     * - sum
+     * - count
+     * - avg
+     * - min
+     * - max
+     */
+    constructor(
+        name: string,
+        join?: string,
+        summary?: 'group' | 'sum' | 'count' | 'avg' | 'min' | 'max'
+    );
+
+    /**
+     * @returns Returns the formula used for this column as a string
+     * 
+     * @since 2009.1
+     */
+    getFormula(): string;
+
+    /**
+     * @returns The function used in this search column as a string
+     * 
+     * @since 2009.1
+     */
+    getFunction(): string;
+
+    /**
+     * Returns join id for this search column
+     * 
+     * @returns The join id as a string
+     * 
+     * @since 2008.1
+     */
+    getJoin(): string;
+
+    /**
+     * Returns the label used for the search column. Note that ONLY custom
+     * labels can be returned using this method.
+     * 
+     * @returns The custom label used for this column as a string
+     * 
+     * @since 2009.1
+     */
+    getLabel(): string;
+
+    /**
+     * @returns The name of the search column as a string
+     * 
+     * @since 2008.1
+     */
+    getName(): string;
+
+    /**
+     * Returns the sort direction for this column
+     * 
+     * @since 2011.1
+     */
+    getSort(): string;
+
+    /**
+     * Returns the summary type (avg, group, sum, count) for this search column.
+     * In the NetSuite Help Center, see 
+     * [Search Summary Types](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3010474.html)
+     * for a list of summary types.
+     * 
+     * @returns The summary type as a string
+     * 
+     * @since 2008.1
+     */
+    getSummary(): string;
+
+    /**
+     * Set the formula used for this column. Name of the column can either be 
+     * formulatext, formulanumeric, formuladatetime, formulapercent, or 
+     * formulacurrency.
+     * 
+     * @param formula The formula used for this column
+     * 
+     * @since 2011.1
+     */
+    setFormula(formula: string): nlobjSearchColumn;
+
+    /**
+     * Sets the special function used for this column.
+     * 
+     * @param functionid Special function used for this column. The following is a list of 
+     * [supported functions and their internal IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html#bridgehead_N3119209):
+     * 
+     * @since 2011.1
+     */
+    setFunction(functionid: string): nlobjSearchColumn;
+
+    /**
+     * Set the label used for this column.
+     * 
+     * @param label The label used for this column
+     * 
+     * @since 2011.1
+     */
+    setLabel(label: string): nlobjSearchColumn;
+
+    /**
+     * Returns nlobjSearchColumn sorted in either ascending or descending order.
+     * 
+     * @param order If not set, defaults to false, which returns column data in 
+     * ascending order. If set to true, data is returned in descending order.
+     * 
+     * @since 2010.1
+     */
+    setSort(order?: boolean): nlobjSearchColumn;
+
+    /**
+     * Returns the search column for which the minimal or maximal value should 
+     * be found when returning the nlobjSearchColumn value.
+     * 
+     * For example, can be set to find the most recent or earliest date, or the 
+     * largest or smallest amount for a record, and then the nlobjSearchColumn 
+     * value for that record is returned.
+     * 
+     * Can only be used when min or max is passed as the summary parameter in 
+     * the nlobjSearchColumn constructor.
+     * 
+     * @param name The name of the search column for which the minimal or 
+     * maximal value should be found
+     * 
+     * @param join The join id for this search column
+     * 
+     * @since 2012.1
+     */
+    setWhenOrderedBy(name: string, join: string): nlobjSearchColumn;
 }
