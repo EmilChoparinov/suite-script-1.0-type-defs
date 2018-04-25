@@ -89,6 +89,8 @@ declare const nlapiCommitLineItem: (type: string) => void;
 
 declare const nlapiCopyRecord: (type, id, initializeValues) => nlobjRecord;
 
+declare const nlapiCreateAssistant: (title, hideHeader) => nlobjAssistant;
+
 /*
    -----------------------------------------------------------------------------
 
@@ -1552,4 +1554,149 @@ declare interface nlobjSelectOption {
      * @since 2009.2
      */
     getText(): string;
+}
+
+/**
+ * Primary object used to encapsulate all properties of a scriptable multi-step 
+ * NetSuite assistant. All data and state for an assistant is tracked
+ * automatically throughout the user's session up until completion of the
+ * assistant.
+ * 
+ * For examples showing how to build and run an assistant in your NetSuite
+ * account,
+ * see [Building a NetSuite Assistant with UI Objects](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html).
+ */
+declare interface nlobjAssistant {
+
+    /**
+     * Use this method to add a field to an assistant and return the field 
+     * object.
+     * 
+     * @param name  The internal ID for this field
+     * 
+     * @param type The field type. Any of the following field types can be 
+     * specified:
+     * - text
+     * - email
+     * - radio - See [Working with Radio Buttons](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879)
+     * for details on this field type.
+     * - label - This is a field type that has no values. In 
+     * [Working with Radio Buttons](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879),
+     * see the first code sample that shows how to set this field type.
+     * - phone
+     * - date
+     * - currency
+     * - float
+     * - integer
+     * - checkbox
+     * - select - Note that if you want to add your own (custom) options on a select field, you must set the source parameter to NULL. Then, when a value is specified, the value will populate the options from the source.
+     * - url - See [Create a Form with a URL Field](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2969820.html)
+     * for an example how to use this type.
+     * - timeofday
+     * - textarea
+     * - multiselect
+     * - image
+     * - inlinehtml
+     * - password
+     * - help
+     * - percent
+     * - longtext
+     * - richtext
+     * 
+     * @param label The UI label for this field
+     * 
+     * @param source  The internalId or scriptId of the source list for this
+     * field if it is a select (List/Record) field. In the NetSuite Help Center,
+     *  see List/Record Type IDs for the internal IDs of all supported 
+     * list/record types.
+     * 
+     * @param group If you are adding the field to a field group, specify the 
+     * internal ID of the field group
+     * 
+     * @since 2009.2
+     */
+    addField(
+        name: string,
+        type:
+            'text' | 'email' | 'radio' | 'label' | 'phone' | 'date' |
+            'currency' | 'float' | 'integer' | 'checkbox' | 'select' | 'url' |
+            'timeofday' | 'textarea' | 'multiselect' | 'image' |
+            'inlinehtml' | 'password' | 'help' | 'percent' | 'longtext' |
+            'richtext',
+        label?: string,
+        source?: string,
+        group?: string
+    ): nlobjField;
+
+    addFieldGroup(name: string, label: string): nlobjFieldGroup;
+}
+
+/**
+ * Primary object used to encapsulate a field group on a custom NetSuite 
+ * assistant page and on nlobjForm objects.
+ * 
+ * You can create an assistant by calling 
+ * [nlapiCreateAssistant(title, hideHeader)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3056901), 
+ * which returns a reference to the 
+ * [nlobjAssistant](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html)
+ * object. On the assistantobject, call addFieldGroup to instantiate a new
+ * nlobjFieldGroup object.
+ * 
+ * To learn more about field groups, see
+ * [Building a NetSuite Assistant](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html)
+ * with UI Objects.
+ */
+declare interface nlobjFieldGroup {
+
+    /**
+     * Use this method to define whether a field group can be collapsed. You can
+     * also use this method to define if the field group will display as
+     * collapsed or expanded when the page first loads.
+     * 
+     * @param collapsible A value of true means that the field group can be
+     * collapsed. A value of false means that the field group cannot be
+     * collapsed - the field group displays as a static group that cannot be
+     * opened or closed.
+     * 
+     * @param hidden If not set, defaults to false. This means that when the
+     * page loads, the field group will not appear collapsed. Note: If you set 
+     * the collapsible parameter to false (meaning the field group is not
+     * collapsible), then any value you specify for hidden will be ignored.
+     * 
+     * @returns 2009.2
+     */
+    setCollapsible(collapsible: boolean, hidden?: boolean): nlobjFieldGroup;
+
+    /**
+     * Use this method to create a UI label for a field group.
+     * 
+     * @param label The UI label for the field group
+     * 
+     * @since 2009.2
+     */
+    setLabel(label: string): nlobjFieldGroup;
+
+    /**
+     * Use this method to conditionally show or hide the border of a field 
+     * group. A field group border consists of the field group title and the 
+     * gray line that frames the group by default.
+     * 
+     * @param show Set to true to show a field group border. Set to false to 
+     * hide the border.
+     * 
+     * @since 2011.1
+     */
+    setShowBorder(show: boolean): void;
+
+    /**
+     * Use this method to determine how your field group is aligned. You can 
+     * choose to align it into a single column or allow NetSuite to auto-align 
+     * it.
+     * 
+     * @param column Set to true to place all fields in the field group into a 
+     * single column. Set to false to allow NetSuite to auto-align your field 
+     * group fields into one, two, or three columns, depending on the number of 
+     * fields and the width of your screen.
+     */
+    setSingleColumn(column: boolean): void;
 }
