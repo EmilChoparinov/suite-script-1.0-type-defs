@@ -1923,29 +1923,463 @@ declare interface nlobjResponse {
      */
     getCode(): string;
 
-    getError()// <-
+    /**
+     * Returns the 
+     * [nlobjError](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3086264.html)
+     * thrown during request. Only available in the return value of call to 
+     * `nlapiRequestURL` in Client SuiteScript.
+     * 
+     * @returns 2008.2
+     */
+    getError(): nlobjError;
 
-    getHeader(name)
+    /**
+     * Returns the value for a header returned in the response. Only available
+     * in the return value of a call to 
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @param name The header name
+     * 
+     * @returns The string value of the header
+     * 
+     * @since 2008.2
+     */
+    getHeader(name: string): string;
 
-    getHeaders(name)
+    /**
+     * Returns an Array containing all the values for a header returned in the
+     * response. This is only available in the return value of a call to 
+     * `nlapiRequestURL`.
+     * 
+     * @param name The header name
+     * 
+     * @returns String[] of header values
+     * 
+     * @since 2008.2
+     */
+    getHeaders(name: string): string[];
 
-    renderPDF(xmlString)
+    /**
+     * Generates, and renders, a PDF directly to a response. Use renderPDF to
+     * generate PDFs without first importing a file to the file cabinet. This 
+     * method is useful if your script does not have NetSuite file cabinet
+     * permissions.
+     * 
+     * The renderPDF method uses the Big Faceless Report Generator built by Big
+     * Faceless Organization (BFO). The BFO Report Generator is a third-party
+     * library used for converting XML to PDF documents. The renderPDF method
+     * passes XML to the BFO tag library (which is stored by NetSuite), and
+     * renders a PDF directly to a response. Note that the xmlString argument is
+     * the same input string as that passed to BFO by
+     * [nlapiXMLToPDF(xmlstring)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3062490.html#bridgehead_N3066595).
+     * 
+     * For details on BFO, available tags, and BFO examples, see the following links:
+     * 
+     * - http://faceless.org/products/report/docs/userguide.pdf
+     * 
+     * - http://faceless.org/products/report/docs/tags/
+     * 
+     * @param xmlString Content of your PDF, passed to renderPDF as a string.
+     * 
+     * @since 2014.2
+     */
+    renderPDF(xmlString: string): void;
 
-    setCDNCacheable(type)
+    /**
+     * Sets CDN caching for a shorter period of time or a longer period of time.
+     * There is no ability to invalidate individual assets, so SSP Application
+     * can set its TTL (Time To Live) in CDN and fall into one of four
+     * categories:
+     * 
+     * - **Unique** — This asset is not cached.
+     * 
+     * - **Short** — This asset may change frequently, so cache it for five
+     * minutes.
+     * 
+     * - **Medium** — This asset may or may not change frequently, so cache it
+     * for two hours.
+     * 
+     * - **Long** — This asset is not expected to change frequently, so cache it
+     *  for seven days.
+     * 
+     * @param type Constant value to represent the caching duration:
+     *
+     * - CACHE_DURATION_UNIQUE
+     * 
+     * - CACHE_DURATION_SHORT
+     * 
+     * - CACHE_DURATION_MEDIUM
+     * 
+     * - CACHE_DURATION_LONG
+     * 
+     * Note that when setting constant values, you do not use quotation marks.
+     * The syntax will be something similar to:
+     * 
+     * setCDNCacheable( response.CACHE_DURATION_SHORT);
+     * 
+     * @since 2013.1
+     */
+    setCDNCacheable(type:
+        'CACHE_CACHE_DURATION_UNIQUE' | 'CACHE_DURATION_SHORT' |
+        'CACHE_DURATION_MEDIUM' | 'CACHE_DURATION_LONG'
+    ): void;
 
-    setContentType(type, name, disposition)
+    /**
+     * Sets the content type for the custom responses (and an optional file name
+     * for binary output). This API is available in Suitelet scripts only.
+     * 
+     * @param type The content/file type. For a list of supported file types, 
+     * see 
+     * [Supported File Types]() 
+     * in the NetSuite Help Center.
+     * 
+     * @param name Set the name of the file being downloaded (for example 
+     * 'name.pdf')
+     * 
+     * @param disposition Content disposition to use for file downloads.
+     * Available values are **inline or attachment**. If a value is not
+     * specified, the parameter will default to **attachment**. What this means 
+     * is that instead of a new browser (or Acrobat) launching and rendering the
+     * content, you will instead be asked if you want to download and Save the
+     * file.
+     * 
+     * @since 2008.2
+     */
+    setContentType(
+        type: string,
+        name?: string,
+        disposition?: 'inline' | 'attachment'
+    ): void;
 
-    setEncoding(encodingType)
+    /**
+     * Sets the character encoding on nlobjResponse content. Available encoding types are:
+     * 
+     * - Unicode (UTF-8)
+     * 
+     * - Western (Windows 1252)
+     * 
+     * - Western (ISO-8859–1)
+     * 
+     * - Chinese Simplified (GB 18030)
+     * 
+     * - Chinese Simplified (GB 2312)
+     * 
+     * - Japanese (Shift-JIS)
+     * 
+     * - Western (Mac Roman)
+     * 
+     * - The default encoding type is Unicode (UTF-8).
+     * 
+     * Your browser character encoding settings must match the specified encoding to view the file contents correctly.
+     * 
+     * @param encodingType he type of encoding for the response. Use one of the following case sensitive values:
+     * 
+     * - UTF-8
+     * 
+     * - windows-1252
+     * 
+     * - ISO-8859-1
+     * 
+     * - GB18030
+     * 
+     * - GB2312 - GB2312 is not a valid argument when setting the encoding for
+     * a new file.  
+     * 
+     * - SHIFT_JIS
+     *
+     * - MacRoman
+     * 
+     * @since 2013.1
+     */
+    setEncoding(
+        encodingType:
+            'UTF-8' | 'windows-1252' | 'ISO-8859-1' | 'GB18030' | 'GB2312' |
+            'SHIFT_JIS' | 'MacRoman'
+    ): void;
 
-    setHeader(name, value)
+    /**
+     * Sets the value of a response header. Note that all user-defined headers
+     * must be prefixed with **Custom-Header** otherwise an SSS_INVALID_ARG or 
+     * SSS_INVALID_HEADER error will be thrown.
+     * 
+     * @param name The name of the header
+     * 
+     * @param value The value used to set header
+     * 
+     * @throws SSS_INVALID_ARG, SSS_INVALID_HEADER
+     * 
+     * @since 2008.2
+     */
+    setHeader(name: string, value: string): void;
 
-    sendRedirect(type, identifier, id, editmode, parameters)
+    /**
+     * Sets the redirect URL by resolving to a NetSuite resource. Note that all 
+     * parameters must be prefixed with **custparam** otherwise an 
+     * SSS_INVALID_ARG error will be thrown.
+     *
+     * Also note that all URLs must be internal unless the Suitelet is being
+     * executed in an “Available without Login” context. If this is the case,
+     * then within the “Available without Login” (externally available)
+     * Suitelet, you can set the type parameter to **EXTERNAL** and the
+     * identifier parameter to the external URL.
+     * 
+     * @param type The base type for this resource
+     *  
+     * - **RECORD** - Record Type
+     *  
+     * - **TASKLINK** - Task Link
+     *  
+     * - **SUITELET** - Suitelet
+     *  
+     * - **EXTERNAL** - Custom URL (external) and only available for external
+     * Suitelets (i.e. available without login)
+     * 
+     * @param identifier  The primary id for this resource (record type ID for
+     * RECORD, scriptId for SUITELET, taskId for tasklink, url for EXTERNAL)
+     * 
+     * @param id The secondary id for this resource (record type ID for RECORD,
+     * deploymentId for SUITELET)
+     * 
+     * @param editmode For RECORD calls, this determines whether to return a URL
+     * for the record in edit mode or view mode. If set to true, returns the URL
+     * to an existing record in edit mode, otherwise the record is returned in
+     * view mode.
+     * 
+     * @param parameters An associative array of additional URL parameters as
+     * name/value pairs
+     * 
+     * @throws SSS_INVALID_ARG
+     * 
+     * @since 2008.2
+     */
+    sendRedirect(
+        type: string,
+        identifier: string,
+        id?: string,
+        editmode?: string,
+        parameters?: {}
+    ): void;
 
-    write(output)
+    write(output: string): void; // <-
 
     writeLine(output)
 
     writePage(pageobject)
+}
+
+declare interface nlobjFile {
+
+    /**
+     * @returns The string description of the file. This is the description that
+     * appears in the Description field on the folder or file record.
+     * 
+     * @since 2009.1
+     */
+    getDescription(): string;
+
+    /**
+     * Returns the character encoding of a file. NetSuite supports the following
+     * encoding types:
+     *  
+     * - Unicode (UTF-8)
+     *  
+     * - Western (Windows 1252)
+     *  
+     * - Western (ISO-8859–1)
+     *  
+     * - Chinese Simplified (GB 18030)
+     *  
+     * - Japanese (Shift-JIS)
+     *  
+     * - Western (Mac Roman)
+     *  
+     * - Chinese Simplified (GB 2312)
+     *  
+     * - Chinese Traditional (Big5)
+     * 
+     * @sicne 2010.1
+     */
+    getEncoding(): 'UTF-8' | 'windows-1252' | 'ISO-8859-1' | 'GB18030' |
+        'SHIFT_JIS' | 'MacRoman' | 'GB2312' | 'Big5'
+
+    /**
+     * @returns Integer: The internal ID of the file's folder within the 
+     * NetSuite file cabinet, for example **10**, **2**, etc.
+     */
+    getFolder(): number;
+
+    /**
+     * Returns the internal ID of the file (if the file is stored in the
+     * NetSuite file cabinet)
+     * 
+     * @returns The integer value of file ID, for example **8**, **108**, **11**
+     * , etc. This is the ID that appears in the Internal ID column next to the
+     * file in the file cabinet.
+     * 
+     * @since 2009.1
+     */
+    getId(): number;
+
+    /**
+     * The string value of the file name
+     */
+    getName(): string;
+
+    /**
+     * Returns the size of the file in bytes
+     * 
+     * @returns The integer value of the file size
+     * 
+     * @since 2009.1
+     */
+    getSize(): number;
+
+    /**
+     * Returns the type of the file
+     * 
+     * @returns The string value of the file type - for example, PDF, CSV, 
+     * PLAINTEXT. (For a list of supported file type IDs, see
+     * [Supported File Types](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3264137.html)
+     * . )
+     * 
+     * @since 2009.1
+     */
+    getType(): number;
+
+    /**
+     * Returns the URL to the file if it is stored in the NetSuite file cabinet
+     * 
+     * @returns The URL as a string
+     * 
+     * @since 2009.1
+     */
+    getURL(): string;
+
+    /**
+     * Returns the contents of the file (base 64 encoded for binary files).
+     * 
+     * @returns The string value of the file contents
+     * 
+     * @since 2009.1
+     */
+    getValue(): string;
+
+    /**
+     * @returns Boolean: The file's inactive status as either true or false.
+     * Returns true if the file is inactive.
+     * 
+     * @since 2009.1
+     */
+    isInactive(): boolean;
+
+    /**
+     * @returns Boolean: The file's online status as either true or false. Returns true 
+     * if the file is “Available without Login.”
+     * 
+     * @since 2009.1
+     */
+    isOnline(): boolean;
+
+    /**
+     * Sets the description of the file
+     * 
+     * @param description A description of the file. This description will
+     * appear in the Description field on the folder or file record.
+     * 
+     * @since 2009.1
+     */
+    setDescription(description: string): void;
+
+    /**
+     * Sets the character encoding of a file. The following types are supported when setting the encoding for new and existing files:
+     * 
+     * - Unicode (UTF-8)
+     * 
+     * - Western (Windows 1252)
+     * 
+     * - Western (ISO-8859–1)
+     * 
+     * - Chinese Simplified (GB 18030)
+     * 
+     * - Japanese (Shift-JIS)
+     * 
+     * - Western (Mac Roman)
+     * 
+     * The following types are supported when setting the encoding for existing files:
+     * 
+     * - Chinese Simplified (GB 2312)
+     * 
+     * - Chinese Traditional (Big5)
+     * 
+     * @param encodingType The type of encoding for the file. Use one of the following case sensitive values:
+     * - UTF-8
+     * 
+     * - windows-1252
+     * 
+     * - ISO-8859-1
+     * 
+     * - GB18030
+     * 
+     * - SHIFT_JIS
+     * 
+     * - MacRoman
+     * 
+     * - GB2312
+     * 
+     * - Big5
+     * 
+     * @since 2010.1
+     */
+    setEncoding(
+        encodingType: 'UTF-8' | 'windows-1252' | 'ISO-8859-1' |
+            'GB18030' | 'SHIFT_JIS' | 'MacRoman' | 'GB2312' | 'Big5'
+    ): void;
+
+    /**
+     * Sets the internal ID of the folder that the file is in
+     * 
+     * @param id The internal ID of the file's folder, for example 
+     * **10**, **-4**, **20**, etc.
+     * 
+     * @since 2009.1
+     */
+    setFolder(id: number): void;
+
+    /**
+     * Sets the file's inactive status. When you inactive a file
+     * or folder, it no longer appears on lists unless (in the UI) you have 
+     * selected the **Show Inactives** check box.
+     * 
+     * @param inactive The file's inactive status. Set to true to inactive the 
+     * file. Set to false to make the file active.
+     * 
+     * @since 2009.1
+     */
+    setIsInactive(inactive: boolean): void;
+
+    /**
+     * Sets the file's online (“Available without Login”) status. When a file is
+     * online, other users can download the file without a login session. This
+     * means you can upload images, MP3, or any other file type to the file
+     * cabinet and give other users the file URL without giving them access to
+     * the account.
+     * 
+     * @param online The file's updated online status. Set to true to make the
+     * file available online. Set to false if you do not want the file available
+     * online.
+     * 
+     * @since 2009.1
+     */
+    setIsOnline(online: boolean): void;
+
+    /**
+     * Sets the name of the file
+     * 
+     * @param name The name of the file
+     * 
+     * @since 2009.1
+     */
+    setName(name: string): void;
 }
 
 declare interface nlobjError {
