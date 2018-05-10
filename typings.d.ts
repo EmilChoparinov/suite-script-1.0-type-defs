@@ -2179,6 +2179,105 @@ declare interface nlobjResponse {
     writePage(pageobject) // <-
 }
 
+declare interface nlobjList {
+
+    /**
+     * Adds an nlobjButton object to the footer of the page
+     * 
+     * @param name The internal ID name of the button. Internal ID names must be
+     * in lowercase and contain no spaces. For example, if you add a button that
+     * appears on the UI as Update Order, the internal ID should be something
+     * equivalent to updateorder.
+     * 
+     * @param label The UI label used for this button
+     * 
+     * @param script The onclick button script function name
+     * 
+     * @since 2008.2
+     */
+    addButton(name: string, label: string, script?: string): void;
+
+    addColumn(name: string, type: string, label: string, align?: string) // <-
+
+    addEditColumn(column, showView, showHrefCol)
+
+    addPageLink(type, title, url)
+
+    addRow(row)
+
+    addRows(rows)
+
+    setScript(script)
+
+    setStyle(style)
+
+    setTitle(title)
+}
+
+/**
+ * Primary object used to encapsulate list columns. To add a column, you must
+ * first create a custom list using 
+ * [nlapiCreateList(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057216),
+ * which returns an
+ * [nlobjList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html)
+ * object.
+ * 
+ * After the list object is instantiated, you can add a standard column using 
+ * the nlobjList.
+ * [addColumn(name, type, label, align)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html#bridgehead_N3153672)
+ * method.
+ * 
+ * You can also add an “Edit | View” column using the nlobjList.
+ * [addEditColumn(column, showView, showHrefCol)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html#bridgehead_N3153855)
+ * method. Both methods return an `nlobjColumn` object.
+ */
+declare interface nlobjColumn {
+
+    /**
+     * Adds a URL parameter (optionally defined per row) to this column's URL.
+     * Should only be called after calling
+     * [setURL(url, dynamic)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html#bridgehead_N3140260)
+     * 
+     * @param param The parameter name added to the URL
+     * 
+     * @param value The parameter value added to the URL - or - a column in the 
+     * data source that returns the parameter value for each row
+     * 
+     * @param dynamic If true, then the parameter value is actually an alias 
+     * that is calculated per row
+     * 
+     * @since 2008.2
+     */
+    addParamToURL(param: string, value: string, dynamic?: boolean): void;
+
+    /**
+     * The UI label used for this column
+     * 
+     * @param label Sets the UI label for this column
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): void;
+
+    /**
+     * Sets the base URL (optionally defined per row) for this column
+     * 
+     * @param url The base URL or a column in the data source that returns the 
+     * base URL for each row
+     * 
+     * @param dynamic If true, then the URL is actually an alias that is 
+     * calculated per row
+     * 
+     * @since 2008.2
+     */
+    setURL(url: string, dynamic?: boolean): void;
+}
+
+/**
+ * Primary object used to encapsulate a NetSuite-looking form. Note that the 
+ * [nlapiCreateForm(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076)
+ * function returns a reference to this object.
+ */
 declare interface nlobjForm {
 
     /**
