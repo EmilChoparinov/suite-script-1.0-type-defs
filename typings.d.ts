@@ -2197,21 +2197,171 @@ declare interface nlobjList {
      */
     addButton(name: string, label: string, script?: string): void;
 
-    addColumn(name: string, type: string, label: string, align?: string) // <-
+    /**
+     * Adds an
+     * [nlobjColumn](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html)
+     * object to a list and returns a reference to this column
+     * 
+     * @param name The internal ID name of this column. Note that internal ID
+     * names must be in lowercase and contain no spaces.
+     * 
+     * @param type The field type for this column. Use any of the following
+     * field types:
+     * 
+     * - text
+     * 
+     * - email
+     * 
+     * - phone
+     * 
+     * - date
+     * 
+     * - currency
+     * 
+     * - float
+     * 
+     * - integer
+     * 
+     * - select
+     * 
+     * - url
+     * 
+     * - timeofday
+     * 
+     * - textarea
+     * 
+     * - percent
+     * 
+     * - inlinehtml
+     * 
+     * @param label The UI label for this column
+     * @param align The layout justification for this column. Possible values include:
+     * 
+     * - center
+     * 
+     * - right
+     * 
+     * - left (default)
+     * 
+     * @since 2008.2
+     */
+    addColumn(
+        name: string,
+        type:
+            'text' | 'email' | 'phone' | 'date' | 'currency' | 'float' |
+            'integer' | 'select' | 'url' | 'timeofday' | 'textarea' |
+            'percent' | 'inlinehtml',
+        label: string,
+        align?: 'center' | 'left' | 'right'
+    ): nlobjColumn;
 
-    addEditColumn(column, showView, showHrefCol)
 
-    addPageLink(type, title, url)
+    /**
+     * Adds an Edit or Edit/View column to Portlets (created with the
+     * [nlobjPortlet]()
+     * object) and Suitelet and Portlet lists (created with the
+     * [nlobjList]()
+     * object). Note that the Edit or Edit/View column will be added to the left
+     * of a previously existing column.
+     * 
+     * @param column An 
+     * [nlobjColumn]()
+     * object to the left of which the Edit/View column will be added
+     * 
+     * @param showView If true then an Edit/View column will be added. Otherwise
+     * only an Edit column will be added.
+     * 
+     * @param showHrefCol If set, this value must be included in row data 
+     * provided for the list and will be used to determine whether the URL for
+     * this link is clickable (specify T for clickable, F for non-clickable)
+     * 
+     * @since 2008.1
+     */
+    addEditColumn(
+        column: nlobjColumn,
+        showView?: boolean,
+        showHrefCol?: boolean
+    ): nlobjColumn;
 
-    addRow(row)
+    /**
+     * Adds a navigation cross-link to the list page
+     * 
+     * @param type The type of navbar link to add. Use any of the following 
+     * types:
+     * 
+     * - breadcrumb - appears on top-left corner after system bread crumbs
+     * 
+     * - crosslink - appears on top-right corner
+     * 
+     * @param title The UI text displayed in the link
+     * 
+     * @param url The URL used for this link
+     * 
+     * @since 2008.2
+     */
+    addPageLink(type: string, title: string, url: string): void;
 
-    addRows(rows)
+    /**
+     * Adds a row (Array of name/value pairs or nlobjSearchResult) to this
+     * portlet.
+     * 
+     * @param row An Array of rows containing name/value pairs containing the 
+     * values for corresponding 
+     * [nlobjColumn](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html)
+     * objects in this list -or- an 
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html).
+     * Note that several special fields: recordtype, id, and fieldname_display
+     * (UI display value for select fields) are automatically added for each
+     * search result.
+     * 
+     * @since 2008.2
+     */
+    addRow(row: nlobjSearchResult | { [key: string]: string }): void;
 
-    setScript(script)
+    /**
+     * Adds multiple rows (Array of nlobjSearchResult objects or name/value pair
+     * Arrays) to a portlet.
+     * 
+     * @param rows An Array of Arrays containing name/value pairs containing
+     * column values for multiple rows -or- an Array of 
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+     * objects containing the results of a search with columns matching the
+     * columns on the list.
+     */
+    addRows(rows: nlobjSearchResult[] | { [key: string]: string }[]): void;
 
-    setStyle(style)
+    /**
+     * Sets the Client SuiteScript used for this page.
+     * 
+     * @param script scriptId or internal ID for global client script used to
+     * enable Client SuiteScript on page
+     * 
+     * @since 2008.2
+     */
+    setScript(script: string | number): void;
 
-    setTitle(title)
+    /**
+     * Sets the display style for this list
+     * @param style The display style value. Use any of the following styles:
+     * 
+     * - grid
+     * 
+     * - report
+     * 
+     * - plain
+     * 
+     * - normal
+     */
+    setStyle(style: 'grid' | 'report' | 'plain' | 'normal'): void;
+
+    /**
+     * Sets the title for this list
+     * 
+     * @param title The title for a list
+     * 
+     * @since 2008.2
+     */
+    setTitle(title: string): void;
 }
 
 /**
