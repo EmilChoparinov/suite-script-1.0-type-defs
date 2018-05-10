@@ -1854,27 +1854,138 @@ declare interface nlobjAssistant {
      */
     isFinished(): boolean;
 
-    sendRedirect(response)
+    /**
+     * Use this method to manage redirects in an assistant
+     * 
+     * @param response The response object
+     * 
+     * @since 2009.2
+     */
+    sendRedirect(response: nlobjResponse): void;
 
-    setCurrentStep(step)
+    /**
+     * Use this method to mark a step as the current step. In the UI, the step
+     * will be highlighted when the user is on that step (see figure).
+     * 
+     * @param step The name of the step object
+     * 
+     * @since 2009.2
+     */
+    setCurrentStep(step: nlobjAssistantStep): void;
 
-    setError(html)
+    /**
+     * Use this method to set an error message for the current step. If you
+     * choose, you can use HTML tags to format the message.
+     * 
+     * @param html Error message text
+     * 
+     * @since 2009.2
+     */
+    setError(html: string): void;
 
-    setFieldValues(values)
+    /**
+     * Use this method to set values for fields on an assistant page.
+     * 
+     * @param values An associative array containing name/value pairs that map
+     * field names to field values
+     * 
+     * @since 2009.2
+     */
+    setFieldValues(values: { [key: string]: string }): void;
 
-    setFinished(html)
+    /**
+     * Use this method to mark the last page in an assistant. Set the rich text
+     * to display a completion message on the last page.
+     * 
+     * @param html The text to display when the assistant has finished. For
+     * example, “Congratulations! You have successfully set up your account.”
+     * 
+     * @since 2009.2
+     */
+    setFinished(html: string): void;
 
-    setNumbered(hasStepNumber)
+    /**
+     * Use this method to display steps without numbers.
+     * 
+     * @param hasStepNumber Set to false to turn step numbering off
+     * 
+     * @since 2010.1
+     */
+    setNumbered(hasStepNumber?: boolean): void;
 
-    setOrdered(ordered)
+    /**
+     * Use this method to enforce a sequential ordering of assistant steps. If 
+     * steps are ordered, users must complete the current step before the 
+     * assistant will allow them to proceed to the next step. From a display 
+     * perspective, ordered steps will always appear in the left panel of the 
+     * assistant (see first figure). Note that by default, steps in an assistant
+     * are ordered.
+     * 
+     * If steps are unordered, they can be completed in any order. Additionally,
+     * unordered steps are always displayed horizontally under the assistant
+     * title (see second figure).
+     * 
+     * @param ordered A value of `true` means steps must be completed 
+     * sequentially, and that they will appear vertically in the left panel of
+     * the assistant. A value of `false` means steps do not need to be completed
+     * sequentially, and they will appear horizontally, directly below the
+     * assistant title.
+     * 
+     * @since 2009.2
+     */
+    setOrdered(ordered: boolean): void;
 
-    setScript(script)
+    /**
+     * Use this method to set the scriptId for a global client script you want
+     * to run on an assistant page.
+     * 
+     * @param script The scriptId of the global client script
+     * 
+     * @since 2009.2
+     */
+    setScript(script: string | number): void;
 
-    setShortcut(show)
+    /**
+     * Use this method to show/hide the **Add to Shortcuts** link that appears
+     * in the top-right corner of an assistant page. Note that if you do not
+     * call this method in your script, the default is to show the Add to
+     * Shortcuts link at the top of all assistant pages. Therefore, it is
+     * recommended that you use this method only if you want to hide this link.
+     * 
+     * @param show A value of false means that the Add to Shortcuts link does
+     * not appear on the assistant. A value of true means that it will appear.
+     * 
+     * @since 2009.2
+     */
+    setShortcut(show: boolean): void;
 
-    setSplash(title, text1, text2)
+    /**
+     * Use this method to set the splash screen for an assistant page.
+     * 
+     * @param title The title of the splash screen
+     * 
+     * @param text1 Text for the splash screen
+     * 
+     * @param text2 If you want splash content to have a two-column appearance, 
+     * provide content in the text2 parameter.
+     * 
+     * @since 2009.2
+     */
+    setSplash(title: string, text1: string, text2?: string): void;
 
-    setTitle(title)
+    /**
+     * Use this method to set the title for the assistant. If you have already 
+     * defined the title using 
+     * [nlapiCreateAssistant(title, hideHeader)](), you do not need to call the 
+     * `setTitle(title)` method. Also note that the title you provide using 
+     * `setTitle(title)` will override the title specified in the 
+     * `nlapiCreateAssistant()` function.
+     * 
+     * @param title Assistant title
+     * 
+     * @since 2009.2
+     */
+    setTitle(title: string): void;
 }
 
 /**
