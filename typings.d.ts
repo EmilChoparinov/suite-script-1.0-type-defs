@@ -2160,13 +2160,393 @@ declare interface nlobjResponse {
         parameters?: {}
     ): void;
 
-    write(output: string): void; // <-
+    /**
+     * Write information (text/xml/html) to the response
+     * 
+     * @param output String or file being written
+     */
+    write(output: string | nlobjFile): void;
 
-    writeLine(output)
+    /**
+     * Write line information (text/xml/html) to the response
+     * 
+     * @param output String being written
+     * 
+     * @since 2008.2
+     */
+    writeLine(output: string): void;
 
-    writePage(pageobject)
+    writePage(pageobject) // <-
 }
 
+declare interface nlobjForm {
+
+    /**
+     * Adds a button to a form
+     * 
+     * @param name The internal ID name of the button. The internal ID must be
+     * in lowercase, contain no spaces, and include the prefix custpage if you
+     * are adding the button to an existing page. For example, if you add a
+     * button that appears as **Update Order**, the button internal ID should be
+     * something similar to **custpage_updateorder**.
+     * 
+     * @param label The UI label used for this button
+     * 
+     * @param script The onclick script used for this button
+     * 
+     * @since 2008.2
+     */
+    addButton(name: string, label: string, script?: string): nlobjButton;
+
+    /**
+     * Adds a field that lets you store credentials in NetSuite to be used when
+     * invoking services provided by third parties. For example, merchants need 
+     * to store credentials in NetSuite used to communicate with Payment Gateway
+     * providers when executing credit card transactions.
+     * 
+     * This method is supported in client and server scripts.
+     * 
+     * Additional things to note about this method:
+     * 
+     * - Credentials associated with this field are stored in encrypted form.
+     * 
+     * - No piece of SuiteScript holds a credential in clear text mode.
+     * 
+     * - NetSuite reports or forms will never provide to the end user the clear 
+     * text form of a credential.
+     * 
+     * - Any exchange of the clear text version of a credential with a third
+     * party must occur over SSL.
+     * 
+     * For no reason will NetSuite ever log the clear text value of a credential
+     * (for example, errors, debug message, alerts, system notes, and so on).
+     * 
+     * @param id The internal ID of the credential field.
+     * 
+     * @param label The UI label for the credential field.
+     * 
+     * @param website The domain the credentials can be sent to. For example,
+     * 'www.mysite.com'. This value can also be an array of strings representing
+     * a list of domains to which the credentials can be sent using
+     * `nlapiRequestUrlWithCredentials`. Note that although no exception is
+     * thrown if this parameter value is not passed,
+     * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544)
+     * will not work without it.
+     * 
+     * @param scriptId The scriptId of the script that is allowed to use this
+     * credential field. For example, 'customscript_my_script'. Note that
+     * although no exception is thrown if this parameter value is not passed,
+     * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544)
+     * will not work without it.
+     * 
+     * @param value If you choose, you can set an initial value for this field. This value is the handle to the credentials. If you do not want to set a value, you must pass in a null value or empty string.
+     * 
+     * @param entityMatch Controls whether use of 
+     * `nlapiRequestUrlWithCredentials` with this credential is restricted to 
+     * the same entity that originally entered the credential. An example where 
+     * you would not want this (you would set to false ) is with a credit card 
+     * processor, where the credential represents the company an employee is 
+     * working for and multiple entities will be expected to make secure calls 
+     * out to the processor (clerks, for example). An example where you might 
+     * want to set entityMatch to true is when each user of the remote call has 
+     * his or her own credentials.
+     * 
+     * @param tab The tab parameter can be used to specify either a tab or a 
+     * field group (if you have added nlobjFieldGroup objects to your form). If 
+     * tab is empty, then the field is added to the “main” section of the form.
+     * 
+     * @since 2012.1
+     */
+    addCredentialField(
+        id: string,
+        label: string,
+        website?: string,
+        scriptId?: string,
+        value?: string,
+        entityMatch?: boolean,
+        tab?: string
+    ): nlobjField;
+
+    /**
+     * Adds an 
+     * [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+     * object to a form and returns a reference to it
+     * 
+     * @param name The internal ID name of the field. The internal ID must be in
+     * lowercase, contain no spaces, and include the prefix custpage if you are
+     * adding the field to an existing page. For example, if you add a field
+     * that appears as Purchase Details, the field internal ID should be
+     * something similar to `custpage_purchasedetails` or 
+     * `custpage_purchase_details`.
+     * 
+     * @param type The field type for this field. Use any of the following
+     * enumerated field types:
+     * 
+     * - text
+     * 
+     * - radio - See
+     * [Working with Radio Buttons](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879)
+     * for details on adding this field type.
+     * 
+     * - label - This is a field type that has no values. It is used for placing
+     * a label next to another field. In
+     * [Working with Radio Buttons](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879),
+     * see the first code sample that shows how to set this field type and how
+     * it will render in the UI.
+     * 
+     * - email
+     * 
+     * - phone
+     * 
+     * - date
+     * 
+     * - datetimetz - This field type lets you combine date and time values in
+     * one field. For example, you may want a single field to contain date and
+     * time “timestamp” data. After a user enters a date/time value, the data is
+     * rendered in the user's preferred date and time format, as well as the
+     * user's time zone. Also note that time values are stored in NetSuite down
+     * to the second.
+     * 
+     * - currency
+     * 
+     * - float
+     * 
+     * - integer
+     * 
+     * - checkbox
+     * 
+     * - select
+     * 
+     * - url - See 
+     * [Create a Form with a URL Field](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2969820.html)
+     * for an example how to use this type.
+     * 
+     * - timeofday
+     * 
+     * - textarea
+     * 
+     * - multiselect
+     * 
+     * - image - This field type is available **only** for fields appearing on
+     * list/staticlist sublists. You cannot specify an image field on a form.
+     * 
+     * - inlinehtml
+     * 
+     * - password
+     * 
+     * - help
+     * 
+     * - percent
+     * 
+     * - longtext
+     * 
+     * Important Long text fields created with SuiteScript have a character
+     * limit of 100,000. Long text fields created with Suitebuilder have a
+     * character limit of 1,000,000.  
+     * 
+     * - richtext
+     * 
+     * - file - This field type is available only for Suitelets and will appear
+     * on the main tab of the Suitelet page. Setting the field type to **file** 
+     * adds a file upload widget to the page and changes the form encoding type
+     * for the form to multipart/form-data. See
+     * [Uploading Files to the File Cabinet Using SuiteScript](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html#bridgehead_N3089140)
+     * for an example of creating a **file** field type, and then later
+     * retrieving this file using the nlobjRequest.
+     * [getFile(id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3106730.html#bridgehead_N3107266)
+     * method.
+     * 
+     * @param label The UI label for this field (this is the value displayed for
+     * help fields)
+     * 
+     * @param sourceOrRadio The internalId or scriptId of the source list for
+     * this field if it is a select (List/Record) or multi-select field. See
+     * [List/Record Type IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
+     * for the internal IDs of all supported list/record types.
+     * 
+     * @param tab The tab parameter can be used to specify either a tab or a 
+     * field group (if you have added nlobjFieldGroup objects to your form). If
+     * tab is empty, then the field is added to the “main” section of the form.
+     * 
+     * @since 2008.2
+     */
+    addField(
+        name: string,
+        type: 'text' | 'radio' | 'label' | 'email' | 'phone' | 'date' |
+            'datetimetz' | 'currency' | 'float' | 'integer' | 'checkbox' |
+            'select' | 'url' | 'timeofday' | 'textarea' | 'multiselect' |
+            'image' | 'inlinehtml' | 'password' | 'help' | 'percent' |
+            'longtext' | 'file',
+        label?: string,
+        sourceOrRadio?: number | string,
+        tab?: string
+    ): nlobjField;
+
+    /**
+     * Adds a field group to the form.
+     * 
+     * @param name Provide an internal ID for the field group.
+     * 
+     * @param label  The UI label for the field group
+     * 
+     * @param tab Specify the tab you the field group to appear on. If no tab is
+     * specified, the field group is placed on the “main” area of the form.
+     * 
+     * @since 2011.1
+     */
+    addFieldGroup(name: string, label: string, tab: string): nlobjFieldGroup;
+
+    /**
+     * Adds a navigation cross-link to the form
+     * 
+     * @param type The type of navbar link to add. Possible values include:
+     * 
+     * - breadcrumb - appears on top left corner after system bread crumbs
+     * 
+     * - crosslink - appears on top right corner
+     * 
+     * @param title The text displayed in the link
+     * 
+     * @param url The URL used for this link
+     * 
+     * @since 2008.2
+     */
+    addPageLink(
+        type: 'breadcrumb' | 'crosslink',
+        title: string,
+        url: string
+    ): void;
+
+    /**
+     * Adds a reset button to a form
+     * 
+     * @param label The UI label used for this button. If no label is provided,
+     * the label defaults to **Reset**.
+     * 
+     * @since 2008.2
+     */
+    addResetButton(label?: string): nlobjButton;
+
+    /**
+     * Adds an nlobjSubList object to a form and returns a reference to it. Note
+     * that sorting (in the UI) is not supported on static sublists created
+     * using the `addSubList()` method if the row count exceeds 25.
+     * 
+     * @param name The internal ID name of the sublist. The internal ID must be
+     * in lowercase, contain no spaces, and include the prefix `custpage` if you
+     * are adding the sublist to an existing page. For example, if you add a
+     * sublist that appears on the UI as Purchase Details, the sublist internal
+     * ID should be something equivalent to `custpage_purchasedetails` or
+     * `custpage_purchase_details`.
+     * 
+     * @param type The sublist type. Use any of the following types:
+     * 
+     * - `editor` - An edit sublist with non-inline form fields (similar to the Address sublist)
+     * 
+     * - `inlineeditor` - An edit sublist with inline fields (similar to the Item sublist)
+     * 
+     * - `list` - A list sublist with editable fields (similar to the Billable Items sublist)
+     * 
+     * - `staticlist` - A read-only segmentable list sublist (similar to the search results sublist)
+     * 
+     * @param label The UI label for this sublist
+     * @param tab The tab under which to display this sublist. If empty, the
+     * sublist is added to the main tab.
+     */
+    addSubList(
+        name: string,
+        type: 'editor' | 'inlineeditor' | 'list' | 'staticlist',
+        label: string,
+        tab?: string
+    ): nlobjSubList;
+
+    /**
+     * Adds a submit button to a form
+     * 
+     * @param label The UI label for this button. If no label is provided, the
+     * label defaults to Save.
+     * 
+     * @since 2008.2
+     */
+    addSubmitButton(label?: string): nlobjButton;
+
+    addSubTab(name: string, label: string, tab?: string) // <-
+
+    addTab(name, label)
+
+    getButton(name)
+
+    getField(name, radio)
+
+    getSubList(name)
+
+    getSubTab(name)
+
+    getTab(name)
+
+    getTabs()
+
+    insertField(field, nextfld)
+
+    insertSubList(sublist, nextsub)
+
+    insertSubTab(subtab, nextsub)
+
+    insertTab(tab, nexttab)
+
+    removeButton(name)
+
+    setFieldValues(values)
+
+    setScript(script)
+
+    setTitle(title)
+}
+
+/**
+ * Primary object used to encapsulate tabs and subtabs. Note that to add a tab
+ * or subtab, you must first create a custom form using
+ * [nlapiCreateForm(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
+ * which returns an
+ * [nlobjForm](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object.
+ * 
+ * After the form object is instantiated, you can add a new tab or subtab to the
+ * form using the nlobjForm.
+ * [addTab(name, label)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3151233) 
+ * or nlobjForm.
+ * [addSubTab(name, label, tab)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3151039)
+ * methods, which both return a reference to `nlobjTab`.
+ */
+declare interface nlobjTab {
+
+    /**
+     * Sets the tab UI label
+     * 
+     * @param label The UI label used for this tab or subtab
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): nlobjTab;
+
+    /**
+     * Sets the inline help used for this tab or subtab
+     * 
+     * @param help Inline help used for this tab or subtab
+     * 
+     * @since 2008.2
+     */
+    setHelpText(help: string): nlobjTab;
+}
+
+/**
+ * Primary object used to encapsulate files (media items) in the NetSuite file
+ * cabinet. For an example that shows how to use several the of File object
+ * methods to upload a file to the NetSuite file cabinet and also attach the
+ * file to a record, see
+ * [Uploading Files to the File Cabinet Using SuiteScript](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html#bridgehead_N3089140)
+ * in the NetSuite Help Center.
+ */
 declare interface nlobjFile {
 
     /**
