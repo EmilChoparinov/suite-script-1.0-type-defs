@@ -1877,6 +1877,20 @@ declare interface nlobjAssistant {
     setTitle(title)
 }
 
+/**
+ * Primary object used for scripting web responses in Suitelets. Note that the 
+ * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142)
+ * function returns a reference to this object.
+ * 
+ * When creating Suitelets you will pass request and response arguments to your 
+ * user-defined function (see example). With the response object instantiated, 
+ * you can then call any nlobjResponse method.
+ * 
+ * See 
+ * [Supported File Types](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3264137.html)
+ * in the NetSuite Help Center for a list of allcontent/media types that can be 
+ * returned through the nlobjResponse object.
+ */
 declare interface nlobjResponse {
     /**
      * Adds a header to the response. If this header has already been set, this 
@@ -2186,6 +2200,11 @@ declare interface nlobjResponse {
     writePage(pageobject: nlobjList | nlobjForm): void;
 }
 
+/**
+ * Primary object used to encapsulate a list page. Note that the
+ * [nlapiCreateList(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057216)
+ * function returns a reference to this object.
+ */
 declare interface nlobjList {
 
     /**
