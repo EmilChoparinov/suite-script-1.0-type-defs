@@ -2157,7 +2157,7 @@ declare interface nlobjResponse {
         identifier: string,
         id?: string,
         editmode?: string,
-        parameters?: {}
+        parameters?: { [key: string]: string }
     ): void;
 
     /**
@@ -2470,37 +2470,205 @@ declare interface nlobjForm {
      */
     addSubmitButton(label?: string): nlobjButton;
 
-    addSubTab(name: string, label: string, tab?: string) // <-
+    /**
+     * Adds a subtab to a form and returns an nlobjTab object reference to it.
+     * 
+     * @param name The internal ID name of the subtab. The internal ID must be 
+     * in lowercase, contain no spaces, and include the prefix `custpage` if you
+     * are adding the subtab to an existing page. For example, if you add a
+     * subtab that appears on the UI as **Purchase Details**, the subtab
+     * internal ID should be something similar to `custpage_purchasedetails` or 
+     * `custpage_purchase_details`.
+     * 
+     * @param label The UI label of the subtab
+     * 
+     * @param tab The tab under which to display this subtab. If empty, it is
+     * added to the main tab.
+     * 
+     * @since 2008.2
+     */
+    addSubTab(name: string, label: string, tab?: string): nlobjTab;
 
-    addTab(name, label)
+    /**
+     * Adds a tab to a form and returns an nlobjTab object reference to the tab
+     * 
+     * @param name The internal ID name of the tab. The internal ID must be in
+     * lowercase, contain no spaces, and include the prefix `custpage` if you 
+     * are adding the tab to an existing page. For example, if you add a tab 
+     * that appears on the UI as **Purchase Details**, the tab internal ID
+     * should be something equivalent to `custpage_purchasedetails` or 
+     * `custpage_purchase_details`.
+     * 
+     * @param label The UI label of the tab
+     * 
+     * @since 2008.2
+     */
+    addTab(name: string, label: string): nlobjTab;
 
-    getButton(name)
+    /**
+     * Returns an 
+     * [nlobjButton](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139249.html)
+     * object by name
+     * 
+     * @param name The internal ID of the button. Internal IDs must be in 
+     * lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getButton(name: string): nlobjButton;
 
-    getField(name, radio)
+    /**
+     * Returns an nlobjField object by name
+     * 
+     * @param name The internal ID name of the field. Internal ID names must be
+     * in lowercase and contain no spaces.
+     * 
+     * @param radio If this is a radio field, specify which radio field to return
+     * based on the radio value.
+     */
+    getField(name: string, radio?: string): nlobjField;
 
-    getSubList(name)
+    /**
+     * Returns an nlobjSubList object by name
+     * 
+     * @param name The internal ID name of the sublist. Internal ID names must 
+     * be in lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getSubList(name: string): nlobjSubList;
 
-    getSubTab(name)
+    /**
+     * Returns an 
+     * [nlobjTab](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163084.html)
+     * object by name
+     * 
+     * @param name The internal ID name of the tab. Internal ID names must be in
+     * lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getSubTab(name: string): nlobjTab;
 
-    getTab(name)
+    /**
+     * Returns an nlobjTab object by name
+     * 
+     * @param name The internal ID name of the tab. Internal ID names must be in
+     * lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getTab(name: string): nlobjTab;
 
-    getTabs()
+    /**
+     * Returns an array of nlobjTab objects containing all the tabs in a form.
+     * 
+     * @since 2012.2
+     */
+    getTabs(): nlobjTab[];
 
-    insertField(field, nextfld)
+    /**
+     * Inserts a field (nlobjField) in front of another field and returns a
+     * reference to it
+     * 
+     * @param field [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+     * object to insert
+     * 
+     * @param nextfld The name of the field you are inserting in front of
+     * 
+     * @since 2008.2
+     */
+    insertField(field: nlobjField, nextfld: string): nlobjField;
 
-    insertSubList(sublist, nextsub)
+    /**
+     * Inserts a sublist (nlobjSubList) in front of another sublist/subtab and
+     * returns a reference to it
+     * 
+     * @param sublist [nlobjSubList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3161033.html)
+     * object to insert
+     * 
+     * @param nextsub The internal ID name of the sublist/subtab you are
+     * inserting in front of
+     * 
+     * @since 2008.2
+     */
+    insertSubList(sublist: nlobjSubList, nextsub: string): nlobjSubList;
 
-    insertSubTab(subtab, nextsub)
+    /**
+     * Inserts a subtab (nlobjTab) in front of another sublist/subtab and
+     * returns a reference to it
+     * 
+     * @param subtab The internal ID name of the subtab. Internal ID names must 
+     * be in lowercase and contain no spaces.
+     * 
+     * @param nextsub The name of the sublist/subtab you are inserting in front 
+     * of
+     * 
+     * @since 2008.2
+     */
+    insertSubTab(subtab: string, nextsub: string): nlobjTab;
 
-    insertTab(tab, nexttab)
+    /**
+     * Inserts a tab (nlobjTab) in front of another tab and returns a reference 
+     * to it
+     * @param tab [nlobjTab](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163084.html)
+     * object to insert
+     * 
+     * @param nexttab The tab name for the tab you are inserting in front of
+     * 
+     * @since 2008.2
+     */
+    insertTab(tab: nlobjTab, nexttab: string): nlobjTab;
 
-    removeButton(name)
+    /**
+     * Removes an 
+     * [nlobjButton](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139249.html)
+     * object. This method can be used on custom buttons and certain built-in
+     * NetSuite buttons. For a list of built-in buttons that support this 
+     * method, see the list of buttons in the section 
+     * [Button IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param name The internal ID of the button to be removed. Internal IDs 
+     * must be in lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    removeButton(name: string): void;
 
-    setFieldValues(values)
+    /**
+     * Sets the values of multiple fields on the current form. This API can be 
+     * used in beforeLoad scripts to initialize field scripts on new records or 
+     * non-stored fields. (See User 
+     * [Event beforeLoad Operations](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2962434.html#bridgehead_N2962507)
+     * in the NetSuite Help Center for information on beforeLoad user event
+     * triggers.)
+     * 
+     * @param values An associative array containing name/value pairs, which
+     * maps field names to field values
+     * 
+     * @since 2008.2
+     */
+    setFieldValues(values: { [key: string]: string }): void;
 
-    setScript(script)
+    /**
+     * Sets the Client SuiteScript file used for this form
+     * 
+     * @param script The scriptId or internal ID for the global client script
+     * used to enable Client SuiteScript on this form
+     * 
+     * @since 2008.2
+     */
+    setScript(script: number | string): void;
 
-    setTitle(title)
+    /**
+     * Sets the title for this form
+     * 
+     * @param title The title used for this form
+     * 
+     * @since 2008.2
+     */
+    setTitle(title: string): void;
 }
 
 /**
