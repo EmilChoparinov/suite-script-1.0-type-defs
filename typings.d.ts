@@ -2102,9 +2102,33 @@ declare interface nlobjSubList {
      */
     setLineItemValue(name: string, linenum: number, value: string): void;
 
+    /**
+     * Sets values for multiple lines (Array of nlobjSearchResult objects or 
+     * name/value pair Arrays) in a sublist.
+     * 
+     * @param values An Array of Arrays containing name/value pairs containing 
+     * column values for multiple rows -or- an Array of
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+     * objects containing the results of a search with columns matching the 
+     * fields on the sublist. Note that several special fields: recordtype, id, 
+     * and fieldname_display (UI display value for select fields) are 
+     * automatically added for each search result.
+     * 
+     * @since 2008.2
+     */
     setLineItemValues(values: { string: string }[] | nlobjSearchResult[]): void;
 
-    setUniqueField(name)
+    /**
+     * Use this method to designate that a certain field on a sublist must 
+     * contain a unique value. This method is available on inlineeditor and 
+     * editor sublists only.
+     * 
+     * @param name The internal ID of the sublist field that you want to make 
+     * unique
+     * 
+     * @since 2009.2
+     */
+    setUniqueField(name: string): nlobjField;
 }
 
 /**
