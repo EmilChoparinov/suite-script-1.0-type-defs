@@ -1670,35 +1670,189 @@ declare interface nlobjAssistant {
      */
     addSubList(name: string, type: string, label: string): nlobjSubList;
 
-    getAllFields()
+    /**
+     * Use this method to get all fields in an assistant. Regardless of which 
+     * page or step the fields have been added to, all fields will be returned. 
+     * Also note that where you call this method matters. If you call 
+     * `getAllFields()` early in your script, and then add ten more fields at 
+     * the end of your script, `getAllFields()` will return only those fields that
+     * were added prior to the call.
+     * 
+     * @returns String[] of all fields in a custom assistant
+     * 
+     * @since 2009.2
+     */
+    getAllFields(): string[];
 
-    getAllFieldGroups()
+    /**
+     * Use this method to get all field groups on an assistant page. Also note
+     * that where you call this method matters. If you call
+     * `getAllFieldGroups()` early in your script, and then add three more field
+     * groups at the end of your script, `getAllFieldGroups()` will return only
+     * those field groups that were added prior to the call.
+     * 
+     * @returns String[] of all field groups in the assistant
+     * 
+     * @since 2009.2
+     */
+    getAllFieldGroups(): string[];
 
-    getAllSteps()
+    /**
+     * Use this method to return an array of all the assistant steps for this
+     * assistant.
+     * 
+     * @since 2009.2
+     */
+    getAllSteps(): nlobjAssistantStep[];
 
-    getAllSubLists()
+    /**
+     * Use this method to get all sublist names that appear on an assistant 
+     * page. Also note that where you call this method matters. If you call 
+     * `getAllSubLists()` early in your script, and then add three more sublists
+     * at the end of your script, `getAllSubLists()` will return only those
+     * sublists that were added prior to the call.
+     * 
+     * @returns String[] of all sublists in an assistant
+     * 
+     * @since 2009.2
+     */
+    getAllSubLists(): string[];
 
-    getCurrentStep()
+    /**
+     * Use this method to get the current step that was set via 
+     * `nlobjAssistant.setCurrentStep(step)`. After getting the current step, 
+     * you can add fields, field groups, and sublists to the step.
+     * 
+     * @since 2009.2
+     */
+    getCurrentStep(): nlobjAssistantStep;
 
-    getField(name)
+    /**
+     * Use this method to return a field on an assistant page.
+     * 
+     * @param name The internal ID of the field
+     * 
+     * @since 2009.2
+     */
+    getField(name: string): nlobjField;
 
-    getFieldGroup(name)
+    /**
+     * Use this method to return a field group on an assistant page.
+     * 
+     * @param name The internal ID for the field group
+     * 
+     * @since 2009.2
+     */
+    getFieldGroup(name: string): nlobjFieldGroup;
 
-    getLastAction()
+    /**
+     * Use this method to get the last submitted action that was performed by
+     * the user. Typically you will use
+     * [getNextStep()](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3131132)
+     * to determine the next step (based on the last action).
+     * 
+     * Possible assistant submit actions that can be specified are:
+     * 
+     * - **next** - means that the user has clicked the Next button in the 
+     * assistant
+     * 
+     * - **back** - means that the user has clicked the Back button
+     * 
+     * - **cancel** - means that the user has clicked the Cancel button
+     * 
+     * - **finish** - means that the user has clicked the Finish button. By
+     * default, inline text then appears on the finish page saying 
+     * “Congratulations! You have completed the <assistant title>” - where 
+     * <assistant title> is the title set in 
+     * [nlapiCreateAssistant(title, hideHeader)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3056901) or 
+     * nlobjAssistant.[setTitle(title)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3133383).
+     * 
+     * - **jump** - if
+     * nlobjAssistant.[setOrdered(ordered)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132764)
+     * has been set to false (meaning that steps can be completed in random
+     * order), then **jump** is used to get the user's last action in a 
+     * non-sequential process.
+     * 
+     * @returns The last submit action (as a string)
+     * 
+     * @since 2009.2
+     */
+    getLastAction(): string;
 
-    getLastStep()
+    /**
+     * Use this method to get the step the last submitted action came from.
+     * 
+     * @since 2009.2
+     */
+    getLastStep(): nlobjAssistantStep;
 
-    getNextStep()
+    /**
+     * Use this method to return the next logical step corresponding to the
+     * user's last submitted action. You should only call this method after you
+     * have successfully captured all the information from the last step and are
+     * ready to move on to the next step. You would use the return value to set
+     * the current step prior to continuing.
+     * 
+     * @returns Returns the next logical step based on the user's last submit
+     * action, assuming there were no errors. Typically you will call
+     * [setCurrentStep(step)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132050)
+     * using the returned step if the submit was successful.
+     * 
+     * @since 2009.2
+     */
+    getNextStep(): nlobjAssistantStep;
 
-    getStep(name)
+    /**
+     * Use this method to return an 
+     * [nlobjAssistantStep](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3137928.html)
+     * object on an assistant page.
+     * 
+     * @param name The internal ID of the step
+     * 
+     * @since 2009.2
+     */
+    getStep(name: string): nlobjAssistantStep;
 
-    getStepCount()
+    /**
+     * Use this method to get the total number of steps in an assistant.
+     * 
+     * @returns The total number of steps in an assistant. Value returned as an
+     * integer.
+     * 
+     * @since 2009.2
+     */
+    getStepCount(): number;
 
-    getSubList(name)
+    /**
+     * Use this method to return a sublist on an assistant page.
+     * 
+     * @param name The internal ID for the sublist
+     * 
+     * @since 2009.2
+     */
+    getSubList(name: string): nlobjSubList;
 
-    hasError()
+    /**
+     * Use this method to determine if an assistant has an error message to
+     * display for the current step.
+     * 
+     * @returns Returns true if 
+     * [setError(html)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132234)
+     * was called
+     * 
+     * @since 2009.2
+     */
+    hasError(): boolean;
 
-    isFinished()
+    /**
+     * Use this method to determine when all steps in an assistant are completed.
+     * 
+     * @returns Returns true if all steps in the assistant have been completed 
+     * or if 
+     * [setFinished(html)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132508)
+     * has been called.
+     */
+    isFinished(): boolean;
 
     sendRedirect(response)
 
@@ -1721,6 +1875,139 @@ declare interface nlobjAssistant {
     setSplash(title, text1, text2)
 
     setTitle(title)
+}
+
+declare interface nlobjResponse {
+    /**
+     * Adds a header to the response. If this header has already been set, this 
+     * will add a new header to the response. Note that all user-defined headers
+     * must be prefixed with **Custom-Header** otherwise an `SSS_INVALID_ARG`
+     * error will be thrown ()
+     * 
+     * @param name The name of the header
+     * 
+     * @param value The value used to set header
+     * 
+     * @throws SSS_INVALID_ARG
+     * 
+     * @since 2008.2
+     */
+    addHeader(name: string, value: string): void;
+
+    /**
+     * Returns an Array containing all the headers returned in the response.
+     * Only available in the return value of a call to 
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @returns String[] of headers
+     * 
+     * @since 2008.2
+     */
+    getAllHeaders(): string[];
+
+    /**
+     * Returns the body returned by the server. Only available in the return
+     * value of a call to
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @returns The string value of the body
+     */
+    getBody(): string;
+
+    /**
+     * Returns the response code returned by the server. Only available in the
+     * return value of a call to
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @returns The string value of the response code
+     */
+    getCode(): string;
+
+    getError()// <-
+
+    getHeader(name)
+
+    getHeaders(name)
+
+    renderPDF(xmlString)
+
+    setCDNCacheable(type)
+
+    setContentType(type, name, disposition)
+
+    setEncoding(encodingType)
+
+    setHeader(name, value)
+
+    sendRedirect(type, identifier, id, editmode, parameters)
+
+    write(output)
+
+    writeLine(output)
+
+    writePage(pageobject)
+}
+
+declare interface nlobjError {
+
+    /**
+     * Returns the error code for this system or user-defined error
+     * 
+     * @returns The error code as a string
+     * 
+     * @since 2008.2
+     */
+    getCode(): string;
+
+    /**
+     * Returns the error message (user-defined or system) associated with this 
+     * error
+     * 
+     * @returns The string value of the error message
+     * 
+     * @since 2008.2
+     */
+    getDetails(): string;
+
+    /**
+     * Returns an error reference ID. If you have included a catch block in your
+     * code, you can use getId() to get the internal reference number for an 
+     * unexpected error. This method is useful if you want to keep your own log 
+     * of error numbers or you want to email the value of getId() to someone else.
+     * 
+     * Also note that if you have to call Technical Support to help you resolve
+     * a SuiteScript issue, this ID may be helpful to your Support rep in
+     * diagnosing the problem.
+     * 
+     * @returns The error ID as a string
+     * 
+     * @since 2008.2
+     */
+    getId(): string;
+
+    /**
+     * Returns the internal ID of the submitted record if this error was thrown
+     * in an **afterSubmit** script
+     * 
+     * @returns The internal ID of the submitted record as an integer
+     */
+    getInternalId(): string;
+
+    /**
+     * @returns Returns the stacktrace containing the location of the error
+     */
+    getStackTrace(): string[];
+
+    /**
+     * Return the name of the user event script (if applicable) that the error 
+     * was thrown from.
+     * 
+     * @returns The string value of the user event that threw the error - for 
+     * example, beforeLoad, beforeSubmit, or afterSubmit
+     * 
+     * @since 2008.2
+     */
+    getUserEvent(): string;
 }
 
 /**
