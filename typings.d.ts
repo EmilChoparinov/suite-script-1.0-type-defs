@@ -2176,7 +2176,14 @@ declare interface nlobjResponse {
      */
     writeLine(output: string): void;
 
-    writePage(pageobject) // <-
+    /**
+     * Generates a page using a page element object (nlobjForm or nlobjList)
+     * 
+     * @param pageobject Standalone page object: nlobjForm or nlobjList
+     * 
+     * @since 2008.2
+     */
+    writePage(pageobject: nlobjList | nlobjForm): void;
 }
 
 declare interface nlobjList {
