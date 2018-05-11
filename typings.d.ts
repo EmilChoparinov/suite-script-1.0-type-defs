@@ -4424,17 +4424,110 @@ declare interface nlobjCSVImport {
  * The nlobjEmailMerger object is supported in all server-side scripts.
  */
 declare interface nlobjEmailMerger {
-    merge()
+    
+    /**
+     * Use this method to perform a mail merge on an nlobjEmailMerger object
+     * (a scriptable e-mail template) and the records designated with the
+     * nlobjEmailMerger set methods.
+     * 
+     * This method has a governance of 20 usage units.
+     * 
+     * @since 2015.1
+     */
+    merge(): nlobjMergeResult;
 
-    setCustomRecord(recordType, recordId)
+    /**
+     * Use this method to designate a custom record to use in a mail merge.
+     * 
+     * @param recordType the internal ID of the custom record type. For example,
+     * “customrecord_telco_customer”.
+     * 
+     * @param recordId The internal ID of the custom record to use in the mail
+     * merge.
+     * 
+     * @throws SSS_INVALID_TYPE_ARG – Thrown if the recordType argument is
+     * invalid or missing.
+     * 
+     * @since 2015.1
+     */
+    setCustomRecord(recordType: string, recordId: number): void;
 
-    setEntity(entityType, entityId)
+    /**
+     * Use this method to designate an entity to use in a mail merge.
+     * 
+     * @param entityType The record type of the record to use in the mail merge.
+     * Use one of the following arguments:
+     * 
+     * - customer
+     * 
+     * - contact
+     * 
+     * - partner
+     * 
+     * - vendor
+     * 
+     * - employee
+     * 
+     * @param entityId The internal ID of the record to use in the mail merge
+     * 
+     * @throws SSS_INVALID_TYPE_ARG – Thrown if the entityType argument is
+     * invalid or missing.
+     * 
+     * @throws SSS_MERGER_ERROR_OCCURRED – Thrown if the entity cannot be set.
+     * 
+     * @since 2015.1
+     */
+    setEntity(entityType: string, entityId: number): void;
 
-    setRecipient(recipientType, recipientId)
+    /**
+     * Use this method to designate a second entity (as a recipient) to use in a
+     * mail merge.
+     * 
+     * @param recipientType The record type of the record to use in the mail merge. Use one of the following arguments:
+     * 
+     * - customer
+     * 
+     * - contact
+     * 
+     * - partner
+     * 
+     * - vendor
+     * 
+     * - employee
+     * 
+     * @param recipientId The internal ID of the record to use in the mail merge.
+     * 
+     * @throws SSS_INVALID_TYPE_ARG – Thrown if the recipientType argument is
+     * invalid or missing.
+     * 
+     * @throws SSS_MERGER_ERROR_OCCURRED – Thrown if the recipient cannot be set.
+     * 
+     * @since 2015.1
+     */
+    setRecipient(recipientType: string, recipientId: string): void;
 
-    setSupportCase(caseId)
+    /**
+     * Use this method to designate a support case to use in a mail merge.
+     * 
+     * @param caseId The internal ID of the case record to use in the mail merge.
+     * 
+     * @since 2015.1
+     */
+    setSupportCase(caseId: string): void;
 
-    setTransaction(transactionId)
+    /**
+     * Use this method to designate a transaction to use in a mail merge. All
+     * transaction types are supported
+     * 
+     * @param transactionId the internal ID of the transaction record to use in 
+     * the mail merge.
+     * 
+     * @throws SSS_MERGER_ERROR_OCCURRED – Thrown if the transaction cannot be
+     * set.
+     * 
+     * @since 2015.1
+     */
+    setTransaction(transactionId: number): void;
 }
 
 /**
@@ -4445,12 +4538,16 @@ declare interface nlobjMergeResult {
     /**
      * Use this method to get the body of the email distribution in string
      * format.
+     * 
+     * @since 2015.1
      */
     getBody(): string;
 
     /**
      * Use this method to get the subject of the email distribution in string
      * format.
+     * 
+     * @since 2015.1
      */
     getSubject(): string;
 }
