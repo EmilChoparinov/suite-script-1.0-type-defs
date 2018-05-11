@@ -109,13 +109,13 @@ declare interface RecordInitializationDefaults {
  * 
  * @since 2008.1
  */
-declare const nlapiAttachRecord: (
+declare function nlapiAttachRecord(
     type: string,
     id: number,
     type2: string,
     id2: number,
     attributes?: any
-) => void;
+): void;
 
 /**
  * Initializes a new record using field data from an existing record. Note that
@@ -140,11 +140,11 @@ declare const nlapiAttachRecord: (
  * types and the values they can take, see Record Initialization Defaults in the
  * NetSuite Help Center.
  */
-declare const nlapiCopyRecord: (
+declare function nlapiCopyRecord(
     type: string,
     id: number,
-    initializeValues: RecordInitializationDefaults
-) => nlobjRecord;
+    initializeValues?: RecordInitializationDefaults
+): nlobjRecord;
 
 /**
  * Initializes a new record and returns an
@@ -167,7 +167,128 @@ declare const nlapiCopyRecord: (
  * 
  * @since 2012.2
  */
-declare const nlapiCreateCSVImport: () => nlobjCSVImport;
+declare function nlapiCreateCSVImport(): nlobjCSVImport;
+
+/**
+ * With scriptable e-mail templates (Freemarker templates), you can create
+ * dynamic templates for e-mail marketing campaigns and system e-mail. See
+ * Scriptable Templates for additional information.
+ * 
+ * This API is called as the first step in performing a mail merge with an
+ * existing scriptable e-mail template. The following record types are supported:
+ * 
+ * - Contact
+ * 
+ * - Case
+ * 
+ * - Customer
+ * 
+ * - Employee
+ * 
+ * - Partner
+ * 
+ * - Vendor
+ * 
+ * - All transaction types
+ * 
+ * - All custom records
+ * 
+ * @param templateId Internal ID of the scriptable template you want to use.
+ * 
+ * @returns an nlobjEmailMerger object
+ * 
+ * @throws SSS_MERGER_ERROR_OCCURRED – Thrown if the email merger fails.
+ * 
+ * @since 2015.1
+ */
+declare function nlapiCreateEmailMerger(templateId: number): nlobjEmailMerger;
+
+/**
+ * Initializes a new record and returns an 
+ * [nlobjRecord](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3094136.html)
+ * object containing all the default field data for that record type. You can
+ * then use the methods available on the returned record object to populate the 
+ * record with the desired information.
+ * 
+ * The nlapiCreateRecord function must be followed by the 
+ * [nlapiSubmitRecord(record, doSourcing, ignoreMandatoryFields)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_N3031704)
+ * function before the record is actually committed to the database.
+ * 
+ * This API is supported in all script types. See SuiteScript 1.0 API Governance
+ * for the unit cost associated with this API.
+ * 
+ * @param type The record internal ID name. For a list of supported record types
+ * and their internal IDs, see SuiteScript Supported Records in the NetSuite
+ * Help Center.
+ * 
+ * @param initializeValues Contains an array of name/value pairs of defaults to
+ * be used during record initialization.For a list of record initialization
+ * types and the values they can take, see Record Initialization Defaults in the
+ * NetSuite Help Center.
+ * 
+ * @returns An nlobjRecord object of a new record
+ * 
+ * @throws SSS_INVALID_RECORD_TYPE
+ * 
+ * @throws SSS_TYPE_ARG_REQD
+ */
+declare function nlapiCreateRecord(
+    type: string,
+    initializeValues?: RecordInitializationDefaults
+): nlobjRecord;
+
+/**
+ * @param type The record internal ID name. For a list of supported record types
+ * and their internal IDs, see 
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html)
+ * in the NetSuite Help Center.
+ * 
+ * @param id The internalId for the record
+ * 
+ * @param initializeValues Contains an array of name/value pairs of defaults to 
+ * be used during record initialization. For a list of record initialization
+ * types and the values they can take, see 
+ * [Record Initialization Defaults](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3223419.html)
+ * in the NetSuite Help Center.
+ * 
+ * @throws SSS_INVALID_RECORD_TYPE
+ * 
+ * @throws SSS_TYPE_ARG_REQD
+ * 
+ * @throws SSS_INVALID_INTERNAL_ID
+ * 
+ * @throws SSS_ID_ARG_REQD
+ */
+declare function nlapiDeleteRecord(
+    type: string,
+    id: number,
+    initializeValues?: RecordInitializationDefaults
+): void;
+
+
+/**
+ * @param type The record internal ID name for the record being detached. For a
+ * list of record names, see the column called “Record Internal ID” in SuiteScript Supported Records.
+ * 
+ * @param id The record internalId for the record being detached
+ * 
+ * @param type2 The record internal ID name for the record being detached from.
+ * Note that if detaching an entity from a static entity group, the internal ID
+ * for the entity group record type is **entitygroup**.
+ * 
+ * @param id2 The record internalId for the record being detached from
+ * 
+ * @param attributes Name/value pairs containing attributes for the attachment:
+ * 
+ * - customrecord*->parent record: field (the custom field used to link child custom record to parent record)
+ */
+declare function nlapiDetachRecord(
+    type: string,
+    id: number,
+    type2: string,
+    id2: number,
+    attributes?: { [key: string]: string }
+): void;
 
 /*
    --------------------------------------------------
@@ -190,10 +311,10 @@ declare const nlapiCreateCSVImport: () => nlobjCSVImport;
  * 
  * @since 2011.2
  */
-declare const nlapiCreateCurrentLineItemSubrecord: (
+declare function nlapiCreateCurrentLineItemSubrecord(
     sublist: string,
     fldname: string
-) => nlobjSubrecord;
+): nlobjSubrecord;
 
 /*
    --------------------------------------------------
@@ -220,7 +341,7 @@ declare const nlapiCreateCurrentLineItemSubrecord: (
  * for sublists that support SuiteScript, sublist internal IDs, and sublist 
  * field IDs.
  */
-declare const nlapiCancelLineItem: (type: string) => void;
+declare function nlapiCancelLineItem(type: string): void;
 
 /**
  * Saves/commits the changes to the current line in a sublist. 
@@ -232,7 +353,7 @@ declare const nlapiCancelLineItem: (type: string) => void;
  * for sublists that support SuiteScript, sublist internal IDs, and sublist
  * field IDs.
  */
-declare const nlapiCommitLineItem: (type: string) => void;
+declare function nlapiCommitLineItem(type: string): void;
 
 /*
    --------------------------------------------------
@@ -281,10 +402,10 @@ declare const nlapiCommitLineItem: (type: string) => void;
  * 
  * @since 2009.2
  */
-declare const nlapiCreateAssistant: (
+declare function nlapiCreateAssistant(
     title: string,
     hideHeader?: boolean
-) => nlobjAssistant;
+): nlobjAssistant;
 
 /*
    --------------------------------------------------
@@ -312,7 +433,7 @@ declare const nlapiCreateAssistant: (
  * @returns Date object corresponding to date that was passed in, plus 
  * the days you added or subtracted
  */
-declare const nlapiAddDays: (d: Date, days: number) => Date;
+declare function nlapiAddDays(d: Date, days: number): Date;
 
 /**
  * Adds/subtracts a number of months to or from a date object
@@ -324,7 +445,7 @@ declare const nlapiAddDays: (d: Date, days: number) => Date;
  * @returns Date object corresponding to date that was passed in, plus the 
  * months you added or subtracted
  */
-declare const nlapiAddMonths: (d: Date, months: number) => Date;
+declare function nlapiAddMonths(d: Date, months: number): Date;
 
 /*
    --------------------------------------------------
@@ -4424,7 +4545,7 @@ declare interface nlobjCSVImport {
  * The nlobjEmailMerger object is supported in all server-side scripts.
  */
 declare interface nlobjEmailMerger {
-    
+
     /**
      * Use this method to perform a mail merge on an nlobjEmailMerger object
      * (a scriptable e-mail template) and the records designated with the
@@ -4534,7 +4655,7 @@ declare interface nlobjEmailMerger {
  * The nlobjMergeResult object is supported in all server-side scripts.
  */
 declare interface nlobjMergeResult {
-    
+
     /**
      * Use this method to get the body of the email distribution in string
      * format.
