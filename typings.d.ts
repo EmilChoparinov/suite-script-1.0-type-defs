@@ -176,9 +176,33 @@ declare const nlapiCommitLineItem: (type: string) => void;
  * 
  * @param initializeValues Contains an array of name/value pairs of defaults to be used during record initialization. For a list of record initialization types and the values they can take, see Record Initialization Defaults in the NetSuite Help Center.
  */
-declare const nlapiCopyRecord: (type: string, id: number, initializeValues: {}) => nlobjRecord;
+declare const nlapiCopyRecord: (
+    type: string,
+    id: number,
+    initializeValues: RecordInitializationDefaults
+) => nlobjRecord;
 
-declare const nlapiCreateAssistant: (title, hideHeader) => nlobjAssistant;
+/**
+ * Use this function to return a reference to an 
+ * [nlobjAssistant](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html)
+ * object, which is the basis for building your own custom assistant.
+ * This API is supported in Suitelets.
+ * 
+ * @param title The name of the assistant. This name will appear at the top of
+ * all assistant pages.
+ * 
+ * @param hideHeader If not set, defaults to false. If set to true, the header
+ * (navbar/logo) on the assistant is hidden from view. Note that the header is
+ * where the Add to Shortcuts link appears.
+ * 
+ * @since 2009.2
+ */
+declare const nlapiCreateAssistant: (
+    title: string,
+    hideHeader?: boolean
+) => nlobjAssistant;
+
+declare const nlapiCreateCSVImport: () => void;
 
 /*
    -----------------------------------------------------------------------------
@@ -4029,6 +4053,119 @@ declare interface nlobjSearchResult {
      * @since 2009.1
      */
     getValue(column: nlobjSearchColumn): string;
+}
+
+/**
+ * Primary object used to encapsulate a CSV import job. This object is passed as a parameter to
+ * [nlapiSubmitCSVImport(nlobjCSVImport)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_N3031452),
+ * which is used to asynchronously import record data into NetSuite.
+ * 
+ * Use 
+ * [nlapiCreateCSVImport( )](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_N3028261)
+ * to return an nlobjCSVImport object. You can then use the object's methods to 
+ * populate it with the desired information.
+ */
+declare interface nlobjCSVImport {
+    
+    /**
+     * Sets the data to be imported in a linked file for a multi-file import
+     * job, by referencing a file in the file cabinet using 
+     * [nlapiLoadFile(id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3066995.html#bridgehead_N3067506),
+     * or by inputting CSV data as raw string.
+     * 
+     * If an import job requires multiple linked files, this method can be
+     * executed multiple times, one time for each linked file.
+     * 
+     * @param sublist The internal ID of the record sublist for which data is being imported.
+     * 
+     * @param file Can be one of the following:
+     * 
+     * - An [nlobjFile](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html)
+     * object, encapsulating a CSV file, that contains the data to be imported.
+     * The CSV file must be uploaded to the file cabinet before it can be used
+     * in this context. The 
+     * [nlobjFile](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html)
+     * object is loaded with
+     * [nlapiLoadFile(id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3066995.html#bridgehead_N3067506).
+     * To load the
+     * [nlobjFile](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html)
+     * object, pass the internal ID of the specific CSV file to be loaded, as
+     * shown below. The internal ID of the CSV file is listed in the file
+     * cabinet, under the Internal ID column.
+     * 
+     * - Raw string of the data to be imported.
+     * 
+     * @throws SSS_INVALID_CSV_CONTENT — Thrown when an invalid value is passed
+     * as the file argument.
+     * 
+     * @since 2012.2
+     */
+    setLinkedFile(sublist: string, file: string): void;
+
+    /**
+     * Sets the name of the saved import map to be used for an import, by
+     * referencing the internal ID or script ID of the import map.
+     * 
+     * @param savedImport The internal ID or script ID of the saved mapping to
+     * use for the import job. The internal ID is system-defined and is
+     * displayed in the ID column at Setup > Import/Export > Saved CSV Imports.
+     * The script ID can be defined in the Import Assistant and is also
+     * displayed on this page.
+     * 
+     * @since 2012.2
+     */
+    setMapping(savedImport: string): void;
+
+    /**
+     * Sets the name of the import job to be shown on the status page for CSV
+     * imports.
+     * 
+     * @param option The name of the option, in this case, jobName.
+     * 
+     * @param value The value for the jobName option, meaning the text to be
+     * displayed in the Job Name column at 
+     * `Setup > Issues > Issue Management > Import Issue Records > Status 
+     * (Administrator)`. The default job name format is: 
+     * `<import type> - <csv file name> - <email address of logged-in user>`.
+     * 
+     * @since 2012.2
+     */
+    setOption(option: string, value: string): void;
+
+    /**
+     * Sets the data to be imported in the primary file for an import job, by
+     * referencing a file in the file cabinet using nlapiLoadFile, or by
+     * inputting CSV data as raw string.
+     * 
+     * @param file Can be one of the following:
+     * 
+     * - The internal ID, as shown in the file cabinet, of the CSV file
+     * containing data to be imported, referenced by nlapiLoadFile.
+     * 
+     * - Raw string of the data to be imported.
+     * 
+     * @throws SSS_INVALID_CSV_CONTENT — Thrown when an invalid value is passed 
+     * as the file argument.
+     * 
+     * @example setPrimaryFile(nlapiLoadFile(73))
+     * 
+     * @since 2012.2
+     */
+    setPrimaryFile(file: string): void;
+
+    /**
+     * Overrides the CSV import queue preference. The stored queue preference is
+     * not altered; setQueue must be called each time an override is needed.
+     * 
+     * @param string The new queue number. Valid values range from ‘1’ to ‘5’,
+     * depending upon the SuiteCloud License.
+     * 
+     * @throws SSS_INVALID_CSV_QUEUE — Thrown for all invalid values passed as
+     * the string argument.
+     * 
+     * @since 2014.1
+     */
+    setQueue(string: string): void;
 }
 
 /*
