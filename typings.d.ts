@@ -76,29 +76,13 @@ declare interface RecordInitializationDefaults {
    -----------------------------------------------------------------------------
 */
 
-/**
- * Adds/subtracts a number of days to or from a date object
- * 
- * @param d Date object
- * 
- * @param days Number of days being added to the date
- * 
- * @returns Date object corresponding to date that was passed in, plus 
- * the days you added or subtracted
- */
-declare const nlapiAddDays: (d: Date, days: number) => Date;
+/*
+   --------------------------------------------------
 
-/**
- * Adds/subtracts a number of months to or from a date object
- * 
- * @param d Date object
- * 
- * @param months number of months being added to the date
- * 
- * @returns Date object corresponding to date that was passed in, plus the 
- * months you added or subtracted
- */
-declare const nlapiAddMonths: (d: Date, months: number) => Date;
+           RECORD APIS
+
+   --------------------------------------------------
+*/
 
 /**
  * Attaches a single record to another record. This API is supported in client,
@@ -134,6 +118,100 @@ declare const nlapiAttachRecord: (
 ) => void;
 
 /**
+ * Initializes a new record using field data from an existing record. Note that
+ * this API simply creates a new instance of another record. After making
+ * changes to the copy, you must submit the copy (which is considered as a new
+ * record) to the database for your changes to be committed to NetSuite.
+ * 
+ * This API is supported in all script types. See SuiteScript 1.0 API Governance
+ * for the unit cost associated with this API.
+ * 
+ * @param type The record internal ID name. For a list of supported record types
+ * and their internal IDs, see 
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html)
+ * in the NetSuite Help Center.
+ * 
+ * @param id The internalId for the record. If you are unsure how to find a 
+ * record's internalId, see 
+ * [Showing Record and Field IDs in Your Account](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2903915.html).
+ * 
+ * @param initializeValues Contains an array of name/value pairs of defaults to
+ * be used during record initialization. For a list of record initialization
+ * types and the values they can take, see Record Initialization Defaults in the
+ * NetSuite Help Center.
+ */
+declare const nlapiCopyRecord: (
+    type: string,
+    id: number,
+    initializeValues: RecordInitializationDefaults
+) => nlobjRecord;
+
+/**
+ * Initializes a new record and returns an
+ * [nlobjCSVImport](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3084719.html)
+ * object. You can then use the methods available on the returned record object
+ * to populate the object with the desired information. Next, you can pass this
+ * object to 
+ * [nlapiSubmitCSVImport(nlobjCSVImport)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_N3031452),
+ * which asynchronously imports the data from the returned object into NetSuite.
+ * 
+ * Note that this API cannot be used to import data that is imported by (2-step)
+ * assistants in the UI, because these import types do not support saved import
+ * maps. This limitation applies to budget, single journal entry, single
+ * inventory worksheet, project tasks, and website redirects imports.
+ * 
+ * @returns An
+ * [nlobjCSVImport](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3084719.html)
+ * object to be passed as a parameter to 
+ * [nlapiSubmitCSVImport(nlobjCSVImport)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_N3031452).
+ * 
+ * @since 2012.2
+ */
+declare const nlapiCreateCSVImport: () => nlobjCSVImport;
+
+/*
+   --------------------------------------------------
+
+           SUBRECORD APIS
+
+   --------------------------------------------------
+*/
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to create a subrecord from a
+ * sublist field on the parent record.
+ * 
+ * @param sublist The sublist internal ID on the parent record (for example, use
+ * item as the ID for the Items sublist).
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the sublist of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details sublist field).
+ * 
+ * @since 2011.2
+ */
+declare const nlapiCreateCurrentLineItemSubrecord: (
+    sublist: string,
+    fldname: string
+) => nlobjSubrecord;
+
+/*
+   --------------------------------------------------
+
+           FIELD APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SUBLIST APIS
+
+   --------------------------------------------------
+*/
+
+/**
  * Cancels any uncommited changes to the current line of a sublist
  * 
  * @param type The sublist internal ID 
@@ -156,31 +234,37 @@ declare const nlapiCancelLineItem: (type: string) => void;
  */
 declare const nlapiCommitLineItem: (type: string) => void;
 
-/**
- * Initializes a new record using field data from an existing record. Note that
- * this API simply creates a new instance of another record. After making
- * changes to the copy, you must submit the copy (which is considered as a new
- * record) to the database for your changes to be committed to NetSuite.
- * 
- * This API is supported in all script types. See SuiteScript 1.0 API Governance
- * for the unit cost associated with this API.
- * 
- * @param type The record internal ID name. For a list of supported record types
- * and their internal IDs, see 
- * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html)
- * in the NetSuite Help Center.
- * 
- * @param id The internalId for the record. If you are unsure how to find a 
- * record's internalId, see 
- * [Showing Record and Field IDs in Your Account](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2903915.html).
- * 
- * @param initializeValues Contains an array of name/value pairs of defaults to be used during record initialization. For a list of record initialization types and the values they can take, see Record Initialization Defaults in the NetSuite Help Center.
- */
-declare const nlapiCopyRecord: (
-    type: string,
-    id: number,
-    initializeValues: RecordInitializationDefaults
-) => nlobjRecord;
+/*
+   --------------------------------------------------
+
+           SEARCH APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SCHEDULING APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           EXECUTION CONTEXT APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           UI BUILDER APIS
+
+   --------------------------------------------------
+*/
 
 /**
  * Use this function to return a reference to an 
@@ -202,7 +286,149 @@ declare const nlapiCreateAssistant: (
     hideHeader?: boolean
 ) => nlobjAssistant;
 
-declare const nlapiCreateCSVImport: () => void;
+/*
+   --------------------------------------------------
+
+           APPLICATION NAVIGATION APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           DATE APIS
+
+   --------------------------------------------------
+*/
+
+/**
+ * Adds/subtracts a number of days to or from a date object
+ * 
+ * @param d Date object
+ * 
+ * @param days Number of days being added to the date
+ * 
+ * @returns Date object corresponding to date that was passed in, plus 
+ * the days you added or subtracted
+ */
+declare const nlapiAddDays: (d: Date, days: number) => Date;
+
+/**
+ * Adds/subtracts a number of months to or from a date object
+ * 
+ * @param d Date object
+ * 
+ * @param months number of months being added to the date
+ * 
+ * @returns Date object corresponding to date that was passed in, plus the 
+ * months you added or subtracted
+ */
+declare const nlapiAddMonths: (d: Date, months: number) => Date;
+
+/*
+   --------------------------------------------------
+
+           TIMEZONE APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           CURRENCY APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           ENCRYPTION APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           XML APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           FILE APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           ERROR HANDLING APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           COMMUNICATIOn APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           CONFIGURATION APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SUITEFLOW APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           PORTLET APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SUITEANALYTICS APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           USER CREDENTIALS APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           JOB MANAGER APIS
+
+   --------------------------------------------------
+*/
 
 /*
    -----------------------------------------------------------------------------
@@ -4066,7 +4292,7 @@ declare interface nlobjSearchResult {
  * populate it with the desired information.
  */
 declare interface nlobjCSVImport {
-    
+
     /**
      * Sets the data to be imported in a linked file for a multi-file import
      * job, by referencing a file in the file cabinet using 
