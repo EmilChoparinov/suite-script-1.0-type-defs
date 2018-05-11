@@ -1,3 +1,72 @@
+/*
+   -----------------------------------------------------------------------------
+
+                                HELPER INTERFACES
+
+   -----------------------------------------------------------------------------
+*/
+
+/**
+ * The `CountryCodes` type is an internal type for referencing
+ */
+type CountryCodes =
+    'AD' | 'AE' | 'AF' | 'AG' | 'AI' | 'AL' | 'AM' |
+    'AN' | 'AO' | 'AQ' | 'AR' | 'AS' | 'AT' | 'AU' |
+    'AW' | 'AZ' | 'BA' | 'BB' | 'BD' | 'BE' | 'BF' |
+    'BG' | 'BH' | 'BI' | 'BJ' | 'BL' | 'BM' | 'BN' |
+    'BO' | 'BR' | 'BS' | 'BT' | 'BV' | 'BW' | 'BY' |
+    'BZ' | 'CA' | 'CC' | 'CD' | 'CF' | 'CG' | 'CH' |
+    'CI' | 'CK' | 'CL' | 'CM' | 'CN' | 'CO' | 'CR' |
+    'CU' | 'CV' | 'CX' | 'CY' | 'CZ' | 'DE' | 'DJ' |
+    'DK' | 'DM' | 'DO' | 'DZ' | 'EC' | 'EE' | 'EG' |
+    'EH' | 'ER' | 'ES' | 'ET' | 'FI' | 'FJ' | 'FK' |
+    'FM' | 'FO' | 'FR' | 'GA' | 'GB' | 'GD' | 'GE' |
+    'GF' | 'GG' | 'GH' | 'GI' | 'GL' | 'GM' | 'GN' |
+    'GP' | 'GQ' | 'GR' | 'GS' | 'GT' | 'GU' | 'GW' |
+    'GY' | 'HK' | 'HM' | 'HN' | 'HR' | 'HT' | 'HU' |
+    'ID' | 'IE' | 'IL' | 'IM' | 'IN' | 'IO' | 'IQ' |
+    'IR' | 'IS' | 'IT' | 'JE' | 'JM' | 'JO' | 'JP' |
+    'KE' | 'KG' | 'KH' | 'KI' | 'KM' | 'KN' | 'KP' |
+    'KR' | 'KW' | 'KY' | 'KZ' | 'LA' | 'LB' | 'LC' |
+    'LI' | 'LK' | 'LR' | 'LS' | 'LT' | 'LU' | 'LV' |
+    'LY' | 'MA' | 'MC' | 'MD' | 'ME' | 'MF' | 'MG' |
+    'MH' | 'MK' | 'ML' | 'MM' | 'MN' | 'MO' | 'MP' |
+    'MQ' | 'MR' | 'MS' | 'MT' | 'MU' | 'MV' | 'MW' |
+    'MX' | 'MY' | 'MZ' | 'NA' | 'NC' | 'NE' | 'NF' |
+    'NG' | 'NI' | 'NL' | 'NO' | 'NP' | 'NR' | 'NU' |
+    'NZ' | 'OM' | 'PA' | 'PE' | 'PF' | 'PG' | 'PH' |
+    'PK' | 'PL' | 'PM' | 'PN' | 'PR' | 'PS' | 'PT' |
+    'PW' | 'PY' | 'QA' | 'RE' | 'RO' | 'RS' | 'RU' |
+    'RW' | 'SA' | 'SB' | 'SC' | 'SD' | 'SE' | 'SG' |
+    'SH' | 'SI' | 'SJ' | 'SK' | 'SL' | 'SM' | 'SN' |
+    'SO' | 'SR' | 'ST' | 'SV' | 'SY' | 'SZ' | 'TC' |
+    'TD' | 'TF' | 'TG' | 'TH' | 'TJ' | 'TK' | 'TM' |
+    'TN' | 'TO' | 'TP' | 'TR' | 'TT' | 'TV' | 'TW' |
+    'TZ' | 'UA' | 'UG' | 'UM' | 'US' | 'UY' | 'UZ' |
+    'VA' | 'VC' | 'VE' | 'VG' | 'VI' | 'VN' | 'VU' |
+    'WF' | 'WS' | 'YE' | 'YT' | 'ZA' | 'ZM' | 'ZW';
+
+/**
+ * The initializeValues parameter is an Object that can contain an array of
+ * name/value pairs of defaults that are passed upon record initialization. The
+ * following table lists initialization types that are available to certain
+ * SuiteScript-supported records and the values they can contain.
+ * For examples, see 
+ * [Record Initialization Examples](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3223419.html#bridgehead_N3224681).
+ */
+declare interface RecordInitializationDefaults {
+    recordmode?: 'dynamic';
+    customform?: string;
+    deletionreason?: string;
+    deletionreasonmemo?: string;
+    assemblyitem?: string;
+    entity?: string;
+    disablepaymentfilters?: string;
+    subtype?: 'sale' | 'resale' | 'purchase';
+    nexuscountry?: CountryCodes;
+    country?: CountryCodes;
+    parenttopic?: string;
+}
 
 /*
    -----------------------------------------------------------------------------
@@ -87,7 +156,27 @@ declare const nlapiCancelLineItem: (type: string) => void;
  */
 declare const nlapiCommitLineItem: (type: string) => void;
 
-declare const nlapiCopyRecord: (type, id, initializeValues) => nlobjRecord;
+/**
+ * Initializes a new record using field data from an existing record. Note that
+ * this API simply creates a new instance of another record. After making
+ * changes to the copy, you must submit the copy (which is considered as a new
+ * record) to the database for your changes to be committed to NetSuite.
+ * 
+ * This API is supported in all script types. See SuiteScript 1.0 API Governance
+ * for the unit cost associated with this API.
+ * 
+ * @param type The record internal ID name. For a list of supported record types
+ * and their internal IDs, see 
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html)
+ * in the NetSuite Help Center.
+ * 
+ * @param id The internalId for the record. If you are unsure how to find a 
+ * record's internalId, see 
+ * [Showing Record and Field IDs in Your Account](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2903915.html).
+ * 
+ * @param initializeValues Contains an array of name/value pairs of defaults to be used during record initialization. For a list of record initialization types and the values they can take, see Record Initialization Defaults in the NetSuite Help Center.
+ */
+declare const nlapiCopyRecord: (type: string, id: number, initializeValues: {}) => nlobjRecord;
 
 declare const nlapiCreateAssistant: (title, hideHeader) => nlobjAssistant;
 
@@ -3941,6 +4030,14 @@ declare interface nlobjSearchResult {
      */
     getValue(column: nlobjSearchColumn): string;
 }
+
+/*
+   -----------------------------------------------------------------------------
+
+                                OBJECT CLASSES
+
+   -----------------------------------------------------------------------------
+*/
 
 /**
  * Primary object used to encapsulate search return columns. For information on
