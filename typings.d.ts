@@ -4394,6 +4394,67 @@ declare interface nlobjCSVImport {
     setQueue(string: string): void;
 }
 
+/**
+ * Encapsulates a scriptable email template, which can be merged with one of the
+ * following record types:
+ * 
+ * - Contact
+ * 
+ * - Case
+ * 
+ * - Customer
+ * 
+ * - Employee
+ * 
+ * - Partner
+ * 
+ * - Vendor
+ * 
+ * - All transaction types
+ * 
+ * - All custom records
+ * 
+ * To create a new nlobjEmailMerger object, call 
+ * [nlapiCreateEmailMerger(templateId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_4183390688).
+ * 
+ * See 
+ * [nlapiCreateEmailMerger(templateId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_4183390688)
+ * for a sample script.
+ * 
+ * The nlobjEmailMerger object is supported in all server-side scripts.
+ */
+declare interface nlobjEmailMerger {
+    merge()
+
+    setCustomRecord(recordType, recordId)
+
+    setEntity(entityType, entityId)
+
+    setRecipient(recipientType, recipientId)
+
+    setSupportCase(caseId)
+
+    setTransaction(transactionId)
+}
+
+/**
+ * The nlobjMergeResult object is supported in all server-side scripts.
+ */
+declare interface nlobjMergeResult {
+    
+    /**
+     * Use this method to get the body of the email distribution in string
+     * format.
+     */
+    getBody(): string;
+
+    /**
+     * Use this method to get the subject of the email distribution in string
+     * format.
+     */
+    getSubject(): string;
+}
+
 /*
    -----------------------------------------------------------------------------
 
