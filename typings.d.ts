@@ -2027,240 +2027,321 @@ declare interface nlobjSubrecord {
    --------------------------------------------------
 */
 
-/*
-   --------------------------------------------------
-
-           SUBLIST APIS
-
-   --------------------------------------------------
-*/
+/**
+ * Sets the field to disabled or enabled based on the value (true or false).
+ * This API is supported in client scripts only.
+ * 
+ * @param fldnam The internal ID name of the field to enable/disable
+ * 
+ * @param val If set to true, the field is disabled. If set to false, it is
+ * enabled.
+ */
+declare function nlapiDisableField(fldnam: string, val: boolean): void;
 
 /**
- * Cancels any uncommited changes to the current line of a sublist
+ * Use this function to obtain **body** field metadata. Calling this function
+ * instantiates the nlobjField object, and you can use the methods available to
+ * nlobjField to get field metadata.
  * 
- * @param type The sublist internal ID 
- * (for example, use price as the ID for the Pricing sublist).
- * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
- * for sublists that support SuiteScript, sublist internal IDs, and sublist 
- * field IDs.
+ * @param fldnam The internal ID of the field.
+ * 
+ * @returns Returns an
+ * [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+ * object representing this field
+ * 
+ * @since 2009.1
  */
-declare function nlapiCancelLineItem(type: string): void;
+declare function nlapiGetField(fldnam: string): nlobjField;
 
 /**
- * Saves/commits the changes to the current line in a sublist. 
- * This is the equivalent of clicking Done for a line item in the UI.
+ * Use this API to get the text value (rather than the internal ID value) of a
+ * field. This API is available in client and user event scripts only.
  * 
- * @param type The sublist internal ID (for example, use price as the ID for
- * the Pricing sublist).
- * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
- * for sublists that support SuiteScript, sublist internal IDs, and sublist
- * field IDs.
+ * @param fldnam The internal ID of the field.
+ * 
+ * @returns The string UI display name for a select field corresponding to the
+ * current selection.
+ * 
+ * **NOTE:** For multiselect fields, this API returns the display names as a
+ * string with the \u0005 separator.
  */
-declare function nlapiCommitLineItem(type: string): void;
-
-/*
-   --------------------------------------------------
-
-           SEARCH APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           SCHEDULING APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           EXECUTION CONTEXT APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           UI BUILDER APIS
-
-   --------------------------------------------------
-*/
+declare function nlapiGetFieldText(fldnam: string): string;
 
 /**
- * Use this function to return a reference to an 
- * [nlobjAssistant](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html)
- * object, which is the basis for building your own custom assistant.
- * This API is supported in Suitelets.
+ * Returns the display names for a multiselect field corresponding to the
+ * current selection. This API is available in client and user event scripts
+ * only.
  * 
- * @param title The name of the assistant. This name will appear at the top of
- * all assistant pages.
+ * @param fldnam The internal ID of the field whose display values are returned
  * 
- * @param hideHeader If not set, defaults to false. If set to true, the header
- * (navbar/logo) on the assistant is hidden from view. Note that the header is
- * where the Add to Shortcuts link appears.
+ * @returns The display names for a multiselect field as an Array.
  * 
- * @since 2009.2
+ * @since 2009.1
  */
-declare function nlapiCreateAssistant(
-    title: string,
-    hideHeader?: boolean
-): nlobjAssistant;
-
-/*
-   --------------------------------------------------
-
-           APPLICATION NAVIGATION APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           DATE APIS
-
-   --------------------------------------------------
-*/
+declare function nlapiGetFieldTexts(fldnam: string): string[];
 
 /**
- * Adds/subtracts a number of days to or from a date object
+ * Use this function to get the internal ID of a field. For example, if the
+ * customer Abe Simpson appears in a field, this function will return 87, which
+ * represents the internal ID value of the Abe Simpson customer record. Note
+ * that if you are getting the value of an inline check box, the return value
+ * will be F if the field is unset.
  * 
- * @param d Date object
+ * @param fldnam The internal ID of the field.
  * 
- * @param days Number of days being added to the date
- * 
- * @returns Date object corresponding to date that was passed in, plus 
- * the days you added or subtracted
+ * @returns The string value of a field on the current record, or returns null
+ * if the field does not exist on the record or the field is restricted.
  */
-declare function nlapiAddDays(d: Date, days: number): Date;
+declare function nlapiGetFieldValue(fldnam: string): string | null;
 
 /**
- * Adds/subtracts a number of months to or from a date object
+ * Use this function to get an array of internal ID values for a multiselect
+ * field.
  * 
- * @param d Date object
+ * This API is available in client and user event scripts only.
  * 
- * @param months number of months being added to the date
+ * @param fldnam The internal ID of the field. For a list of fields that are 
+ * supported in SuiteScript and their internal IDs, see the SuiteScript 
+ * Reference Guide.
  * 
- * @returns Date object corresponding to date that was passed in, plus the 
- * months you added or subtracted
+ * @returns The values of a multiselect field as an Array on the current record.
+ * Returns null if the field does not exist on the record or the field is
+ * restricted.
+ * 
+ * @since 2009.1
  */
-declare function nlapiAddMonths(d: Date, months: number): Date;
+declare function nlapiGetFieldValues(fldnam: string): string[] | null;
 
-/*
-   --------------------------------------------------
+/**
+ * Adds a select option to a select/multiselect field added via script. Note
+ * that this API can only be used on select/multiselect fields that are added
+ * via the 
+ * [UI Objects API](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3126890.html)
+ * (for example, in Suitelets or beforeLoad user events scripts).
+ * 
+ * @param fldnam The internalId of the scripted field
+ * 
+ * @param value A unique value for the select option. Note that the datatype for
+ * this argument will vary depending on the value that is set. For example, you
+ * may assign numerical values such as 1, 2, 3 or string values such as option1,
+ * option2, option3.
+ * 
+ * @param text The display name of the select option
+ * 
+ * @param selected If not set, this argument defaults to false. If set to true,
+ * the select option becomes the default option.
+ */
+declare function nlapiInsertSelectOption(
+    fldnam: string,
+    value: string | number,
+    text: string,
+    selected?: boolean
+): void;
 
-           TIMEZONE APIS
+/**
+ * Performs a search for one or more **body** fields on a record. This function
+ * supports joined-field lookups. Note that the notation for joined fields is:
+ * `join_id.field_name`
+ * 
+ * @param type The record internal ID name. In the NetSuite Help Center, see 
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * Record IDs are listed in the “Record Internal ID” column.
+ * 
+ * @param id The internalId for the record, for example 777 or 87.
+ * @param fields Sets an array of column/field names to look up, or a single
+ * column/field name. The `fields` parameter can also be set to reference joined
+ * fields (see the third code sample).
+ * 
+ * @param text If not set, this argument defaults to false and the internal ID
+ * of the dropdown field is returned. If set to true, this argument returns the
+ * UI display name for this field or fields (valid only for
+ * SELECT|IMAGE|DOCUMENT fields).
+ */
+declare function nlapiLookupField(
+    type: string,
+    id: null,
+    fields: string | string[],
+    text?: boolean
+): string | { [key: string]: string };
 
-   --------------------------------------------------
-*/
+/**
+ * Removes a single select option from a select or multiselect field added via
+ * script. Note that this API call can only be used on select/multiselect fields
+ * that are added via the 
+ * [UI Objects API](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3126890.html)
+ * (for example on Suitelets or beforeLoad user event scripts).
+ * 
+ * @param fldnam The name of the scripted field
+ * 
+ * @param value The value of the select option to be removed or null to delete
+ * all the options
+ */
+declare function nlapiRemoveSelectOption(fldnam: string, value: string): void;
 
-/*
-   --------------------------------------------------
+/**
+ * Sets the value of a select field on the current record using the UI display
+ * name. This API can be used in user event **beforeLoad** scripts to initialize
+ * a field on new records or to initialize a non-stored field.
+ * (Non-stored fields are those that have the **Store Value** preference
+ * unchecked on the custom field page.)
+ * 
+ * This function is available in client and user event scripts only.
+ * 
+ * @param fldname The name of the field being set
+ * 
+ * @param txt The display name associated with the value that the field is being
+ * set to
+ * 
+ * @param firefieldchanged If true, then the fieldchange script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * (Available in Client SuiteScript only). See Using the Fire Field Changed
+ * Parameter for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ */
+declare function nlapiSetFieldText(
+    fldname: string,
+    txt: string,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
 
-           CURRENCY APIS
+/**
+ * Sets the values of a multi-select field on the current record using the UI
+ * display names. This API can be used in user event **beforeLoad** scripts to
+ * initialize a field on new records or to initialize a non-stored field.
+ * (Non-stored fields are those that have the **Store Value** preference
+ * unchecked on the custom field page.)
+ * 
+ * This function is available in client and user event scripts only.
+ * 
+ * @param fldname The name of the field being set
+ * 
+ * @param txts The display names associated with the values that the field is
+ * being set to
+ * 
+ * @param firefieldchanged If true, then the fieldchange script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * (Available in Client SuiteScript only). See Using the Fire Field Changed
+ * Parameter for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ * 
+ * @since 2009.1
+ */
+declare function nlapiSetFieldTexts(
+    fldname: string,
+    txts: string[],
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
 
-   --------------------------------------------------
-*/
+/**
+ * Sets the value of a body field. This API can be used in user event 
+ * **beforeLoad** scripts to initialize a field on new records or to initialize 
+ * a non-stored field. (Non-stored fields are those that have the 
+ * **Store Value** preference unchecked on the custom field page.)
+ * 
+ * For client-side scripting, this API can be triggered by a PageInit client 
+ * event trigger.
+ * 
+ * This API is available in client and user event scripts only.
+ * 
+ * @param fldnam The internal ID name of the field being set
+ * 
+ * @param value The value the field is being set to.
+ * 
+ * @param firefieldchanged If true, then the fieldchange script for that field 
+ * is executed. If no value is provided, this argument defaults to true. 
+ * (Available in Client SuiteScript only). See Using the 
+ * [Fire Field Changed Parameter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3042487.html#bridgehead_N3050839) 
+ * for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always 
+ * execute as true.
+ */
+declare function nlapiSetFieldValue(
+    fldnam: string,
+    value: string,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
 
-/*
-   --------------------------------------------------
+/**
+ * Sets the value of a multiselect body field on a current record. This API can
+ * be used for user event **beforeLoad** scripts to initialize fields on new
+ * records or non-stored fields. (Non-stored fields are those that have the
+ * **Store Value** preference unchecked on the custom field page.
+ * 
+ * For client-side scripting, this API can be triggered by a **PageInit** client
+ * event trigger.
+ * 
+ * This API is available in client and user event scripts only.
+ * @param fldnam The internal ID name of the field being set
+ * 
+ * @param value The value the field is being set to (Array).
+ * 
+ * @param firefieldchanged If true, then the fieldchange script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ * 
+ * @since 2009.1
+ */
+declare function nlapiSetFieldValues(
+    fldnam: string,
+    value: string,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
 
-           ENCRYPTION APIS
+/**
+ * Updates one or more body fields or custom fields on a record. This function
+ * can be used on any record that supports inline editing and on any body
+ * field or custom field that supports inline editing. Note that this function
+ * cannot be used to update sublist “line item” fields.
+ * 
+ * The nlapiSubmitField function is a companion function to
+ * [nlapiLookupField(type, id, fields, text)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3039111.html#bridgehead_N3040351).
+ * 
+ * `nlapiSubmitField` is available in client, user event, scheduled, portlet,
+ * and Suitelet scripts.
+ * 
+ * See 
+ * [SuiteScript 1.0 API Governance](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3350760.html)
+ * for the unit cost associated with this API. Note that the metering for this
+ * API is on a per-call basis, not per updated line. For example you can update
+ * five fields with one call to `nlapiSubmitField`, and the entire operation
+ * will cost 10 units (if the API is executing on a standard transaction
+ * record).
+ * 
+ * @param type The record internal ID name of the record you are updating.
+ * 
+ * @param id The internalId for the record, for example 777 or 87
+ * 
+ * @param fields An Array of field names being updated -or- a single field name
+ * 
+ * @param values An Array of field values being updated -or- a single field value
+ * 
+ * @param doSourcing If not set, this argument defaults to false and field
+ * sourcing does not occur. If set to true, sources in dependent field information
+ * for empty fields.
+ */
+declare function nlapiSubmitField(
+    type: string,
+    id: number,
+    fields: string | string[],
+    values: string | string[],
+    doSourcing?: boolean
+): void;
 
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           XML APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           FILE APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           ERROR HANDLING APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           COMMUNICATIOn APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           CONFIGURATION APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           SUITEFLOW APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           PORTLET APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           SUITEANALYTICS APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           USER CREDENTIALS APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   --------------------------------------------------
-
-           JOB MANAGER APIS
-
-   --------------------------------------------------
-*/
-
-/*
-   -----------------------------------------------------------------------------
-
-                                OBJECT INTERFACES
-
-   -----------------------------------------------------------------------------
-*/
 /**
  * Primary object used to encapsulate a NetSuite field.
  * 
@@ -2569,6 +2650,241 @@ declare interface nlobjField {
      */
     setRichTextWidth(width?: number): nlobjField;
 }
+
+/*
+   --------------------------------------------------
+
+           SUBLIST APIS
+
+   --------------------------------------------------
+*/
+
+/**
+ * Cancels any uncommited changes to the current line of a sublist
+ * 
+ * @param type The sublist internal ID 
+ * (for example, use price as the ID for the Pricing sublist).
+ * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist 
+ * field IDs.
+ */
+declare function nlapiCancelLineItem(type: string): void;
+
+/**
+ * Saves/commits the changes to the current line in a sublist. 
+ * This is the equivalent of clicking Done for a line item in the UI.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for
+ * the Pricing sublist).
+ * See [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ */
+declare function nlapiCommitLineItem(type: string): void;
+
+/*
+   --------------------------------------------------
+
+           SEARCH APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SCHEDULING APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           EXECUTION CONTEXT APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           UI BUILDER APIS
+
+   --------------------------------------------------
+*/
+
+/**
+ * Use this function to return a reference to an 
+ * [nlobjAssistant](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html)
+ * object, which is the basis for building your own custom assistant.
+ * This API is supported in Suitelets.
+ * 
+ * @param title The name of the assistant. This name will appear at the top of
+ * all assistant pages.
+ * 
+ * @param hideHeader If not set, defaults to false. If set to true, the header
+ * (navbar/logo) on the assistant is hidden from view. Note that the header is
+ * where the Add to Shortcuts link appears.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiCreateAssistant(
+    title: string,
+    hideHeader?: boolean
+): nlobjAssistant;
+
+/*
+   --------------------------------------------------
+
+           APPLICATION NAVIGATION APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           DATE APIS
+
+   --------------------------------------------------
+*/
+
+/**
+ * Adds/subtracts a number of days to or from a date object
+ * 
+ * @param d Date object
+ * 
+ * @param days Number of days being added to the date
+ * 
+ * @returns Date object corresponding to date that was passed in, plus 
+ * the days you added or subtracted
+ */
+declare function nlapiAddDays(d: Date, days: number): Date;
+
+/**
+ * Adds/subtracts a number of months to or from a date object
+ * 
+ * @param d Date object
+ * 
+ * @param months number of months being added to the date
+ * 
+ * @returns Date object corresponding to date that was passed in, plus the 
+ * months you added or subtracted
+ */
+declare function nlapiAddMonths(d: Date, months: number): Date;
+
+/*
+   --------------------------------------------------
+
+           TIMEZONE APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           CURRENCY APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           ENCRYPTION APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           XML APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           FILE APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           ERROR HANDLING APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           COMMUNICATIOn APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           CONFIGURATION APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SUITEFLOW APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           PORTLET APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           SUITEANALYTICS APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           USER CREDENTIALS APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   --------------------------------------------------
+
+           JOB MANAGER APIS
+
+   --------------------------------------------------
+*/
+
+/*
+   -----------------------------------------------------------------------------
+
+                                OBJECT INTERFACES
+
+   -----------------------------------------------------------------------------
+*/
 
 /**
  * Primary object used to encapsulate available select options for a select 
