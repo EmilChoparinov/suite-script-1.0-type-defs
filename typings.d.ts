@@ -2682,6 +2682,974 @@ declare function nlapiCancelLineItem(type: string): void;
  */
 declare function nlapiCommitLineItem(type: string): void;
 
+/**
+ * Sets the line item field of a sublist to disabled or enabled based on the
+ * value (true or false). This function is only supported in client scripts.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See Using the SuiteScript Records Browser for sublists that
+ * support SuiteScript, sublist internal IDs, and sublist field IDs.
+ * 
+ * @param fldnam The name of the line item field to enable/disable
+ * 
+ * @param val If set to true the field is disabled. If set to false it is
+ * enabled
+ */
+declare function nlapiDisableLineItemField(
+    type: string,
+    fldnam: string,
+    val?: boolean
+): void;
+
+/**
+ * This API returns the line number of a particular price in a column. If the
+ * value is present on multiple lines, it will return the line item of the first
+ * line that contains the value. This API is supported in client and user event
+ * scripts. Use this API on a matrix sublists only.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see
+ * [Pricing Sublist Internal IDs]()
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the matrix field
+ * 
+ * @param val The value of the field
+ * 
+ * @param column The column number for this field. Column numbers start at 1,
+ * not 0.
+ * 
+ * @returns The line number (as an integer) of a specified matrix field
+ * 
+ * @since 2009.2
+ */
+declare function nlapiFindLineItemMatrixValue(
+    type: string,
+    fldnam: string,
+    val: string,
+    column: number
+): number;
+
+/**
+ * Use this API to find the line number of a specific field in a sublist. This
+ * API can be used on any sublists that supports SuiteScript. This API is
+ * supported in client and user event scripts only.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for
+ * the Pricing sublist). See 
+ * [Using the SuiteScript Records Browser]()
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param fldnam The field internal ID
+ * 
+ * @param val The value of the field
+ * 
+ * @returns The line number (as an integer) of a specific sublist field
+ * 
+ * @since 2009.2
+ */
+declare function nlapiFindLineItemValue(
+    type: string,
+    fldnam: string,
+    val: string
+): number;
+
+/**
+ * Returns the line number of the currently selected line in a group.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @returns The integer value for the currently selected line number in a
+ * sublist
+ */
+declare function nlapiGetCurrentLineItemIndex(type: string): number;
+
+/**
+ * Use this API to get the value of the currently selected matrix field. This
+ * API should be used on matrix sublists only. This API is supported in client
+ * and user event scripts.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the matrix field being set.
+ * 
+ * @param column The column number for this field. Column numbers start at 1,
+ * not 0.
+ * 
+ * @returns The string value of a field on the currently selected line in a
+ * matrix sublist. Returns null if the field does not exist.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiGetCurrentLineItemMatrixValue(
+    type: string,
+    fldnam: string,
+    column: number
+): string;
+
+/**
+ * Returns the display name (the UI label) of a select field (based on its
+ * current selection) on the currently selected line. Typically used in validate
+ * line functions.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist field IDs.
+ * 
+ * @param fldnam The name of the field being set
+ * 
+ * @returns The string display name of a select field (based on its current
+ * selection) on the currently selected line. Returns null if the field does not
+ * exist.
+ */
+declare function nlapiGetCurrentLineItemText(
+    type: string,
+    fldnam: string
+): string;
+
+/**
+ * Returns the values of a multiselect sublist field on the currently selected 
+ * line. One example of a multiselect sublist field is the Serial Numbers field 
+ * on the Items sublist.
+ * 
+ * This function is not supported in client SuiteScript. It is meant to be used 
+ * in user event scripts.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist field IDs.
+ * 
+ * @param fldnam The name of the field being set
+ * 
+ * @returns An array of string values for the multiselect sublist field (on the
+ * currently selected line)
+ * 
+ * @since 2012.1
+ */
+declare function nlapiGetCurrentLineItemValue(
+    type: string,
+    fldnam: string
+): string;
+
+/**
+ * Use this API to determine the number of line items on a sublist. You can then 
+ * use APIs such as nlapiInsertLineItem or nlapiRemoveLineItem to add or remove 
+ * lines before/after existing lines.
+ * 
+ * The nlapiGetLineItemCount API is available in Client and User Event scripts 
+ * only. If you want to get the line count of a sublist in a Suitelet, see 
+ * nlobjSubList.[getLineItemCount()](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3161033.html#bridgehead_N3161941).
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist field IDs.
+ * 
+ * @returns The integer value for the number of lines in a sublist for the
+ * current record
+ */
+declare function nlapiGetLineItemCount(type: string): number;
+
+/**
+ * Use this function to obtain sublist (line item) field metadata. Calling this
+ * function instantiates the nlobjField object, and you can use all the methods
+ * available to nlobjField to get field metadata.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist field IDs.
+ * 
+ * @param fldnam The internal ID of the sublist field
+ * 
+ * @param linenum The line number for this field. Note the first line number on
+ * a sublist is **1** (not 0).
+ * 
+ * @returns An nlobjField object representing this line item field
+ * 
+ * @since 2009.1
+ */
+declare function nlapiGetLineItemField(
+    type: string,
+    fldnam: string,
+    linenum: number
+): nlobjField;
+
+/**
+ * Use this API to obtain metadata for a field that appears in a matrix sublist.
+ * This API is supported in client and user event scripts.
+ * 
+ * Calling this function instantiates the 
+ * [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+ * object, and you can use all the methods available to the `nlobjField` object.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs]()
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the field (line) whose value you want
+ * returned.
+ * 
+ * @param linenum The line number for this field. Note the first line number on
+ * a sublist is 1 (not 0).
+ * 
+ * @param column The column number for this field. Column numbers start at 1,
+ * not 0.
+ * 
+ * @returns An nlobjField object representing this sublist field. Returns null
+ * if the field you have specified does not exist.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiGetLineItemMatrixField(
+    type: string,
+    fldnam: string,
+    linenum: number,
+    column: number
+): nlobjField | null;
+
+/**
+ * Use this API to get the value of a matrix field that appears on a specific
+ * line in a specific column. This API can be used only in the context of a
+ * matrix sublist. This API is supported in client and user event scripts.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the matrix field whose value you want
+ * returned.
+ * 
+ * @param linenum The line number for this field. Note the first line number on
+ * a sublist is 1 (not 0).
+ * 
+ * @param column The column number for this field. Column numbers start at 1
+ * (not 0).
+ * 
+ * @returns The string value of the matrix field.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiGetLineItemMatrixValue(
+    type: string,
+    fldnam: string,
+    linenum: number,
+    column: number
+): string;
+
+/**
+ * Returns the display name of a select field (based on its current selection)
+ * in a sublist.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See Using the
+ * [SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param fldnam The name of the field being set
+ * 
+ * @param linenum The line number for this field. Note the first line number on
+ * a sublist is 1 (not 0).
+ * 
+ * @returns The string value of the display name of a select field (based on its
+ * current selection) in a sublist. Returns null if field does not exist on the
+ * record or the field is restricted.
+ */
+declare function nlapiGetLineItemText(
+    type: string,
+    fldnam: string,
+    linenum: number
+): string | null;
+
+/**
+ * Available only in client and user event SuiteScripts. Note that you cannot
+ * set default line item values when the line is not in edit mode.
+ * 
+ * Also, NetSuite recommends that you read the topic 
+ * [Getting Field Values in SuiteScript](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2945065.html#bridgehead_N2945106),
+ * which addresses the rare instances in which the value returned by this API is
+ * inconsistent.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See Using the
+ * [SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param fldnam The internal ID of the field (line item) whose value is being 
+ * returned
+ * 
+ * @param linenum The line number for this field. Note the first line number on 
+ * a sublist is 1 (not 0).
+ * 
+ * @returns The string value of a sublist line item
+ */
+declare function nlapiGetLineItemValue(
+    type: string,
+    fldnam: string,
+    linenum: number
+): string;
+
+/**
+ * Returns the values of a multiselect sublist field on a selected line. One
+ * example of a multiselect sublist field is the Serial Numbers field on the
+ * Items sublist.
+ * 
+ * This function is not supported in client SuiteScript. It is meant to be used
+ * in user event scripts.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param fldname The internal ID of the multiselect field
+ * 
+ * @param linenum The line number for this field. Note the first line number on
+ * a sublist is 1 (not 0).
+ * 
+ * @returns An array of string values for the multiselect sublist field
+ * 
+ * @sinze 2012.1
+ */
+declare function nlapiGetLineItemValues(
+    type: string,
+    fldname: string,
+    linenum: number
+): string[];
+
+/**
+ * Use this API in a matrix sublist to get the number of columns for a specific
+ * matrix field. This API is supported in client and user event scripts.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The field internal ID of the matrix field.
+ * 
+ * @returns The integer value for the number of columns of a specified matrix
+ * field
+ * 
+ * @since 2009.2
+ */
+declare function nlapiGetMatrixCount(
+    type: string,
+    fldnam: string
+): number;
+
+/**
+ * Use this API to get field metadata for a matrix “header” field in a matrix
+ * sublist.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the matrix header field.
+ * 
+ * @param column The column number for this field. Column numbers start at 1
+ * (not 0).
+ * 
+ * @since 2009.2
+ */
+declare function nlapiGetMatrixField(
+    type: string,
+    fldnam: string,
+    column: number
+): nlobjField;
+
+/**
+ * Use this API to get the value of a matrix “header” field in a matrix sublist.
+ * 
+ * This API is supported in client and user event scripts.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the matrix header field.
+ * 
+ * @param column The column number for this field. Column numbers start at 1
+ * (not 0).
+ * 
+ * @returns The integer value of a matrix header field. For example, on the
+ * Pricing sublist the value of a specified quantity level (Qty) field is
+ * returned.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiGetMatrixValue(
+    type: string,
+    fldnam: string,
+    column: number
+): number;
+
+/**
+ * Inserts a line above the currently selected line in a sublist. Available to
+ * client and user event scripts only.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param line The line number in which to insert new line. Note the first line
+ * number on a sublist is 1 (not 0).
+ */
+declare function nlapiInsertLineItem(type: string, line: number): void;
+
+/**
+ * Adds a select option to a select/multiselect field that was added through
+ * scripting. This field will appear as a line item on a sublist.
+ * 
+ * Note that this API can only be used on select/multiselect fields that are
+ * added via the 
+ * [UI Objects API](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3126890.html)
+ * (for example on Suitelets or beforeLoad user events).
+ * 
+ * For performance reasons, you should disable the dropdown list before adding
+ * multiple options, then enable the dropdown list when finished.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist field
+ * IDs.
+ * 
+ * @param fldnam The name of the scripted field
+ * 
+ * @param value A unique value for the select option. Note that the datatype for
+ * this argument will vary depending on the value that is set. For example, you
+ * may assign numerical values such as 1, 2, 3 or string values such as option1,
+ * option2, option3.
+ * 
+ * @param text The display name of the select option
+ * 
+ * @param selected If not set, this argument defaults to false. If set to true,
+ * the selected option will become the default selection.
+ */
+declare function nlapiInsertLineItemOption(
+    type: string,
+    fldnam: string,
+    value: string | number,
+    text: string,
+    selected?: boolean
+): void;
+
+/**
+ * Determines whether any changes have been made to a sublist.
+ * 
+ * This API can only be used in client scripts.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @returns Returns true if the currently selected line of the sublist has been
+ * edited
+ */
+declare function nlapiIsLineItemChanged(type: string): boolean;
+
+/**
+ * Makes a server call to refresh staticlist (read-only) sublists. For
+ * inlineeditor or editor sublists, it simply redraws the sublist. This API does
+ * not do anything for sublists of type list.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ */
+declare function nlapiRefreshLineItems(type: string): void;
+
+/**
+ * Removes the currently selected line in a sublist. Supported in client scripts,
+ * user event scripts, and Suitelets.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param line The line number you want to remove. Note the first line number on
+ * a sublist is 1 (not 0).
+ */
+declare function nlapiRemoveLineItem(type: string, line: number): void;
+
+/**
+ * Removes a single select option from a select or multiselect line item field
+ * added through a script
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param fldnam The name of the scripted field.
+ * 
+ * @param value The value of the select option to be removed or null to delete
+ * all the options.
+ */
+declare function nlapiRemoveLineItemOption(
+    type: string,
+    fldnam: string,
+    value: string
+): void;
+
+/**
+ * Selects an existing line in a sublist
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ * 
+ * @param linenum The line number to select. Note the first line number on a
+ * sublist is 1 (not 0).
+ */
+declare function nlapiSelectLineItem(type: string, linenum: number): void;
+
+/**
+ * Use this function if you want to set a value on a sublist line that does not
+ * currently exist. This API is the UI equivalent of clicking a sublist tab (for
+ * example the Items sublist tab) so that you can then add a new line (or item,
+ * in this example) to the sublist.
+ * 
+ * @param type The sublist internal ID (for example, use price as the ID for the
+ * Pricing sublist). See 
+ * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+ * for sublists that support SuiteScript, sublist internal IDs, and sublist
+ * field IDs.
+ */
+declare function nlapiSelectNewLineItem(type: string): void;
+
+/**
+ * This API is typically used in validate line functions to set the value of a
+ * matrix sublist field before it has been added to the form. This API is
+ * supported in client and user event scripts. Also note that it should be used
+ * on matrix sublists only.
+ * 
+ * @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The internal ID of the matrix field.
+ * 
+ * @param column The column number for this field. Column numbers start at 1
+ * (not 0).
+ * 
+ * @param value The value the field is being set to.
+ * 
+ * @param firefieldchanged If true, then the field change script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * (Available in Client SuiteScript only). See Using the 
+ * [Fire Field Changed Parameter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3042487.html#bridgehead_N3050839) 
+ * for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiSetCurrentLineItemMatrixValue(
+    type: string,
+    fldnam: string,
+    column: number,
+    value: string | number,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
+
+/**
+ * Sets the value of a select field on the currently selected line using the
+ * display name. See also, Using the 
+ * [Fire Field Changed Parameter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3042487.html#bridgehead_N3050839).
+ *
+ *  @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The name of the field being set
+ * 
+ * @param text The display name associated with the value that the field is
+ * being set to
+ * 
+ * @param firefieldchanged If true, then the field change script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * (Available in Client SuiteScript only). See Using the 
+ * [Fire Field Changed Parameter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3042487.html#bridgehead_N3050839) 
+ * for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ */
+declare function nlapiSetCurrentLineItemText(
+    type: string,
+    fldnam: string,
+    text: string,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
+
+/**
+ * Sets the value of the line-item field before it has been added to the form.
+ * Typically used in validate line functions. See also, Using the Fire Field
+ * Changed Parameter.
+ * 
+ *  @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The name of the field being set
+ * 
+ * @param value The value the field is being set to.
+ * 
+ * @param firefieldchanged If true, then the field change script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * (Available in Client SuiteScript only). See Using the 
+ * [Fire Field Changed Parameter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3042487.html#bridgehead_N3050839) 
+ * for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ */
+declare function nlapiSetCurrentLineItemValue(
+    type: string,
+    fldnam: string,
+    value: string,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
+
+/**
+ * Sets the values for a multi-select sublist field. Note that like any other 
+ * “set field” APIs, the values you use will be internal ID values. For example, 
+ * rather than specifying 'Abe Simpson' as a customer value, you will use 232 or 
+ * 88 or whatever the internal ID is for customer Abe Simpson.
+ * 
+ * However, if you are using this API to set the serialnumber field on the Item 
+ * sublist, you will set the text string of the actual serial number, for 
+ * example 'serialnum1', 'serialnum2', and so on.
+ * 
+ * This API is supported in client scripts only.
+ * 
+ *  @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The name of the multi-select sublist field being set.
+ * 
+ * @param values The values for the field.
+ * 
+ * @param firefieldchanged If true, then the field change script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * (Available in Client SuiteScript only). See Using the 
+ * [Fire Field Changed Parameter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3042487.html#bridgehead_N3050839) 
+ * for more information.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ * 
+ * @since 2012.1
+ */
+declare function nlapiSetCurrentLineItemValues(
+    type: string,
+    fldnam: string,
+    values: any[],
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
+
+/**
+ * Sets the value of a sublist field on the current, **new** record. This API
+ * can be used in beforeLoad user event scripts to initialize sublist line
+ * items, but only on **new** records and only on non-stored sublist fields. If
+ * you execute this API on an existing record, nothing will happen.
+ * 
+ * Note that this API is supported in **user event scripts** only.
+ * 
+ * This function can be used in client SuiteScript, but note that **it is
+ * supported only on custom fields and the Description field**. If you use this
+ * function to set the value of a standard, built-in line item field, the
+ * function will not execute.
+ * 
+ *  @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The name of the field being set
+ * 
+ * @param linenum The line number for this field. Note the first line number on
+ * a sublist is 1 (not 0).
+ * 
+ * @param value The value the field is being set to
+ */
+declare function nlapiSetLineItemValue(
+    type: string,
+    fldnam: string,
+    linenum: number,
+    value: string
+): void;
+
+/**
+ * This API is used to set a header field in a matrix sublist. This API is
+ * supported in client and user event scripts. It is typically used in pageInit
+ * (client) and beforeLoad (user event) events. Also note that this API should
+ * be used on matrix sublists only.
+ * 
+ *  @param type The sublist internal ID. In the NetSuite Help Center, see 
+ * [Pricing Sublist Internal IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_1502207768.html#bridgehead_N3219953)
+ * to determine the correct internal ID of your pricing list.
+ * 
+ * @param fldnam The name of the field being set.
+ * 
+ * @param column The value the field is being set to.
+ * @param value The column number for this field. Column numbers start at 1
+ * (not 0).
+ * 
+ * @param firefieldchanged If true, then the field change script for that field
+ * is executed. If no value is provided, this argument defaults to true.
+ * 
+ * @param synchronous This parameter is relevant for client SuiteScripts only.
+ * In server scripts (such as user event scripts), this parameter will always
+ * execute as true.
+ * 
+ * @since 2009.2
+ */
+declare function nlapiSetMatrixValue(
+    type: string,
+    fldnam: string,
+    column: number,
+    value: string,
+    firefieldchanged?: boolean,
+    synchronous?: boolean
+): void;
+
+/**
+ * Primary object used to encapsulate a NetSuite sublist. This object is 
+ * **read-only** except for instances created via the UI Object API using
+ * Suitelets or beforeLoad user event scripts.
+ * 
+ * To add a sublist, you must first create a custom form using
+ * [nlapiCreateForm(title, hideNavbar)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
+ * which returns an 
+ * [nlobjForm](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object.
+ * 
+ * After the form object is instantiated, you can add a new sublist to the form
+ * using the nlobjForm
+ * [.addSubList(name, type, label, tab)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3150667)
+ * method, which returns a reference to nlobSublist.
+ */
+declare interface nlobjSubList {
+    /**
+     * Adds a button to a sublist
+     * 
+     * @param name The internal ID name of the button. Internal ID names must be
+     * in lowercase and contain no spaces.
+     * 
+     * @param label The UI label for the button
+     * 
+     * @param script The onclick script function name
+     * 
+     * @since 2008.2
+     */
+    addButton(name?: string, label?: string, script?: string): nlobjButton;
+
+    /**
+     * Adds a field (column) to a sublist
+     * 
+     * @param name The internal ID name of the field. Internal ID names must be 
+     * in lowercase and contain no spaces.
+     * 
+     * @param type The field type for this field. Use any of the following 
+     * types:
+     * - text
+     * - email
+     * - phone
+     * - date
+     * - datetimetz - This field type lets you combine date and time values in one field. For example, you may want a single field to contain date and time “timestamp” data. After a user enters a date/time value, the data is rendered in the user's preferred date and time format, as well as the user's time zone. Also note that time values are stored in NetSuite down to the second.
+     * - currency
+     * - float
+     * - integer
+     * - checkbox
+     * - select
+     * - url
+     * - image - This field type is available **only** for fields appearing on list/staticlist sublists. You cannot specify an **image** field on a form.
+     * - timeofday
+     * - textarea
+     * - percent
+     * - radio - only supported for sublists of type list
+     * @param label The UI label for this field
+     * 
+     * @param source The internalId or scriptId of the source list for this
+     * field if it's a select (List/Record) field. In the NetSuite Help Center,
+     * see [List/Record Type IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
+     * for the internal IDs of all supported list/record types.
+     * 
+     * @since 2008.2
+     */
+    addField(
+        name: string,
+        type: string,
+        label: string,
+        source?: number | string
+    ): nlobjField;
+
+    /**
+     * Adds a "Mark All" and an "Unmark All" button to a sublist. Only valid on
+     * scriptable sublists of type **LIST**. Requires a check box column to
+     * exist on the form, which will be automatically checked/unchecked
+     * depending on what the end user does.
+     * 
+     * @since 2008.2
+     */
+    addMarkAllButtons(): void;
+
+    /**
+     * Adds a Refresh button to sublists of type `list` or `staticlist` to
+     * auto-refresh the sublist if its contents are dynamic. In this case, the
+     * sublist is refreshed without having to reload the contents of the entire
+     * page.
+     * 
+     * @since 2009.1
+     */
+    addRefreshButton(): nlobjButton;
+
+    /**
+     * Returns the number of lines on a sublist
+     * 
+     * @return The integer value of the number of line items on a sublist
+     */
+    getLineItemCount(): number;
+
+    /**
+     * Returns string value of a sublist field. Note that you cannot set default
+     * line item values when the line is not in edit mode.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). See
+     * [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param fldnam The internal ID of the field (line item) whose value is
+     * being returned
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     */
+    getLineItemValue(group: string, fldnam: string, linenum: number): string;
+
+    /**
+     * Designates a particular column as the totalling column, which is used to 
+     * calculate and display a running total for the sublist
+     * 
+     * @param field The internal ID name of the field on this sublist used to 
+     * calculate running total
+     * 
+     * @since 2010.1
+     */
+    setAmountField(field: string): void;
+
+    /**
+     * Sets the display style for this sublist. This method is only supported on
+     * scripted or staticlist sublists via the UI Object API.
+     * 
+     * @param type The display type for this sublist. Use either of the
+     * following two values:
+     * - hidden
+     * - normal - (default)
+     * 
+     * @since 2008.2
+     */
+    setDisplayType(type?: 'hidden' | 'normal'): void;
+
+    /**
+     * Adds inline help text to this sublist. This method is only supported on 
+     * sublists via the UI Object API.
+     * 
+     * @param help Inline help text used for this sublist
+     * 
+     * @since 2008.2
+     */
+    setHelpText(help: string): void;
+
+    /**
+     * Sets the label for this sublist. This method is only supported on
+     * sublists via the UI Object API.
+     * 
+     * @param label The UI label for this sublist
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): void;
+
+    /**
+     * Sets the value of a cell in a sublist field.
+     * 
+     * @param name The internal ID name of the line item field being set
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     * 
+     * @param value The value the field is being set to
+     * 
+     * @since 2008.2
+     */
+    setLineItemValue(name: string, linenum: number, value: string): void;
+
+    /**
+     * Sets values for multiple lines (Array of nlobjSearchResult objects or 
+     * name/value pair Arrays) in a sublist.
+     * 
+     * @param values An Array of Arrays containing name/value pairs containing 
+     * column values for multiple rows -or- an Array of
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+     * objects containing the results of a search with columns matching the 
+     * fields on the sublist. Note that several special fields: recordtype, id, 
+     * and fieldname_display (UI display value for select fields) are 
+     * automatically added for each search result.
+     * 
+     * @since 2008.2
+     */
+    setLineItemValues(values: { string: string }[] | nlobjSearchResult[]): void;
+
+    /**
+     * Use this method to designate that a certain field on a sublist must 
+     * contain a unique value. This method is available on inlineeditor and 
+     * editor sublists only.
+     * 
+     * @param name The internal ID of the sublist field that you want to make 
+     * unique
+     * 
+     * @since 2009.2
+     */
+    setUniqueField(name: string): nlobjField;
+}
+
 /*
    --------------------------------------------------
 
@@ -4946,209 +5914,6 @@ declare interface nlobjAssistantStep {
      * @since 2009.2
      */
     setLabel(label: string): nlobjAssistantStep;
-}
-
-/**
- * Primary object used to encapsulate a NetSuite sublist. This object is 
- * **read-only** except for instances created via the UI Object API using
- * Suitelets or beforeLoad user event scripts.
- * 
- * To add a sublist, you must first create a custom form using
- * [nlapiCreateForm(title, hideNavbar)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
- * which returns an 
- * [nlobjForm](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
- * object.
- * 
- * After the form object is instantiated, you can add a new sublist to the form
- * using the nlobjForm
- * [.addSubList(name, type, label, tab)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3150667)
- * method, which returns a reference to nlobSublist.
- */
-declare interface nlobjSubList {
-    /**
-     * Adds a button to a sublist
-     * 
-     * @param name The internal ID name of the button. Internal ID names must be
-     * in lowercase and contain no spaces.
-     * 
-     * @param label The UI label for the button
-     * 
-     * @param script The onclick script function name
-     * 
-     * @since 2008.2
-     */
-    addButton(name?: string, label?: string, script?: string): nlobjButton;
-
-    /**
-     * Adds a field (column) to a sublist
-     * 
-     * @param name The internal ID name of the field. Internal ID names must be 
-     * in lowercase and contain no spaces.
-     * 
-     * @param type The field type for this field. Use any of the following 
-     * types:
-     * - text
-     * - email
-     * - phone
-     * - date
-     * - datetimetz - This field type lets you combine date and time values in one field. For example, you may want a single field to contain date and time “timestamp” data. After a user enters a date/time value, the data is rendered in the user's preferred date and time format, as well as the user's time zone. Also note that time values are stored in NetSuite down to the second.
-     * - currency
-     * - float
-     * - integer
-     * - checkbox
-     * - select
-     * - url
-     * - image - This field type is available **only** for fields appearing on list/staticlist sublists. You cannot specify an **image** field on a form.
-     * - timeofday
-     * - textarea
-     * - percent
-     * - radio - only supported for sublists of type list
-     * @param label The UI label for this field
-     * 
-     * @param source The internalId or scriptId of the source list for this
-     * field if it's a select (List/Record) field. In the NetSuite Help Center,
-     * see [List/Record Type IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
-     * for the internal IDs of all supported list/record types.
-     * 
-     * @since 2008.2
-     */
-    addField(
-        name: string,
-        type: string,
-        label: string,
-        source?: number | string
-    ): nlobjField;
-
-    /**
-     * Adds a "Mark All" and an "Unmark All" button to a sublist. Only valid on
-     * scriptable sublists of type **LIST**. Requires a check box column to
-     * exist on the form, which will be automatically checked/unchecked
-     * depending on what the end user does.
-     * 
-     * @since 2008.2
-     */
-    addMarkAllButtons(): void;
-
-    /**
-     * Adds a Refresh button to sublists of type `list` or `staticlist` to
-     * auto-refresh the sublist if its contents are dynamic. In this case, the
-     * sublist is refreshed without having to reload the contents of the entire
-     * page.
-     * 
-     * @since 2009.1
-     */
-    addRefreshButton(): nlobjButton;
-
-    /**
-     * Returns the number of lines on a sublist
-     * 
-     * @return The integer value of the number of line items on a sublist
-     */
-    getLineItemCount(): number;
-
-    /**
-     * Returns string value of a sublist field. Note that you cannot set default
-     * line item values when the line is not in edit mode.
-     * 
-     * @param group The sublist internal ID (for example, use addressbook as the
-     * ID for the Address sublist). See
-     * [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
-     * for sublists that support SuiteScript, sublist internal IDs, and sublist
-     * field IDs.
-     * 
-     * @param fldnam The internal ID of the field (line item) whose value is
-     * being returned
-     * 
-     * @param linenum The line number for this field. Note the first line number
-     * on a sublist is 1 (not 0).
-     */
-    getLineItemValue(group: string, fldnam: string, linenum: number): string;
-
-    /**
-     * Designates a particular column as the totalling column, which is used to 
-     * calculate and display a running total for the sublist
-     * 
-     * @param field The internal ID name of the field on this sublist used to 
-     * calculate running total
-     * 
-     * @since 2010.1
-     */
-    setAmountField(field: string): void;
-
-    /**
-     * Sets the display style for this sublist. This method is only supported on
-     * scripted or staticlist sublists via the UI Object API.
-     * 
-     * @param type The display type for this sublist. Use either of the
-     * following two values:
-     * - hidden
-     * - normal - (default)
-     * 
-     * @since 2008.2
-     */
-    setDisplayType(type?: 'hidden' | 'normal'): void;
-
-    /**
-     * Adds inline help text to this sublist. This method is only supported on 
-     * sublists via the UI Object API.
-     * 
-     * @param help Inline help text used for this sublist
-     * 
-     * @since 2008.2
-     */
-    setHelpText(help: string): void;
-
-    /**
-     * Sets the label for this sublist. This method is only supported on
-     * sublists via the UI Object API.
-     * 
-     * @param label The UI label for this sublist
-     * 
-     * @since 2008.2
-     */
-    setLabel(label: string): void;
-
-    /**
-     * Sets the value of a cell in a sublist field.
-     * 
-     * @param name The internal ID name of the line item field being set
-     * 
-     * @param linenum The line number for this field. Note the first line number
-     * on a sublist is 1 (not 0).
-     * 
-     * @param value The value the field is being set to
-     * 
-     * @since 2008.2
-     */
-    setLineItemValue(name: string, linenum: number, value: string): void;
-
-    /**
-     * Sets values for multiple lines (Array of nlobjSearchResult objects or 
-     * name/value pair Arrays) in a sublist.
-     * 
-     * @param values An Array of Arrays containing name/value pairs containing 
-     * column values for multiple rows -or- an Array of
-     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
-     * objects containing the results of a search with columns matching the 
-     * fields on the sublist. Note that several special fields: recordtype, id, 
-     * and fieldname_display (UI display value for select fields) are 
-     * automatically added for each search result.
-     * 
-     * @since 2008.2
-     */
-    setLineItemValues(values: { string: string }[] | nlobjSearchResult[]): void;
-
-    /**
-     * Use this method to designate that a certain field on a sublist must 
-     * contain a unique value. This method is available on inlineeditor and 
-     * editor sublists only.
-     * 
-     * @param name The internal ID of the sublist field that you want to make 
-     * unique
-     * 
-     * @since 2009.2
-     */
-    setUniqueField(name: string): nlobjField;
 }
 
 /**
