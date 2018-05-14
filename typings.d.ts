@@ -268,7 +268,8 @@ declare function nlapiDeleteRecord(
 
 /**
  * @param type The record internal ID name for the record being detached. For a
- * list of record names, see the column called “Record Internal ID” in SuiteScript Supported Records.
+ * list of record names, see the column called “Record Internal ID” in SuiteScript
+ * Supported Records.
  * 
  * @param id The record internalId for the record being detached
  * 
@@ -280,7 +281,10 @@ declare function nlapiDeleteRecord(
  * 
  * @param attributes Name/value pairs containing attributes for the attachment:
  * 
- * - customrecord*->parent record: field (the custom field used to link child custom record to parent record)
+ * - customrecord*->parent record: field (the custom field used to link child
+ * custom record to parent record)
+ * 
+ * @since 2008.1
  */
 declare function nlapiDetachRecord(
     type: string,
@@ -290,6 +294,321 @@ declare function nlapiDetachRecord(
     attributes?: { [key: string]: string }
 ): void;
 
+/**
+ * Available in `beforeLoad`, `beforeSubmit`, and `afterSubmit` user event
+ * scripts. You are not allowed to submit the current or previous record
+ * returned by `nlapiGetNewRecord`.
+ * 
+ * When triggered by an inline edit event `(type == xedit)`, this function only
+ * returns the field and sublist line item values that were edited. For all
+ * other triggers, `nlapiGetNewRecord` returns all record object values.
+ * 
+ * @returns An nlobjRecord containing all the values being used for a write
+ * operation
+ */
+declare function nlapiGetNewRecord(): nlobjRecord;
+
+/**
+ * Available in `beforeLoad`, `beforeSubmit`, and `afterSubmit` user event
+ * scripts. You are not allowed to submit the current or previous record
+ * returned by `nlapiGetOldRecord`.
+ * 
+ * @returns An 
+ * [nlobjRecord](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3094136.html)
+ * containing all the values for the current record prior to the write operation
+ */
+declare function nlapiGetOldRecord(): nlobjRecord;
+
+/**
+ * Use this API to retrieve the `internalId` of the current record in a user 
+ * event script. This API is available in client and user event scripts only.
+ * 
+ * @returns The integer value of the record whose form the user is currently on,
+ * or for the record that the current user event script is executing on. Note
+ * that the value of **-1** is returned if there is no current record or the
+ * current record is a new record.
+ */
+declare function nlapiGetRecordId(): number;
+
+/**
+ * Use this API to retrieve the record type `internal` ID of the current record 
+ * in a user event script or a client script. If there is no current record 
+ * type, the value of **null** will be returned.
+ * 
+ * @returns The record type internal ID as a string. Example return values are:
+ * 
+ * - **salesorder** for a script executed on a Sales Order record
+ * 
+ * - **customer** for a script executed on a Customer record
+ * 
+ * - **promotioncode** for a script executed on the Promotion record
+ */
+declare function nlapiGetRecordType(): string | null;
+
+/**
+ * Loads an existing record from the system and returns an nlobjRecord object
+ * containing all the field data for that record. You can then extract the
+ * desired information from the loaded record using the methods available on the
+ * returned record object. This API is a core API. It is available in both
+ * client and server contexts.
+ * 
+ * @param type The record internal ID name. This parameter is case-insensitive. 
+ * In the NetSuite Help Center, see 
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * Use the values listed in the column “Record Internal ID”.
+ * 
+ * @param id internalId for the record, for example 555 or 78.
+ * 
+ * @param initializeValues Contains an array of name/value pairs of defaults to
+ * be used during record initialization. For a list of record initialization
+ * types and the values they can take, see
+ * [Record Initialization Defaults](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3223419.html)
+ * in the NetSuite Help Center.
+ * 
+ * @returns An 
+ * [nlobjRecord](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3094136.html)
+ * object of an existing NetSuite record. This function returns the record object
+ * **exactly** as the record appears in the system. Therefore, in beforeLoad
+ * user event scripts, if you attempt to change a field and load the record
+ * simultaneously, the change will not take effect.
+ * 
+ * @throws SSS_INVALID_RECORD_TYPE
+ * 
+ * @throws SSS_TYPE_ARG_REQD
+ * 
+ * @throws SSS_INVALID_INTERNAL_ID
+ * 
+ * @throws SSS_ID_ARG_REQD
+ */
+declare function nlapiLoadRecord(
+    type: string,
+    id: number,
+    initializeValues?: RecordInitializationDefaults
+): nlobjRecord;
+
+/**
+ * Returns an 
+ * [nlobjFile]()
+ * object containing the PDF or HTML document. This API is supported in user
+ * event, scheduled, and Suitelet scripts.
+ * 
+ * ** NOTE: There is a 10MB limitation to the size of the file that can be accessed
+ * using this API. Direct manipulation of the print URL is not supported.**
+ * 
+ * @param type Print operation type. Can be any of the following:
+ * 
+ * - TRANSACTION
+ * 
+ * - STATEMENT
+ * 
+ * - PACKINGSLIP
+ * 
+ * - PICKINGTICKET
+ * 
+ * - BILLOFMATERIAL
+ * 
+ * @param id The internal ID of the transaction or statement being printed
+ * 
+ * @param mode The output type: PDF|HTML|DEFAULT. DEFAULT uses the user/company
+ * preference for print output
+ * 
+ * @param properties Name/value pairs used to configure the print operation
+ * 
+ * - TRANSACTION: formnumber
+ * 
+ * - STATEMENT: openonly (T|F), startdate, statementdate, formnumber
+ * 
+ * - PACKINGSLIP: formnumber, itemfulfillment
+ * 
+ * - PICKINGTICKET: formnumber, shipgroup, location
+ * 
+ * @param incustlocale This parameter applies when advanced templates are used.
+ * If not set, this argument defaults to false, which means that the document is
+ * printed in the default company language. If set to true, the document is
+ * printed in the customer's locale.
+ * 
+ * @returns 2008.1
+ */
+declare function nlapiPrintRecord(
+    type: string,
+    id: number,
+    mode?: string,
+    properties?: {
+        TRANSACTION: number,
+        STATEMENT: boolean | Date | number,
+        PACKINGSLIP: number,
+        PICKINGTICKET: number | string
+    },
+    incustlocale?: boolean
+): nlobjFile;
+
+/**
+ * Submits a CSV import job to asynchronously import record data into NetSuite.
+ * This API can be used to:
+ * 
+ * - Automate standard record data import for SuiteApp installations, demo
+ * environments, and testing environments.
+ * 
+ * - Import data on a schedule using a scheduled script.
+ * 
+ * - Build integrated CSV imports with RESTlets.
+ * 
+ * When the API is executed, the import job is added to the queue. The progress 
+ * of an import job can be viewed at
+ * *Setup > Issues > Issue Management > Import Issue Records > Status (Administrator)*.
+ * For details, see 
+ * [Checking CSV Import Status](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N350581.html).
+ * 
+ * @param nlobjCSVImport nlobjCSVImport object with methods to set the
+ * following: saved import map, primary file, linked file(s) (optional), import
+ * job name (optional).
+ * 
+ * @returns Job ID of the import (which is also the identifier for the CSV
+ * response file)
+ * 
+ * @throws This API throws errors resulting from inline validation of CSV file
+ * data before the import of data begins (the same validation that is performed
+ * between the mapping step and the save step in the Import Assistant). Any
+ * errors that occur during the import job are recorded in the CSV response file,
+ * as they are for imports initiated through the Import Assistant.
+ * 
+ * @since 2012.1
+ */
+declare function nlapiSubmitCSVImport(
+    nlobjCSVImport: nlobjCSVImport
+): nlobjCSVImport;
+
+/**
+ * Submits and commits new records or changes applied to an existing record and
+ * returns the internalId for the committed record. The nlapiSubmitRecord
+ * function can be used in conjunction with nlapiCreateRecord or nlapiLoadRecord
+ * to create or modify a record related to the current one.
+ * 
+ * @param record [nlobjRecord](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3094136.html)
+ * object containing the data record
+ * 
+ * @param doSourcing If not set, this argument defaults to false, which means
+ * that dependent field values are not sourced. If set to true, sources
+ * dependent field information for empty fields. Be aware that doSourcing takes
+ * the values of true or false, not T or F. For more information on sourcing,
+ * see
+ * [Understanding Sourcing in SuiteScript](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_N3031962)
+ * in the NetSuite Help Center.
+ * 
+ * @param ignoreMandatoryFields Disables mandatory field validation for this
+ * submit operation. If set to true, ignores all standard and custom fields that
+ * were made mandatory through customization. All fields that were made
+ * mandatory through company preferences are also ignored.
+ * 
+ * @returns An integer value of the committed record's internal ID (for example,
+ * 555, 21, or 4).
+ * 
+ * @throws SSS_INVALID_RECORD_OBJ
+ * 
+ * @throws SSS_RECORD_OBJ_REQD
+ * 
+ * @throws SSS_INVALID_SOURCE_ARG
+ * 
+ */
+declare function nlapiSubmitRecord(
+    record: nlobjRecord,
+    doSourcing?: boolean,
+    ignoreMandatoryFields?: boolean
+): number;
+
+/**
+ * Initializes a new record using data from an existing record of a different
+ * type and returns an nlobjRecord. This function can be useful for automated
+ * order processing such as creating item fulfillment transactions and invoices
+ * off of orders.
+ * 
+ * This API is supported in client, user event, scheduled, and Suitelet scripts.
+ * See SuiteScript 1.0 API Governance for the unit cost associated with this
+ * API.
+ * 
+ * @param type The record internal ID name. In the NetSuite Help Center, see
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * The internal ID appears in the column called “Record Internal ID”.
+ * 
+ * @param id The internalId for the record, for example 555 or 78.
+ * 
+ * @param transformType The record internal ID name of the record you are
+ * transforming the existing record into
+ * 
+ * @param transformValues An array of field name -> value pairs containing field
+ * defaults used for transformation. Note that you can also specify whether you
+ * want the record transformation to occur in dynamic mode. For details, see
+ * [Working with Records in Dynamic Mode](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2941943.html).
+ * 
+ * @throws SSS_INVALID_URL_CATEGORY
+ * 
+ * @throws SSS_CATEGORY_ARG_REQD
+ * 
+ * @throws SSS_INVALID_TASK_ID
+ * 
+ * @throws SSS_TASK_ID_REQD
+ * 
+ * @throws SSS_INVALID_INTERNAL_ID
+ * 
+ * @throws SSS_INVALID_EDITMODE_ARG
+ */
+declare function nlapiTransformRecord(
+    type: string,
+    id: number,
+    transformType: string,
+    transformValues?: {}
+): nlobjRecord;
+
+/**
+ * When you void a transaction, its total and all its line items are set to
+ * zero, but the transaction is not removed from the system. NetSuite supports
+ * two types of voids: direct voids and voids by reversing journal. See the help
+ * topic 
+ * [Voiding, Deleting, or Closing Transactions](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N563543.html)
+ * for additional information.
+ * 
+ * `nlapiVoidTransaction` voids a transaction and then returns an id that
+ * indicates the type of void performed. If a direct void is performed,
+ * `nlapiVoidTransaction` returns the ID of the record voided. If a void by
+ * reversing journal is performed, nlapiVoidTransaction returns the ID of the
+ * newly created voiding journal.
+ * 
+ * @param transactionType internal ID of the record type to be voided. See the
+ * help topics
+ * [Supported Transaction Types — Direct Void](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_3784196293) 
+ * and 
+ * [Supported Transaction Types — Void by Reversing Journal](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3027360.html#bridgehead_3784205413)
+ * for a list of valid arguments.
+ * 
+ * @param recordId the internal ID of the specific record to be voided. See the
+ * help topic
+ * [How do I find a record's internal ID?](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2904065.html)
+ * for additional information.
+ * 
+ * @returns An id that indicates the type of void performed
+ * 
+ * - If a direct void is performed, nlapiVoidTransaction returns the original
+ * recordId value passed in.
+ * 
+ * - If a void by reversing journal is performed, nlapiVoidTransaction returns
+ * the ID of the newly created voiding journal.
+ * 
+ * @throws INVALID_RCRD_TYPE — if the transactionType argument passed is not
+ * valid
+ * 
+ * @throws RCRD_DSNT_EXIST — if the recordId argument passed is not valid
+ * @throws THIS_TRANSACTION_HAS_ALREADY_BEEN_VOIDED — if you attempt to void a
+ * transaction that has already been voided
+ * 
+ * @throws VOIDING_REVERSAL_DISALLWD — if you attempt to void a transaction with
+ * inventory impact
+ * 
+ * @since 2013.2
+ */
+declare function nlapiVoidTransaction(
+    transactionType: string,
+    recordId: number
+): number;
 /*
    --------------------------------------------------
 
@@ -4672,6 +4991,7 @@ declare interface nlobjMergeResult {
      */
     getSubject(): string;
 }
+
 
 /*
    -----------------------------------------------------------------------------
