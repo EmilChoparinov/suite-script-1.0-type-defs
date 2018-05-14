@@ -46,6 +46,87 @@ type CountryCodes =
     'VA' | 'VC' | 'VE' | 'VG' | 'VI' | 'VN' | 'VU' |
     'WF' | 'WS' | 'YE' | 'YT' | 'ZA' | 'ZM' | 'ZW';
 
+type SearchOperators =
+    'after' | 'allof' | 'any' | 'anyof' | 'before' | 'between' | 'contains' |
+    'doesnotcontain' | 'doesnotstartwith' | 'equalto' | 'greaterthan' |
+    'greaterthanorequalto' | 'haskeywords' | 'is' | 'isempty' | 'isnot' |
+    'isnotempty' | 'lessthan' | 'lessthanorequalto' | 'noneof' | 'notafter' |
+    'notallof' | 'notbefore' | 'notbetween' | 'notequalto' | 'notgreaterthan' |
+    'notgreaterthanorequalto' | 'notlessthan' | 'notlessthanorequalto' |
+    'noton' | 'notonorafter' | 'notonorbefore' | 'notwithin' | 'on' |
+    'onorafter' | 'onorbefore' | 'startswith' | 'within';
+
+type SearchDateFilters =
+    'fiscalHalfBeforeLast' | 'fiscalHalfBeforeLastToDate' |
+    'fiscalQuarterBeforeLast' | 'fiscalQuarterBeforeLastToDate' |
+    'fiscalYearBeforeLast' | 'fiscalYearBeforeLastToDate' | 'fiveDaysAgo' |
+    'fiveDaysFromNow' | 'fourDaysAgo' | 'fourDaysFromNow' |
+    'fourWeeksStartingThisWeek' | 'lastBusinessWeek' | 'lastFiscalHalf' |
+    'lastFiscalHalfOneFiscalYearAgo' | 'lastFiscalHalfToDate' |
+    'lastFiscalQuarter' | 'lastFiscalQuarterOneFiscalYearAgo' |
+    'lastFiscalQuarterToDate' | 'lastFiscalQuarterTwoFiscalYearsAgo' |
+    'lastFiscalYear' | 'lastFiscalYearToDate' | 'lastMonth' |
+    'lastMonthOneFiscalQuarterAgo' | 'lastMonthToDate' |
+    'lastMonthTwoFiscalQuartersAgo' | 'lastMonthTwoFiscalYearsAgo' |
+    'lastRollingHalf' | 'lastRollingQuarter' | 'lastRollingYear' | 'lastWeek' |
+    'lastWeekToDate' | 'monthAfterNext' | 'monthAfterNextToDate' |
+    'monthBeforeLast' | 'monthBeforeLastToDate' | 'nextBusinessWeek' |
+    'nextFiscalHalf' | 'nextFiscalQuarter' | 'nextFiscalYear' |
+    'nextFourWeeks' | 'nextMonth' | 'nextOneHalf' | 'nextOneMonth' |
+    'nextOneQuarter' | 'nextOneWeek' | 'nextOneYear' | 'nextWeek' |
+    'ninetyDaysAgo' | 'ninetyDaysFromNow' | 'oneYearBeforeLast' |
+    'previousFiscalQuartersLastFiscalYear' |
+    'previousFiscalQuartersThisFiscalYear' | 'previousMonthsLastFiscalHalf' |
+    'previousMonthsLastFiscalQuarter' | 'previousMonthsLastFiscalYear' |
+    'previousMonthsSameFiscalHalfLastFiscalYear' |
+    'previousMonthsSameFiscalQuarterLastFiscalYear' |
+    'previousMonthsThisFiscalHalf' | 'previousMonthsThisFiscalQuarter' |
+    'previousMonthsThisFiscalYear' | 'previousOneDay' | 'previousOneHalf' |
+    'previousOneMonth' | 'previousOneQuarter' | 'previousOneWeek' |
+    'previousOneYear' | 'previousRollingHalf' | 'previousRollingQuarter' |
+    'previousRollingYear' | 'sameDayFiscalQuarterBeforeLast' |
+    'sameDayFiscalYearBeforeLast' | 'sameDayLastFiscalQuarter' |
+    'sameDayLastFiscalYear' | 'sameDayLastMonth' | 'sameDayLastWeek' |
+    'sameDayMonthBeforeLast' | 'sameDayWeekBeforeLast' |
+    'sameFiscalHalfLastFiscalYear' | 'sameFiscalHalfLastFiscalYearToDate' |
+    'sameFiscalQuarterFiscalYearBeforeLast' |
+    'sameFiscalQuarterLastFiscalYear' |
+    'sameFiscalQuarterLastFiscalYearToDate' |
+    'sameMonthFiscalQuarterBeforeLast' | 'sameMonthFiscalYearBeforeLast' |
+    'sameMonthLastFiscalQuarterToDate' | 'sameMonthLastFiscalYear' |
+    'sameMonthLastFiscalYearToDate' | 'sameWeekFiscalYearBeforeLast' |
+    'sameWeekLastFiscalYear' | 'sixtyDaysAgo' | 'sixtyDaysFromNow' |
+    'startOfFiscalHalfBeforeLast' | 'startOfFiscalQuarterBeforeLast' |
+    'startOfFiscalYearBeforeLast' | 'startOfLastBusinessWeek' |
+    'startOfLastFiscalHalf' | 'startOfLastFiscalHalfOneFiscalYearAgo' |
+    'startOfLastFiscalQuarter' | 'startOfLastFiscalQuarterOneFiscalYearAgo' |
+    'startOfLastFiscalYear' | 'startOfLastMonth' |
+    'startOfLastMonthOneFiscalQuarterAgo' | 'startOfLastMonthOneFiscalYearAgo' |
+    'startOfLastRollingHalf' | 'startOfLastRollingQuarter' |
+    'startOfLastRollingYear' | 'startOfLastWeek' | 'startOfMonthBeforeLast' |
+    'startOfNextBusinessWeek' | 'startOfNextFiscalHalf' |
+    'startOfNextFiscalQuarter' | 'startOfNextFiscalYear' | 'startOfNextMonth' |
+    'startOfNextWeek' | 'startOfPreviousRollingHalf' |
+    'startOfPreviousRollingQuarter' | 'startOfPreviousRollingYear' |
+    'startOfSameFiscalHalfLastFiscalYear' |
+    'startOfSameFiscalQuarterLastFiscalYear' |
+    'startOfSameMonthLastFiscalQuarter' | 'startOfSameMonthLastFiscalYear' |
+    'startOfThisBusinessWeek' | 'startOfThisFiscalHalf' |
+    'startOfThisFiscalQuarter' | 'startOfThisFiscalYear' | 'startOfThisMonth' |
+    'startOfThisWeek' | 'startOfThisYear' | 'startOfWeekBeforeLast' |
+    'tenDaysAgo' | 'tenDaysFromNow' | 'thirtyDaysAgo' | 'thirtyDaysFromNow' |
+    'thisBusinessWeek' | 'thisFiscalHalf' | 'thisFiscalHalfToDate' |
+    'thisFiscalQuarter' | 'thisFiscalQuarterToDate' | 'thisFiscalYear' |
+    'thisFiscalYearToDate' | 'thisMonth' | 'thisMonthToDate' |
+    'thisRollingHalf' | 'thisRollingQuarter' | 'thisRollingYear' | 'thisWeek' |
+    'thisWeekToDate' | 'thisYear' | 'threeDaysAgo' | 'threeDaysFromNow' |
+    'threeFiscalQuartersAgo' | 'threeFiscalQuartersAgoToDate' |
+    'threeFiscalYearsAgo' | 'threeFiscalYearsAgoToDate' | 'threeMonthsAgo' |
+    'threeMonthsAgoToDate' | 'today' | 'tomorrow' | 'twoDaysAgo' |
+    'twoDaysFromNow' | 'weekAfterNext' | 'weekAfterNextToDate' |
+    'weekBeforeLast' | 'weekBeforeLastToDate' | 'yesterday';
+
+
 /**
  * The initializeValues parameter is an Object that can contain an array of
  * name/value pairs of defaults that are passed upon record initialization. The
@@ -3657,6 +3738,115 @@ declare interface nlobjSubList {
 
    --------------------------------------------------
 */
+
+declare function nlapiCreateSearch(type, filters, columns)
+declare function nlapiLoadSearch(type, id)
+declare function nlapiLookupField(type, id, fields, text)
+declare function nlapiSearchDuplicate(type, fields, id)
+declare function nlapiSearchGlobal(keywords)
+declare function nlapiSearchRecord(type, id, filters, columns)
+
+declare class nlobjSearchFilter {
+    /**
+     * Constructor for a search filter object
+     * 
+     * @param name The internal ID of the search field. For example, if one of
+     * your filtering criterion is Quantity Available, you will set the value of
+     * name to quantityavailable, which is the search field ID for Quantity
+     * Available.
+     * 
+     * @param join If you are executing a joined search, the join id used for
+     * the search field specified in the name parameter. The join id is the
+     * internal ID of the record type the search field appears on.
+     * 
+     * @param operator The search operator used for this search field. For more
+     * information about possible operator values, see 
+     * [Search Operators](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3005172.html).
+     * 
+     * @param value1 A filter value -or- A special date field value -or- Array
+     * of values for select/multiselect fields -or- An integer value
+     * 
+     * @param value2 A secondary filter value -or- special date field value for
+     * between/within style operators * lastbusinessweek. Values are not case
+     * sensitive. For more information about possible date filter values, see
+     * [Search Date Filters](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3010842.html).
+     * 
+     * @since 2007.1
+     */
+    constructor(
+        name: string,
+        join: string,
+        operator: SearchOperators,
+        value1: SearchDateFilters | Date | SearchDateFilters[] | number,
+        value2: SearchDateFilters | Date
+    )
+
+    /**
+     * Returns the formula used for this filter
+     * 
+     * @returns The formula used for this filter
+     * 
+     * @since 2011.1
+     */
+    getFormula(): string;
+
+    /**
+     * Returns the join id for this search filter
+     * 
+     * @returns The string value of the search join
+     * 
+     * @since 2008.1
+     */
+    getJoin(): string;
+
+    /**
+     * Returns the name for this search filter
+     * 
+     * @returns The string value of the search filter
+     * 
+     * @since 2007.0
+     */
+    getName(): string;
+
+    /**
+     * Returns the summary type used for this filter
+     * 
+     * @returns The summary type used for this filter
+     * 
+     * @since 2011.1
+     */
+    getSummaryType(): string;
+
+    /**
+     * Returns the filter operator that was used
+     * 
+     * @since 2008.2
+     */
+    getOperator(): string;
+
+    /**
+     * Sets the formula used for this filter. Name of the filter can either be
+     * `formulatext`, `formulanumeric`, `formuladatetime`, `formulapercent`, or 
+     * `formulacurrency`.
+     * 
+     * @param formula The formula used for this filter
+     * 
+     * @since 2011.1
+     */
+    setFormula(formula: string): nlobjSearchFilter;
+
+    /**
+     * Sets the summary type used for this filter. Filter name must correspond
+     * to a search column if it is to be used as a summary filter.
+     * 
+     * @param type The summary type used for this filter
+     * 
+     * @since 2011.1
+     */
+    setSummaryType(
+        type: 'max' | 'min' | 'avg' | 'sum' | 'count'
+    ): nlobjSearchFilter;
+}
 
 /*
    --------------------------------------------------
