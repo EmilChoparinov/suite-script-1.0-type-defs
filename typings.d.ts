@@ -1826,6 +1826,199 @@ declare function nlapiCreateCurrentLineItemSubrecord(
     fldname: string
 ): nlobjSubrecord;
 
+/**
+ * Returns a nlobjSubrecord object. Use this API to create a subrecord from a
+ * body field on the parent record.
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the body of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details body field).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiCreateSubrecord(fldname: string): nlobjSubrecord;
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to edit a subrecord from a
+ * sublist field on the parent record.
+ * 
+ * @param sublist The sublist internal ID on the parent record (for example, use
+ * item as the ID for the Items sublist).
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the sublist of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details sublist field).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiEditCurrentLineItemSubrecord(
+    sublist: string,
+    fldname: string
+): nlobjSubrecord;
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to edit a subrecord from a 
+ * **body** field on the parent record.
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the body of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details body field).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiEditSubrecord(fldname: string): nlobjSubrecord;
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to remove a subrecord from a
+ * sublist field on the parent record.
+ * 
+ * @param sublist The sublist internal ID on the parent record (for example, use
+ * item as the ID for the Items sublist).
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the sublist of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details sublist field).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiRemoveCurrentLineItemSubrecord(sublist, fldname): void;
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to remove a subrecord from a
+ * body field on the parent record.
+ * 
+ * This API is currently used only in the context of the / Numbered Inventory
+ * feature. For information, see Using SuiteScript with / Numbered Inventory
+ * Management.
+ *  
+ * @param fldname The internal ID of the “subrecord field” on the body of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details body field).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiRemoveSubrecord(fldname: string): void;
+
+/**
+ * Returns a `nlobjSubrecord` object. Use this API to view a subrecord from a
+ * **sublist** field on the parent record. Calling this API analogous to doing a
+ * “get” on a subrecord, however, the nlobjSubrecord object returned is in 
+ * **read-only** mode. Therefore, an error is thrown if you attempt to edit a
+ * subrecord returned by this API.
+ * 
+ * You can call this API when you want your script to read the
+ * [nlobjSubrecord](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3126577.html)
+ * object of the current sublist line you are on. After you get the
+ * [nlobjSubrecord](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3126577.html)
+ * object, you can use regular record API to access its values.
+ * 
+ * This API is currently used only in the context of the / Numbered Inventory
+ * feature. For information, see Using SuiteScript with / Numbered Inventory
+ * Management.
+ * 
+ * @param sublist The sublist internal ID on the parent record (for example, use
+ * item as the ID for the Items sublist).
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the sublist of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details sublist field).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiViewCurrentLineItemSubrecord(
+    sublist: string,
+    fldname: string
+): nlobjSubrecord;
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to view a subrecord from a
+ * **sublist** field on the parent record. Calling this API analogous to doing a
+ * “get” on a subrecord, however, the `nlobjSubrecord` object returned is in
+ * read-only mode. Therefore, an error is thrown if you attempt to edit a
+ * subrecord returned by this function.
+ * 
+ * You can call this API when you want to read the value of a line you are
+ * **not** currently on (or have not selected). For example, if you are editing
+ * line 2 as your current line, you can call `nlapiViewLineItemSubrecord` on 
+ * line 1 to get the value of line 1.
+ * 
+ * This API is currently used only in the context of the / Numbered Inventory
+ * feature. For information, see Using SuiteScript with / Numbered Inventory
+ * Management.
+ * 
+ * @param sublist The sublist internal ID on the parent record (for example, use
+ * item as the ID for the Items sublist).
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the sublist of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details sublist field).
+ * 
+ * @param linenum The line number for the sublist field. Note the first line
+ * number on a sublist is 1 (not 0).
+ * 
+ * @since 2011.2
+ */
+declare function nlapiViewLineItemSubrecord(
+    sublist: string,
+    fldname: string,
+    linenum: number
+): nlobjSubrecord;
+
+/**
+ * Returns a nlobjSubrecord object. Use this API to view a subrecord from a
+ * **body** field on the parent record. Calling this API analogous to doing a
+ * “get” on a subrecord, however, the nlobjSubrecord object returned is in
+ * read-only mode. Therefore, an error is thrown if you attempt to edit a
+ * subrecord returned by this function.
+ * 
+ * This API is currently used only in the context of the / Numbered Inventory
+ * feature. For information, see Using SuiteScript with / Numbered Inventory
+ * Management. 
+ * 
+ * @param fldname The internal ID of the “subrecord field” on the body of the
+ * parent record (for example, inventorydetail as the ID for the Inventory
+ * Details body field).
+ * 
+ * @sincce 2011.2
+ */
+declare function nlapiViewSubrecord(fldname: string): nlobjSubrecord;
+
+/**
+ * Primary object used to encapsulate a NetSuite subrecord. To create a 
+ * subrecord, you must first create or load a parent record. You can then create
+ *  or access a subrecord from a body field or from a sublist field on the 
+ * parent record.
+ * 
+ * For general information on subrecords, 
+ * see [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html).
+ * For a list of all APIs related to subrecords,
+ * see [Subrecord APIs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html).
+ */
+declare interface nlobjSubrecord {
+    /**
+     * Use this method to cancel the current processing of the subrecord and 
+     * revert subrecord data to the last committed change (submitted in the last
+     *  commit() call).
+     * 
+     * Note that you will not be able to do any additional write or read 
+     * operations on the subrecord instance after you have canceled it. You must
+     * reload the subrecord from the parent to write any additional data to the
+     * subrecord.
+     * 
+     * @since 2011.2
+     */
+    cancel(): void;
+
+    /**
+     * Use this method to commit the subrecord to the parent record.
+     * See [Saving Subrecords Using SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2941460.html)
+     * for additional information on saving subrecords.
+     * 
+     * @since 2011.2
+     */
+    commit(): void;
+}
+
 /*
    --------------------------------------------------
 
@@ -2068,43 +2261,6 @@ declare function nlapiAddMonths(d: Date, months: number): Date;
 
    -----------------------------------------------------------------------------
 */
-
-/**
- * Primary object used to encapsulate a NetSuite subrecord. To create a 
- * subrecord, you must first create or load a parent record. You can then create
- *  or access a subrecord from a body field or from a sublist field on the 
- * parent record.
- * 
- * For general information on subrecords, 
- * see [Working with Subrecords in SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html).
- * For a list of all APIs related to subrecords,
- * see [Subrecord APIs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2940215.html).
- */
-declare interface nlobjSubrecord {
-    /**
-     * Use this method to cancel the current processing of the subrecord and 
-     * revert subrecord data to the last committed change (submitted in the last
-     *  commit() call).
-     * 
-     * Note that you will not be able to do any additional write or read 
-     * operations on the subrecord instance after you have canceled it. You must
-     * reload the subrecord from the parent to write any additional data to the
-     * subrecord.
-     * 
-     * @since 2011.2
-     */
-    cancel(): void;
-
-    /**
-     * Use this method to commit the subrecord to the parent record.
-     * See [Saving Subrecords Using SuiteScript](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2941460.html)
-     * for additional information on saving subrecords.
-     * 
-     * @since 2011.2
-     */
-    commit(): void;
-}
-
 /**
  * Primary object used to encapsulate a NetSuite field.
  * 
