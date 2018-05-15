@@ -3739,12 +3739,180 @@ declare interface nlobjSubList {
    --------------------------------------------------
 */
 
-// declare function nlapiCreateSearch(type, filters, columns):
-declare function nlapiLoadSearch(type, id)
-declare function nlapiLookupField(type, id, fields, text)
-declare function nlapiSearchDuplicate(type, fields, id)
-declare function nlapiSearchGlobal(keywords)
-declare function nlapiSearchRecord(type, id, filters, columns)
+/**
+ * Creates a new search. The search can be modified and run as an on demand
+ * search, without saving it. Alternatively, calling nlobjSearch.
+ * [saveSearch(title, scriptId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114333)
+ * will save the search to the database, so it can be resused later in the UI or
+ * using [nlapiLoadSearch(type, id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051604).
+ * 
+ * @param type The record internal ID of the record type you are searching (for
+ * example, customer|lead|prospect|partner|vendor|contact). For a list of
+ * internal IDs, in the NetSuite Help Center see 
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * 
+ * @param filters A single
+ * [nlobjSearchFilter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3120682.html)
+ * object - or - an array of
+ * [nlobjSearchFilter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3120682.html)
+ * objects - or - a search filter expression.
+ * 
+ * @param columns A single 
+ * [nlobjSearchColumn(name, join, summary)]()
+ * object - or - an array of 
+ * [nlobjSearchColumn(name, join, summary)]()
+ * objects. Note that you can further filter the returned 
+ * [nlobjSearch]()
+ * object by passing additional search return column values. You will do this
+ * using the nlobjSearch.
+ * [setColumns(columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114539)
+ * method.
+ * 
+ * @since 2012.1
+ */
+declare function nlapiCreateSearch(
+    type: string,
+    filters?: nlobjSearchFilter | nlobjSearchFilter[] | {}[],
+    columns?: nlobjSearchColumn | nlobjSearchColumn[]
+): nlobjSearch;
+
+/**
+ * Loads an existing saved search. The saved search could have been created
+ * using the UI, or created using 
+ * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)
+ * in conjunction with nlobjSearch.
+ * [saveSearch(title, scriptId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114333).
+ * 
+ * Executing this API consumes 5 governance units.
+ * 
+ * @param type The record internal ID of the record type you are searching (for
+ * example, customer|lead|prospect|partner|vendor|contact). This parameter is
+ * case-insensitive. For a list of internal IDs, in the NetSuite Help Center see
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * 
+ * @param id The internal ID or script ID of the saved search. The script ID of
+ * the saved search is required, regardless of whether you specify the search
+ * type. If you do not specify the search type, you must set type to **null**
+ * and then set the script/search ID. See 
+ * [Example 3](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051782)
+ * for more details
+ * 
+ * @since 2012.1
+ */
+declare function nlapiLoadSearch(type: string, id: string): nlobjSearch;
+
+/**
+ * Performs a search for duplicate records based on the account's Duplicate
+ * Detection configuration. Note that this API only works for records that
+ * support duplicate record detection. These records include customers, leads, 
+ * prospects, contacts, partners, and vendors.
+ * 
+ * This API is supported in client, user event, scheduled, portlet, and Suitelet
+ * scripts.
+ * 
+ * @param type The record internal ID name you are checking duplicates for (for
+ * example, customer|lead|prospect|partner|vendor|contact). In the NetSuite Help
+ * Center, see
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * 
+ * @param fields The internal ID names of the fields used to detect duplicate
+ * (for example, companyname|email|name|phone|address1|city|state|zipcode).
+ * Depending on the use case, fields may or may not be a required argument. If
+ * you are searching for duplicates based on the fields that appear on a certain
+ * record type, fields would be a **required** argument. If you are searching
+ * for the duplicate of a specific record (of a specifed type), you would set id
+ * and not set fields.
+ * 
+ * @param id internalId of existing record. Depending on the use case, id may or
+ * may not be a required argument. If you are searching for a specific record of
+ * a specified type, you must set id. If you are searching for duplicates based
+ * on field names, you will not set id ; you will set `fields`.
+ * 
+ * @returns An Array of 
+ * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+ * objects corresponding to the duplicate records.
+ */
+declare function nlapiSearchDuplicate(
+    type: string,
+    fields: string[],
+    id: number
+): nlobjSearchResult[];
+
+/**
+ * erforms a global search against a single keyword or multiple keywords.
+ * 
+ * This API is supported in client, user event, scheduled, portlet, and Suitelet
+ * scripts. Usage metering allowed for nlapiSearchGlobal is 10 units.
+ * 
+ * @param keywords Global search keywords string or expression
+ */
+declare function nlapiSearchGlobal(keywords: string): nlobjSearchResult[];
+
+/**
+ * Performs a search using a set of criteria (your search filters) and columns
+ * (the results). Alternatively, you can use this API to execute an existing
+ * saved search. Results are limited to 1000 rows.
+ * 
+ * Usage metering allowed for nlapiSearchRecord is 10 units.
+ * 
+ * @param type The record internal ID of the record type you are searching. For 
+ * a list of internal IDs, in the NetSuite Help Center see
+ * [SuiteScript Supported Records](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3170023.html).
+ * 
+ * @param id The internalId or custom scriptId for the saved search. To obtain
+ * the internalId, go to Lists > Search > Saved Searches (Administrator). The
+ * internalId appears in the Internal ID column. If you have created a custom
+ * scriptId when building your search, this ID will appear in the ID column.
+ * 
+ * @param filters A single 
+ * [nlobjSearchFilter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3120682.html) object - or - an array of 
+ * [nlobjSearchFilter](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3120682.html) objects - or - a search filter expression.
+ * 
+ * @param columns A single 
+ * [nlobjSearchColumn(name, join, summary)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html)
+ * object - or - an array of 
+ * [nlobjSearchColumn(name, join, summary)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html)
+ * objects. Note that you can further filter the returned saved search by
+ * passing additional search return column values.
+ * 
+ * @returns An array of 
+ * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+ * objects corresponding to the searched records.
+ * 
+ * @throws SSS_INVALID_RECORD_TYPE
+ * 
+ * @throws SSS_TYPE_ARG_REQD
+ * 
+ * @throws SSS_INVALID_SRCH_ID
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_JOIN
+ * 
+ * @throws SSS_INVALID_SRCH_OPERATOR
+ * 
+ * @throws SSS_INVALID_SRCH_COL_NAME
+ * 
+ * @throws SSS_INVALID_SRCH_COL_JOIN
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_EXPR
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_EXPR_DANGLING_OP
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_EXPR_OBJ_TYPE
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_EXPR_PAREN_DEPTH
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_LIST_PARENS
+ * 
+ * @throws SSS_INVALID_SRCH_FILTER_LIST_TERM
+ */
+declare function nlapiSearchRecord(
+    type?: string,
+    id?: number | string,
+    filters?: nlobjSearchFilter | nlobjSearchFilter[] | {}[],
+    columns?: nlobjSearchColumn | nlobjSearchColumn[]
+): nlobjSearchResult[];
 
 /**
  * Primary object used to encapsulate search filters
@@ -4255,6 +4423,258 @@ declare interface nlobjSearchResultSet {
      * @since 2012.1
      */
     getResults(start: number, end: number): nlobjSearchResult[];
+}
+
+/**
+ * Primary object used to encapsulate a search result row. For information on
+ * executing NetSuite searches using SuiteScript, see Searching Overview in the 
+ * NetSuite Help Center.
+ */
+declare interface nlobjSearchResult {
+
+    /**
+     * Returns an array of
+     * [nlobjSearchColumn(name, join, summary)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html)
+     * objects containing all the columns returned in a specified search
+     * 
+     * @since 2009.2
+     */
+    getAllColumns(): nlobjSearchColumn[];
+
+    /**
+     * Returns the internal ID for the returned record
+     * 
+     * @returns The record internal ID as an integer
+     */
+    getId(): number;
+
+    /**
+     * Returns the record type for the returned record
+     * 
+     * @returns The name of the record type as a string - for example, customer,
+     * assemblyitem, contact, or projecttask
+     */
+    getRecordType(): string;
+
+    /**
+     * Returns the text value for this 
+     * [nlobjSearchColumn(name, join, summary)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html) if
+     * it is a select field
+     * 
+     * @param column The name of the search result column.
+     * 
+     * @since 2009.2
+     */
+    getText(column: nlobjSearchColumn): string;
+
+    /**
+     * Returns the UI display name (ie,. the text value) for this 
+     * nlobjSearchColumn. Note that this method is supported on **non-stored**
+     * select, image, document fields only.
+     * 
+     * @param name name of the search column
+     * @param join The join internalId for this search column
+     * @param summary The summary type used for this search column. Use any of 
+     * the following types:
+     * - group
+     * - sum
+     * - count
+     * - avg
+     * - min
+     * - max
+     * 
+     * @returns The UI display name for this nlobjSearchColumn as a string
+     * 
+     * @since 2008.1
+     */
+    getText(name: string, join?: string, summary?: string): string;
+
+    /**
+     * Returns the value for the nlobjSearchColumn
+     * 
+     * @param name The name of the search column
+     * 
+     * @param join The join internalId for this search column
+     * 
+     * @param summary The summary type used for this search column. Types are:
+     * - group
+     * - sum
+     * - count
+     * - avg
+     * - min
+     * - max
+     * 
+     * @returns The value for a search return column as a string
+     * 
+     * @since 2008.1
+     */
+    getValue(name: string, join?: string, summary?: string): string;
+
+    /**
+     * Can be used on formula fields and non-formula (standard) fields to get
+     * the value of a specified search return column
+     * 
+     * @param column Search return column object whose value you want to return
+     * 
+     * @returns String value of the search return column
+     * 
+     * @since 2009.1
+     */
+    getValue(column: nlobjSearchColumn): string;
+}
+
+
+/**
+ * Primary object used to encapsulate search return columns. For information on
+ * executing NetSuite searches using SuiteScript, see Searching Overview in the
+ * NetSuite Help Center.
+ */
+declare class nlobjSearchColumn {
+
+    /**
+     * Primary object used to encapsulate search return columns. For information
+     * on executing NetSuite searches using SuiteScript, see 
+     * [Searching Overview](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3000275.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param name The search return column name
+     * 
+     * @param join The join id for this search return column
+     * 
+     * @param summary The summary type for this column; see 
+     * [Search Summary Types](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3010474.html)
+     * for additional information. Available types are:
+     * - group
+     * - sum
+     * - count
+     * - avg
+     * - min
+     * - max
+     */
+    constructor(
+        name: string,
+        join?: string,
+        summary?: 'group' | 'sum' | 'count' | 'avg' | 'min' | 'max'
+    );
+
+    /**
+     * @returns Returns the formula used for this column as a string
+     * 
+     * @since 2009.1
+     */
+    getFormula(): string;
+
+    /**
+     * @returns The function used in this search column as a string
+     * 
+     * @since 2009.1
+     */
+    getFunction(): string;
+
+    /**
+     * Returns join id for this search column
+     * 
+     * @returns The join id as a string
+     * 
+     * @since 2008.1
+     */
+    getJoin(): string;
+
+    /**
+     * Returns the label used for the search column. Note that ONLY custom
+     * labels can be returned using this method.
+     * 
+     * @returns The custom label used for this column as a string
+     * 
+     * @since 2009.1
+     */
+    getLabel(): string;
+
+    /**
+     * @returns The name of the search column as a string
+     * 
+     * @since 2008.1
+     */
+    getName(): string;
+
+    /**
+     * Returns the sort direction for this column
+     * 
+     * @since 2011.1
+     */
+    getSort(): string;
+
+    /**
+     * Returns the summary type (avg, group, sum, count) for this search column.
+     * In the NetSuite Help Center, see 
+     * [Search Summary Types](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3010474.html)
+     * for a list of summary types.
+     * 
+     * @returns The summary type as a string
+     * 
+     * @since 2008.1
+     */
+    getSummary(): string;
+
+    /**
+     * Set the formula used for this column. Name of the column can either be 
+     * formulatext, formulanumeric, formuladatetime, formulapercent, or 
+     * formulacurrency.
+     * 
+     * @param formula The formula used for this column
+     * 
+     * @since 2011.1
+     */
+    setFormula(formula: string): nlobjSearchColumn;
+
+    /**
+     * Sets the special function used for this column.
+     * 
+     * @param functionid Special function used for this column. The following is a list of 
+     * [supported functions and their internal IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html#bridgehead_N3119209):
+     * 
+     * @since 2011.1
+     */
+    setFunction(functionid: string): nlobjSearchColumn;
+
+    /**
+     * Set the label used for this column.
+     * 
+     * @param label The label used for this column
+     * 
+     * @since 2011.1
+     */
+    setLabel(label: string): nlobjSearchColumn;
+
+    /**
+     * Returns nlobjSearchColumn sorted in either ascending or descending order.
+     * 
+     * @param order If not set, defaults to false, which returns column data in 
+     * ascending order. If set to true, data is returned in descending order.
+     * 
+     * @since 2010.1
+     */
+    setSort(order?: boolean): nlobjSearchColumn;
+
+    /**
+     * Returns the search column for which the minimal or maximal value should 
+     * be found when returning the nlobjSearchColumn value.
+     * 
+     * For example, can be set to find the most recent or earliest date, or the 
+     * largest or smallest amount for a record, and then the nlobjSearchColumn 
+     * value for that record is returned.
+     * 
+     * Can only be used when min or max is passed as the summary parameter in 
+     * the nlobjSearchColumn constructor.
+     * 
+     * @param name The name of the search column for which the minimal or 
+     * maximal value should be found
+     * 
+     * @param join The join id for this search column
+     * 
+     * @since 2012.1
+     */
+    setWhenOrderedBy(name: string, join: string): nlobjSearchColumn;
 }
 
 /*
@@ -6574,104 +6994,6 @@ declare interface nlobjButton {
 }
 
 /**
- * Primary object used to encapsulate a search result row. For information on
- * executing NetSuite searches using SuiteScript, see Searching Overview in the 
- * NetSuite Help Center.
- */
-declare interface nlobjSearchResult {
-
-    /**
-     * Returns an array of
-     * [nlobjSearchColumn(name, join, summary)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html)
-     * objects containing all the columns returned in a specified search
-     * 
-     * @since 2009.2
-     */
-    getAllColumns(): nlobjSearchColumn[];
-
-    /**
-     * Returns the internal ID for the returned record
-     * 
-     * @returns The record internal ID as an integer
-     */
-    getId(): number;
-
-    /**
-     * Returns the record type for the returned record
-     * 
-     * @returns The name of the record type as a string - for example, customer,
-     * assemblyitem, contact, or projecttask
-     */
-    getRecordType(): string;
-
-    /**
-     * Returns the text value for this 
-     * [nlobjSearchColumn(name, join, summary)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html) if
-     * it is a select field
-     * 
-     * @param column The name of the search result column.
-     * 
-     * @since 2009.2
-     */
-    getText(column: nlobjSearchColumn): string;
-
-    /**
-     * Returns the UI display name (ie,. the text value) for this 
-     * nlobjSearchColumn. Note that this method is supported on **non-stored**
-     * select, image, document fields only.
-     * 
-     * @param name name of the search column
-     * @param join The join internalId for this search column
-     * @param summary The summary type used for this search column. Use any of 
-     * the following types:
-     * - group
-     * - sum
-     * - count
-     * - avg
-     * - min
-     * - max
-     * 
-     * @returns The UI display name for this nlobjSearchColumn as a string
-     * 
-     * @since 2008.1
-     */
-    getText(name: string, join?: string, summary?: string): string;
-
-    /**
-     * Returns the value for the nlobjSearchColumn
-     * 
-     * @param name The name of the search column
-     * 
-     * @param join The join internalId for this search column
-     * 
-     * @param summary The summary type used for this search column. Types are:
-     * - group
-     * - sum
-     * - count
-     * - avg
-     * - min
-     * - max
-     * 
-     * @returns The value for a search return column as a string
-     * 
-     * @since 2008.1
-     */
-    getValue(name: string, join?: string, summary?: string): string;
-
-    /**
-     * Can be used on formula fields and non-formula (standard) fields to get
-     * the value of a specified search return column
-     * 
-     * @param column Search return column object whose value you want to return
-     * 
-     * @returns String value of the search return column
-     * 
-     * @since 2009.1
-     */
-    getValue(column: nlobjSearchColumn): string;
-}
-
-/**
  * Encapsulates a scriptable email template, which can be merged with one of the
  * following record types:
  * 
@@ -6837,156 +7159,3 @@ declare interface nlobjMergeResult {
 
    -----------------------------------------------------------------------------
 */
-
-/**
- * Primary object used to encapsulate search return columns. For information on
- * executing NetSuite searches using SuiteScript, see Searching Overview in the
- * NetSuite Help Center.
- */
-declare class nlobjSearchColumn {
-
-    /**
-     * Primary object used to encapsulate search return columns. For information
-     * on executing NetSuite searches using SuiteScript, see 
-     * [Searching Overview](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3000275.html)
-     * in the NetSuite Help Center.
-     * 
-     * @param name The search return column name
-     * 
-     * @param join The join id for this search return column
-     * 
-     * @param summary The summary type for this column; see 
-     * [Search Summary Types](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3010474.html)
-     * for additional information. Available types are:
-     * - group
-     * - sum
-     * - count
-     * - avg
-     * - min
-     * - max
-     */
-    constructor(
-        name: string,
-        join?: string,
-        summary?: 'group' | 'sum' | 'count' | 'avg' | 'min' | 'max'
-    );
-
-    /**
-     * @returns Returns the formula used for this column as a string
-     * 
-     * @since 2009.1
-     */
-    getFormula(): string;
-
-    /**
-     * @returns The function used in this search column as a string
-     * 
-     * @since 2009.1
-     */
-    getFunction(): string;
-
-    /**
-     * Returns join id for this search column
-     * 
-     * @returns The join id as a string
-     * 
-     * @since 2008.1
-     */
-    getJoin(): string;
-
-    /**
-     * Returns the label used for the search column. Note that ONLY custom
-     * labels can be returned using this method.
-     * 
-     * @returns The custom label used for this column as a string
-     * 
-     * @since 2009.1
-     */
-    getLabel(): string;
-
-    /**
-     * @returns The name of the search column as a string
-     * 
-     * @since 2008.1
-     */
-    getName(): string;
-
-    /**
-     * Returns the sort direction for this column
-     * 
-     * @since 2011.1
-     */
-    getSort(): string;
-
-    /**
-     * Returns the summary type (avg, group, sum, count) for this search column.
-     * In the NetSuite Help Center, see 
-     * [Search Summary Types](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3010474.html)
-     * for a list of summary types.
-     * 
-     * @returns The summary type as a string
-     * 
-     * @since 2008.1
-     */
-    getSummary(): string;
-
-    /**
-     * Set the formula used for this column. Name of the column can either be 
-     * formulatext, formulanumeric, formuladatetime, formulapercent, or 
-     * formulacurrency.
-     * 
-     * @param formula The formula used for this column
-     * 
-     * @since 2011.1
-     */
-    setFormula(formula: string): nlobjSearchColumn;
-
-    /**
-     * Sets the special function used for this column.
-     * 
-     * @param functionid Special function used for this column. The following is a list of 
-     * [supported functions and their internal IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3117719.html#bridgehead_N3119209):
-     * 
-     * @since 2011.1
-     */
-    setFunction(functionid: string): nlobjSearchColumn;
-
-    /**
-     * Set the label used for this column.
-     * 
-     * @param label The label used for this column
-     * 
-     * @since 2011.1
-     */
-    setLabel(label: string): nlobjSearchColumn;
-
-    /**
-     * Returns nlobjSearchColumn sorted in either ascending or descending order.
-     * 
-     * @param order If not set, defaults to false, which returns column data in 
-     * ascending order. If set to true, data is returned in descending order.
-     * 
-     * @since 2010.1
-     */
-    setSort(order?: boolean): nlobjSearchColumn;
-
-    /**
-     * Returns the search column for which the minimal or maximal value should 
-     * be found when returning the nlobjSearchColumn value.
-     * 
-     * For example, can be set to find the most recent or earliest date, or the 
-     * largest or smallest amount for a record, and then the nlobjSearchColumn 
-     * value for that record is returned.
-     * 
-     * Can only be used when min or max is passed as the summary parameter in 
-     * the nlobjSearchColumn constructor.
-     * 
-     * @param name The name of the search column for which the minimal or 
-     * maximal value should be found
-     * 
-     * @param join The join id for this search column
-     * 
-     * @since 2012.1
-     */
-    setWhenOrderedBy(name: string, join: string): nlobjSearchColumn;
-}
