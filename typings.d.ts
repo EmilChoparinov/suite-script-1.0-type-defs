@@ -4685,6 +4685,102 @@ declare class nlobjSearchColumn {
    --------------------------------------------------
 */
 
+/**
+ * A call to this API submits a scheduled script for processing. For this to 
+ * work, the scheduled script must have a status of **Not Scheduled** on the
+ * Script Deployment page. If the script's status is set to **Testing** on the
+ * Script Deployment page, the API does not submit the script for processing.
+ * 
+ * If the deployment status on the Script Deployment page is set to 
+ * **Scheduled**, the script is submitted for processing according to the
+ * time(s) specified on the Script Deployment page.
+ * 
+ * The `nlapiScheduleScript` API consumes 20 units per call. This API is
+ * supported in user event, portlet, RESTlet, scheduled, and Suitelet scripts.
+ * 
+ * @param scriptId The script internalId or custom scriptId
+ * @param deployId The deployment internal ID or script ID. The first “free”
+ * deployment will be used. Free means that the script's deployment status
+ * appears as Not Scheduled and the deployment is not currently executing.
+ * 
+ * @param params Object of name/values used in this scheduled script instance -
+ * used to override the script parameters values for this execution.
+ * 
+ * Note that name values are the script parameter internal IDs. If you are not
+ * familiar with what a script parameter is in the context of
+ * SuiteScript, see 
+ * [Creating Script Parameters Overview](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2999300.html)
+ * in the NetSuite Help Center.
+ * 
+ * @returns A string whose value is QUEUED if the script was successfully
+ * submitted for processing by this call, or it returns the script's current
+ * status. Valid status values are:
+ * 
+ * - **INQUEUE** - The script you requested is already submitted for processing
+ * and waiting to be run. This script cannot be requested again until it
+ * finishes processing. If the script is INQUEUE, you must try again later if
+ * you want to run the script.
+ * 
+ * - **INPROGRESS** - The scheduled script is currently running.
+ * 
+ * - **SCHEDULED** - The script's deployment status is set to scheduled and will
+ * be submitted for processing according to the time(s) specified on the script
+ * deployment.
+ */
+declare function nlapiScheduleScript(
+    scriptId: string | number,
+    deployId?: string | number,
+    params?: {}): 'INQUEUE' | 'INPROGRESS' | 'SCHEDULED'
+
+/**
+ * Creates a recovery point saving the state of the script's execution. When
+ * NetSuite resumes execution of the script, it resumes the script at the
+ * specified recovery point. Also note that when the script is resumed, its
+ * governance units are reset. Be aware, however, all scheduled scripts have a
+ * 50 MB memory limit. For complete details on scheduled script memory limits,
+ * see Understanding Memory Usage in Scheduled Scripts.
+ * 
+ * @returns Native Javascript Object. For more info, visit [
+ * here](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3053136.html#bridgehead_N3053603)
+ */
+declare function nlapiSetRecoveryPoint(): {
+    status: 'SUCCESS' | 'FAILURE' | 'RESUME',
+    reason:
+    'SS_NLAPIYIELDSCRIPT' | 'SS_ABORT' | 'SS_MAJOR_RELEASE' |
+    'SS_EXCESSIVE_MEMORY_FOOTPRINT ' | 'SS_CANCELLED' |
+    'SS_DISALLOWED_OBJECT_REFERENCE' | 'SSS_FILE_OBJECT_NOT_SERIALIZABLE' |
+    'SSS_SCRIPT_DESERIALIZATION_FAILURE',
+    size: number,
+    information: string;
+}
+
+/**
+ * Creates a recovery point and, when executed, continues from the recovery
+ * point. The newly resubmitted script has its governance units reset. To
+ * summarize, nlapiYieldScript works as follows:
+ * 
+ * 1. Creates a new recovery point.
+ * 
+ * 2. Creates a new scheduled script instance with governance reset.
+ * 
+ * 3. Associates the recovery point to the new instance of the scheduled script
+ * 
+ * 4. Submits the new instance for processing.
+ * 
+ * @returns Native Javascript Object. For more info, visit [
+ * here](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3053136.html#bridgehead_N3053967)
+ */
+declare function nlapiYieldScript(): {
+    status: 'FAILURE' | 'RESUME',
+    reason:
+    'SS_NLAPIYIELDSCRIPT' | 'SS_ABORT' | 'SS_MAJOR_RELEASE' |
+    'SS_EXCESSIVE_MEMORY_FOOTPRINT ' | 'SS_CANCELLED' |
+    'SS_DISALLOWED_OBJECT_REFERENCE' | 'SSS_FILE_OBJECT_NOT_SERIALIZABLE' |
+    'SSS_SCRIPT_DESERIALIZATION_FAILURE',
+    size: number,
+    information: string;
+}
+
 /*
    --------------------------------------------------
 
