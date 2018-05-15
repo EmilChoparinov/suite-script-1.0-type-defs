@@ -3739,13 +3739,16 @@ declare interface nlobjSubList {
    --------------------------------------------------
 */
 
-declare function nlapiCreateSearch(type, filters, columns)
+// declare function nlapiCreateSearch(type, filters, columns):
 declare function nlapiLoadSearch(type, id)
 declare function nlapiLookupField(type, id, fields, text)
 declare function nlapiSearchDuplicate(type, fields, id)
 declare function nlapiSearchGlobal(keywords)
 declare function nlapiSearchRecord(type, id, filters, columns)
 
+/**
+ * Primary object used to encapsulate search filters
+ */
 declare class nlobjSearchFilter {
     /**
      * Constructor for a search filter object
@@ -3778,7 +3781,7 @@ declare class nlobjSearchFilter {
         join: string,
         operator: SearchOperators,
         value1: SearchDateFilters | Date | SearchDateFilters[] | number,
-        value2: SearchDateFilters | Date
+        value2?: SearchDateFilters | Date
     )
 
     /**
@@ -3846,6 +3849,274 @@ declare class nlobjSearchFilter {
     setSummaryType(
         type: 'max' | 'min' | 'avg' | 'sum' | 'count'
     ): nlobjSearchFilter;
+}
+
+/**
+ * Primary object used to encapsulate a NetSuite saved search. Note, however,
+ * you are **not required** to save the search results returned in this object.
+ * 
+ * A reference to nlobjSearch is returned by 
+ * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)
+ * and
+ * [nlapiLoadSearch(type, id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051604).
+ * If you are creating a new search using nlapiCreateSearch, the search will not
+ * be saved until you call nlobjSearch.saveSearch(title, scriptId).
+ * 
+ * After you have saved the search, you can get properties of the search or
+ * redefine the search by loading the search with 
+ * [nlapiLoadSearch(type, id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051604)
+ * and calling various methods on the nlobjSearch object. You can also do this
+ * for searches created in the UI.
+ * 
+ * By default, the search returned by nlapiCreateSearch will be private, which
+ * follows the saved search model in the UI. To make a search public, you must
+ * call nlobjSearch.
+ * [setIsPublic(type)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3115056) 
+ * before saving it.
+ */
+declare interface nlobjSearch {
+
+    /**
+     * Adds a single return column to the search. Note that existing columns on
+     * the search are not changed.
+     * 
+     * @param column The `nlobjSearchColumn` you want added to the search.
+     * 
+     * @since 2012.1
+     */
+    addColumn(column: nlobjSearchColumn): void;
+
+    /**
+     * Adds multiple return columns to the search. Note that existing columns on
+     * the search are not changed.
+     * 
+     * @param columns The `nlobjSearchColumn[]` you want added to the search.
+     * 
+     * @since 2012.1
+     */
+    addColumns(columns: nlobjSearchColumn[]): void;
+
+    /**
+     * Adds a single search filter. Note that existing filters on the search
+     * are not changed.
+     * 
+     * @param filter The `nlobjSearchFilter` you want added to the search.
+     * 
+     * @since 2012.1
+     */
+    addFilter(filter: nlobjSearchFilter): void;
+
+    /**
+     * Adds a search filter list. Note that existing filters on the search are 
+     * not changed.
+     * 
+     * @param filters The list (array) of zero or more `nlobjSearchFilter` you
+     * want added to the search.
+     * 
+     * @since 2012.1
+     */
+    addFilters(filters: nlobjSearchFilter[]): void;
+
+    /**
+     * Deletes a saved search that was created through scripting or through the
+     * UI.
+     * 
+     * If you have created a saved search through the UI, you can load the
+     * search using 
+     * [nlapiLoadSearch(type, id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051604)
+     * and then call `deleteSearch` to delete it.
+     * 
+     * In scripting if you have created a search using 
+     * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)
+     * and saved the search using the nlobjSearch
+     * [.saveSearch(title, scriptId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114333),
+     * you can then load the search and call deleteSearch to delete it.
+     * 
+     * @since 2012.1
+     */
+    deleteSearch(): void;
+
+    /**
+     * Gets the search return columns for the search.
+     * 
+     * @since 2012.1
+     */
+    getColumns(): nlobjSearchColumn[];
+
+    /**
+     * Gets the filter expression for the search.
+     * 
+     * @since 2012.2
+     */
+    getFilterExpression(): {}[];
+
+    /**
+     * Gets the filters for the search.
+     * 
+     * @since 2012.1
+     */
+    getFilters(): nlobjSearchFilter[];
+
+    /**
+     * Gets the internal ID of the search. The internal ID is available only
+     * when the search is either loaded using
+     * [nlapiLoadSearch(type, id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051604)
+     * or has been saved using nlobjSearch.
+     * [saveSearch(title, scriptId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114333).
+     * 
+     * If this is an on demand search (created with 
+     * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)), 
+     * this method will return null.
+     * 
+     * @returns The search ID as a string. Typical return values will be
+     * something like 55 or 234 or 87. You will not receive a value such as 
+     * `customsearch_mysearch`. Any ID prefixed with customsearch is considered
+     * a script ID, not the search's internal system ID.
+     * 
+     * @since 2012.1
+     */
+    getId(): string | null;
+
+    /**
+     * Gets whether the nlobjSearch has been set as public search.
+     * 
+     * @returns Returns true if the search is public. Returns false if it is
+     * not.
+     * 
+     * @since 2012.1
+     */
+    getIsPublic(): boolean;
+
+    /**
+     * Gets the script ID of the search. The script ID is available only when
+     * the search is either loaded using
+     * [nlapiLoadSearch(type, id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051604)
+     * or has been saved using nlobjSearch.
+     * [saveSearch(title, scriptId)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114333).
+     * 
+     * If this is an on demand search (created with 
+     * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)
+     * ), this method will return null.
+     * 
+     * @returns The script ID of the search as a string. Typical return values
+     * will be something like `customsearch_mysearch` or 
+     * `customsearchnewinvoices`. You will not receive values such as 55 or 234
+     * or 87. These are considered internal system IDs assigned by NetSuite
+     * when you first save the search.
+     * 
+     * @since 2012.1
+     */
+    getScriptId(): string;
+
+    /**
+     * Returns the record type that the search was based on. This method is
+     * helpful when you have the internal ID of the search, but do not know the
+     * record type the search was based on.
+     * 
+     * @returns The internal ID name of the record type as a string. For
+     * example, if the search was on a Customer record, customer will be
+     * returned; if the search was on the Sales Order record type, `salesorder`
+     * will be returned.
+     * 
+     * @since 2012.1
+     */
+    getSearchType(): string;
+
+    runSearch()
+
+    saveSearch(title, scriptId)
+
+    setColumns(columns)
+
+    setFilterExpression(filterExpression)
+
+    setFilters(filters)
+
+    setIsPublic(type)
+
+    setRedirectURLToSearch()
+
+    setRedirectURLToSearchResults()
+}
+
+/**
+ * Primary object used to encapsulate a set of search results. The
+ * `nlobjSearchResultSet` object provides both an iterator interface, which
+ * supports processing of each result of the search, and stop at any time, and
+ * a slice interface, which supports retrieval of an arbitrary segment of the
+ * search results, up to 1000 results at a time.
+ * 
+ * A `nlobjSearchResultSet` object is returned by a call to nlobjSearch.
+ * [runSearch()](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3114123).
+ */
+declare interface nlobjSearchResultSet {
+
+    /**
+     * Calls the developer-defined callback function for every result in this
+     * set. There is a limit of 4000 rows in the result set returned in
+     * `forEachResult()`.
+     * 
+     * Your callback function must have the following signature:
+     * 
+     * boolean callback(`nlobjSearchResult` result);
+     * 
+     * Note that the work done in the context of the callback function counts
+     * towards the governance of the script that called it. For example, if the
+     * callback function is running in the context of a scheduled script, which
+     * has a 10,000 unit governance limit, you must be sure the amount of
+     * processing within the callback function does not put the entire script
+     * at risk of exceeding scheduled script governance limits.
+     * 
+     * Also be aware that the execution of the forEachResult(callback) method
+     * consumes 10 governance units.
+     * 
+     * @param callback A JavaScript function. This may be defined as a separate
+     * named function, or it may be an anonymous inline function.
+     * 
+     * @since 2012.1
+     */
+    forEachResult(callback: (searchResult: nlobjSearchResult) => boolean): void;
+
+
+    /**
+     * Returns a list of nlobjSearchColumn objects for this result set. This
+     * list contains one `nlobjSearchColumn` object for each result column in
+     * the `nlobjSearchResult` objects returned by this search.
+     */
+    getColumns(): nlobjSearchColumn[];
+
+    /**
+     * Retrieve a slice of the search result. The start parameter is the
+     * inclusive index of the first result to return. The end parameter is the
+     * exclusive index of the last result to return. For example,
+     * `getResults(0, 10)` retrieves 10 search results, at index 0 through index
+     * 9; Unlimited rows in the result are supported, however you can only
+     * return 1,000 at a time based on the index values.
+     * 
+     * If there are fewer results available than requested, then the array will
+     * contain fewer than end - start entries. For example, if there are only 25
+     * search results, then `getResults(20, 30)` will return an array of 5
+     * `nlobjSearchResult` objects.
+     * 
+     * If more that 1000 rows are required, it is recommended that you modify
+     * the search's criteria to reduce the number of results, and the execution
+     * time.
+     * 
+     * Also be aware that the execution of the getResults(start, end) method
+     * consumes 10 governance units.
+     * 
+     * @param start The index number of the first result to return, inclusive.
+     * 
+     * @param end The index number of the last result to return, exclusive.
+     * 
+     * @throws SSS_INVALID_SEARCH_RESULT_INDEX if start is negative.
+     * 
+     * @throws SSS_SEARCH_RESULT_LIMIT_EXCEEDED if more than 1000 rows are
+     * requested.
+     * 
+     * @since 2012.1
+     */
+    getResults(start: number, end: number): nlobjSearchResult[];
 }
 
 /*
