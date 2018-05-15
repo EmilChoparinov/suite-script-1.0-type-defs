@@ -4022,21 +4022,159 @@ declare interface nlobjSearch {
      */
     getSearchType(): string;
 
-    runSearch()
+    /**
+     * Runs an on demand search, returning the results. Be aware that calling
+     * this method does NOT save the search. Using this method in conjunction
+     * with 
+     * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)
+     * supports creating and running on demand searches that are never saved to
+     * the database, much like `nlapiSearchRecord`.
+     * 
+     * Note that this method returns the 
+     * [nlobjSearchResultSet](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3124405.html)
+     * object, which provides you with more flexibility when working with or
+     * iterating through your search results. Therefore, you may also want to
+     * use runSearch in conjunction with nlapiLoadSearch. By doing so you can
+     * load an existing saved search, call runSearch, and then (if you choose):
+     * 
+     * - retrieve a slice of the search results from anywhere in the result list
+     * 
+     * - paginate through the search results.
+     * 
+     * @since 2012.1
+     */
+    runSearch(): nlobjSearchResultSet;
 
-    saveSearch(title, scriptId)
+    /**
+     * Saves the search created by
+     * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237).
+     * 
+     * Executing this API consumes 5 governance units.
+     * 
+     * @param title The title you want to give the saved search. Note that
+     * title is required when saving a new search, but optional when saving a
+     * search that was loaded using 
+     * [nlapiLoadSearch(type, id)]()
+     * or has already been saved by calling saveSearch(title, scriptId) before.
+     * 
+     * @param scriptId The script ID you want to assign to the saved search. All
+     * saved search script IDs must be prefixed with **customsearch**
+     * 
+     * @returns The internal ID of the search as a number.
+     * 
+     * @since 2012.1
+     */
+    saveSearch(title?: string, scriptId?: string): number
 
-    setColumns(columns)
+    /**
+     * Sets the return columns for this search, overwriting any prior columns.
+     * If null is passed in it is treated as if it were an empty array and
+     * removes any existing columns on the search.
+     * 
+     * @param columns The nlobjSearchColumn[] you want to set in the search.
+     * Passing in null or [] removes all columns from the search.
+     * 
+     * @since 2012.1
+     */
+    setColumns(columns: nlobjSearchColumn[]): void;
 
-    setFilterExpression(filterExpression)
+    /**
+     * 
+     * @param filterExpression The filter expression you want to set in the
+     * search. Passing in null or [] removes all filters from the search.
+     * 
+     * A search filter expression is a JavaScript string array of zero or more
+     * elements. Each element is one of the following:
+     * 
+     * - Operator - either ‘NOT', ‘AND', or ‘OR'
+     * 
+     * - Filter term
+     * 
+     * - Nested search filter expression
+     * 
+     * For more information about search filter expression, see
+     * [Search Filter Expression Overview](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3111947.html#bridgehead_N3115497).
+     * 
+     * @since 2012.2
+     */
+    setFilterExpression(filterExpression: {}[]): void;
 
-    setFilters(filters)
+    /**
+     * Sets the filters for this search, overwriting any prior filters. If null
+     * is passed in it is treated as if it were an empty array and removes any
+     * existing filters on this search.
+     * 
+     * @param filters The `nlobjSearchFilter`[] you want to set in the search.
+     * Passing in null or [] removes all filters from the search.
+     * 
+     * @since 2012.1
+     */
+    setFilters(filters: nlobjSearchFilter[]): void;
 
-    setIsPublic(type)
+    /**
+     * Sets whether the search is public or private. By default, all searches
+     * created through 
+     * [nlapiCreateSearch(type, filters, columns)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3051062.html#bridgehead_N3051237)
+     * are private.
+     * 
+     * @param type Set to true to designate the search as a public search. Set
+     * to false to designate the search as a private search.
+     * 
+     * @since 2012.1
+     */
+    setIsPublic(type: boolean): void;
 
-    setRedirectURLToSearch()
+    /**
+     * Acts like 
+     * [nlapiSetRedirectURL(type, identifier, id, editmode, parameters)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3060274) 
+     * but redirects end users to a populated search definition page. You can use
+     * this method with any kind of search that is held in the nlobjSearch
+     * object. This could be:
+     * 
+     * - an existing saved search,
+     * 
+     * - an on demand search that you are building in SuiteScript, or
+     * 
+     * - a search you have loaded and then modified (using `addFilter`,
+     * `setFilters`, `addFilters`, `addColumn`, `addColumns`, or `setColumns`)
+     * but do not save.
+     * 
+     * Note that this method does not return a URL. It works by loading a search
+     * into the session, and then redirecting to a URL that loads the search
+     * definition page.
+     * 
+     * This method is supported in afterSubmit user event scripts, Suitelets,
+     * and client scripts.
+     * 
+     * @since 2012.1
+     */
+    setRedirectURLToSearch(): void;
 
-    setRedirectURLToSearchResults()
+    /**
+     * Acts like 
+     * [nlapiSetRedirectURL(type, identifier, id, editmode, parameters)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3060274)
+     * but redirects end users to a search results page. You can use this method
+     * with any kind of search that is held in the nlobjSearch object. This
+     * could be:
+     * 
+     * - an existing saved search,
+     * 
+     * - an on demand search that you are building in SuiteScript, or
+     * 
+     * - a search you have loaded and then modified (using `addFilter`,
+     * `setFilters`, `addFilters`, `addColumn`, `addColumns`, or `setColumns`)
+     * but do not save.
+     * 
+     * Note that this method does not return a URL. It works by loading a
+     * search into the session, and then redirecting to a URL that loads the
+     * search results.
+     * 
+     * This method is supported in afterSubmit user event scripts, Suitelets,
+     * and client scripts.
+     * 
+     * @since 2012.1
+     */
+    setRedirectURLToSearchResults(): void;
 }
 
 /**
