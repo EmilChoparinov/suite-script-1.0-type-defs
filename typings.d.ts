@@ -4790,12 +4790,113 @@ declare function nlapiYieldScript(): {
 */
 
 /**
+ * Used to branch scripts depending on the metadata or context of the execution.
+ * For example, you may want the script to perform in one way when a form is
+ * accessed via the UI and another when the form is accessed via web services.
+ * 
+ * This API is supported in client, user event, scheduled, portlet, and Suitelet
+ * scripts.
+ * 
+ * @returns 
+ * [nlobjContext](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3077939.html)
+ * object containing information (metadata) about the current user or script context.
+ */
+declare function nlapiGetContext(): nlobjContext;
+
+/**
+ * This API is supported in client, user event, scheduled, portlet, and Suitelet
+ * scripts.
+ * 
+ * @returns The integer value of the current user's department (for example, 3,
+ * 9, or 1)
+ */
+declare function nlapiGetDepartment(): number;
+
+/**
+ * Returns the integer value of the current user's location. This API is
+ * supported in client, user event, scheduled, portlet, and Suitelet scripts.
+ * 
+ * @returns The integer value of the current user's location (for example, 5, 7,
+ * -2). Note that if a location has not been set, the value of **-1** is
+ * returned.
+ */
+declare function nlapiGetLocation(): number;
+
+/**
+ * Returns the internalId for the current user's role. This API is supported in
+ * client, user event, scheduled, portlet, and Suitelet scripts.
+ * 
+ * @returns The integer value of the current user's role (for example: 1, 3, or
+ * 5). Note that the value of **-31** is returned if a user cannot be properly
+ * identified by NetSuite. This occurs when the user has not authenticated to
+ * NetSuite, for example when using externally available ( Available without
+ * Login ) Suitelets or online forms.
+ */
+declare function nlapiGetRole(): number;
+
+/**
+ * Returns the internalId for the current user's subsidiary. This API is
+ * supported in client, user event, scheduled, portlet, and Suitelet scripts.
+ * 
+ * @returns The integer value for the current user's subsidiary (for example 1,
+ * 3, or 5). Note that if a subsidiary has not been set (for example, the
+ * subsidiaries feature is not turned on in the user's account), the value of 1
+ * is returned if this function is called.
+ */
+declare function nlapiGetSubsidiary(): number;
+
+/**
+ * Returns the internalId of the current NetSuite user. This API is supported in
+ * client, user event, scheduled, portlet, and Suitelet scripts.
+ * 
+ * @returns The integer value of the current user (for example, 195, 25, 21).
+ * Note that the value of -4 is returned if a user cannot be properly identified
+ * by NetSuite. This occurs when the user has not authenticated to NetSuite, for
+ * example when using externally available (Available without Login ) Suitelets
+ * or online forms.
+ */
+declare function nlapiGetUser()
+
+/**
+ * This API is supported in all server-side and record-level (global) client
+ * scripts.
+ * 
+ * Use this API to log an entry on the Execution Log subtab. The Execution Log
+ * subtab appears on the Script Deployment page for a script. See
+ * [Creating Script Execution Logs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2936533.html)
+ * to learn more about writing logs to the  Execution Log subtab.
+ * 
+ * @param type One of the following log types:
+ * 
+ * - DEBUG
+ * 
+ * - AUDIT
+ * 
+ * - ERROR
+ * 
+ * - EMERGENCY
+ * 
+ * @param title A title used to organize log entries (max length: 99
+ * characters). If you set title to null or empty string (''), you will see the
+ * word “Untitled” appear in your log entry.
+ * 
+ * @param details The details of the log entry (max length: 3999 characters)
+ * 
+ * @throws SSS_MISSING_REQD_ARGUMENT - if no value is specified for title.
+ */
+declare function nlapiLogExecution(
+    type: 'DEBUG' | 'AUDIT' | 'ERROR' | 'EMERGENCY',
+    title?: string,
+    details?: string
+): void;
+
+/**
  * Encapsulates user information as well as script execution context at runtime.
  * Note that the 
  * [nlapiGetContext()](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3055475.html#bridgehead_N3055647)
  * function returns a reference to this object.
  */
-declare class nlobjContext {
+declare interface nlobjContext {
 
     /**
      * Returns the bundle ID for the current script.
@@ -5161,7 +5262,7 @@ declare class nlobjContext {
      * [Creating Script Parameters Overview](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2999300.html).
      */
     getSetting(type: 'SESSION' | 'FEATURE' | 'SCRIPT', name: string): string;
-    
+
     /**
      * Use this API to get a system or script setting. Note that if you want to
      * get session, feature, or permission settings directly, you can also use
