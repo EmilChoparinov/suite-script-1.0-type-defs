@@ -2423,315 +2423,6 @@ declare function nlapiSubmitField(
     doSourcing?: boolean
 ): void;
 
-/**
- * Primary object used to encapsulate a NetSuite field.
- * 
- * @link [to docs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
- */
-declare interface nlobjField {
-
-    /**
-     * Adds a select option to a SELECT field
-     * 
-     * @param value The internal ID of this select option
-     * 
-     * @param text The UI label for this option
-     * 
-     * @param selected If true, then this option is selected by default
-     * 
-     * @since 2008.2
-     */
-    addSelectOption(value: string, text: string, selected?: boolean): void;
-
-    /**
-     * Returns field UI label
-     * 
-     * @returns String value of the field's UI label
-     * 
-     * @since 2009.1
-     */
-    getLabel(): string;
-
-    /**
-     * Returns the field internal ID
-     * 
-     * @returns String value of a field's internal ID
-     * 
-     * @since 2009.1
-     */
-    getName(): string;
-
-    /**
-     * Use this API to obtain a list of available options on a select field. 
-     * This API can be used on both standard and custom select fields. 
-     * Only the first 1,000 available options will be returned by this API.
-     *
-     * This method can only be used in server contexts against a record object. 
-     * Also note that a call to this method may return different results for the
-     *  same field for different roles.
-     *
-     * If you attempt to get select options on a field that is not a select 
-     * field, or if you reference a field that does not exist on the form, null 
-     * is returned.
-     * 
-     * @param filter A search string to filter the select options that are 
-     * returned. For example, if there are 50 select options available, and 10 
-     * of the options contains 'John', e.g. “John Smith” or “Shauna Johnson”, 
-     * only those 10 options will be returned.
-     * 
-     * @param filteroperator Supported operators are **contains** | **is** | 
-     * **startswith**. If not specified, defaults to the **contains** operator.
-     * 
-     * @returns An array of 
-     * [nlobjSelectOption](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3126295.html)
-     * objects. These objects represent the key-value pairs representing a 
-     * select option (for example: **87, Abe Simpson** ).
-     * 
-     * @since 2009.1
-     */
-    getSelectOptions(
-        filter?: string,
-        filteroperator?: string
-    ): nlobjSelectOption[];
-
-    /**
-     * Returns the field type - for example, text, date, currency, select, 
-     * checkbox, etc.
-     * 
-     * @returns String value of field's SuiteScript type
-     * 
-     * @since 2009.1
-     */
-    getType(): string;
-
-    /**
-     * Sets the alias used to set the value for this field. By default the alias
-     *  is equal to the field's name. The method is only supported on scripted 
-     * fields via the UI Object API.
-     * 
-     * @param alias The value used to override the alias
-     * 
-     * @since 2008.2
-     */
-    setAlias(alias: string): nlobjField;
-
-    /**
-     * Use this method to set the layout type for a field and optionally the 
-     * break type. This method is only supported on scripted fields that have 
-     * been created using the UI Object API.
-     * 
-     * @param breaktype The break type used to add a break in flow layout for 
-     * this field. Available types are:
-     * - startcol - This starts a new column (also disables automatic field 
-     * balancing if set for any field)
-     * - startrow - For outside fields, this places the field on a new row. The 
-     * startrow breaktype 
-     * is only used for fields with a layout type of outside. 
-     * See [setLayoutType(type, breaktype)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3143169).
-     * - none - (default)
-     * 
-     * @since 2009.2
-     */
-    setBreakType(breaktype: 'startcol' | 'startrow' | 'none'): nlobjField;
-
-    /**
-     * Sets the default value for this field. This method is only supported on 
-     * scripted fields via the UI object API.
-     * 
-     * @param value The default value for this field. Note that if you pass an 
-     * empty string, the field will default to a blank field in the UI.
-     * 
-     * @since 2008.2
-     */
-    setDefaultValue(value: string): nlobjField;
-
-    /**
-     * Sets the height and width for the field. Only supported on multi-selects,
-     *  long text, rich text, and fields that get rendered as INPUT (type=text) 
-     * fields. This API is not supported on list/record fields. This method is 
-     * only supported on scripted fields via the UI object API.
-     * 
-     * @param width The width of the field (cols for textarea, characters for 
-     * all others)
-     * 
-     * @param height The height of the field (rows for textarea and multiselect 
-     * fields)
-     * 
-     * @since 2008.2
-     */
-    setDisplaySize(width: number, height: number): nlobjField;
-
-    /**
-     * Sets the display type for this field.
-     *
-     * Be aware that this method cannot be used in **client** scripts. 
-     * In other words, if you use 
-     * [nlapiGetField(fldnam)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3039111.html#bridgehead_N3039511)
-     * in a client script to return a 
-     * field object that has been added to a form, you cannot use setDisplayType
-     *  to set the field's display type. The nlobjField object returned from 
-     * nlapiGetField(fldnam) is **read-only**.
-     * 
-     * @param type The display type for this field. 
-     * 
-     * Allowed display types:
-     * - inline - This makes the field display as inline text
-     * - hidden - This hides the field on the form.
-     * - readonly - This disables the field but it is still selectable and 
-     * scrollable (for textarea fields)
-     * - entry - This makes the sublist field appear as a data entry input field
-     *  (for non checkbox, select fields)
-     * - disabled - This disables the field from user-changes
-     * - normal - (default) This makes the field appear as a normal input field 
-     * (for non-sublist fields)
-     * 
-     * @since 2008.2
-     */
-    setDisplayType(
-        type: 'inline' | 'hidden' | 'readonly' | 'entry' | 'disabled' | 'normal'
-    ): nlobjField;
-
-
-    /**
-     * Use this method to set help text for this field.
-     * 
-     * @param help Help text for the field. When the field label is clicked,
-     * a field help popup will open to display the help text.
-     * 
-     * @param inline If not set, defaults to false. 
-     * This means that field help will appear only in a field help popup box 
-     * when the field label is clicked. 
-     * If set to true, field help will display in a field help popup box, as 
-     * well as inline below the field.
-     * 
-     * @since 2009.2
-     */
-    setHelpText(help: string, inline?: boolean): nlobjField;
-
-    /**
-     * Sets the UI label for this field. The method is available only on 
-     * scripted fields via the UI object API.
-     * 
-     * @param label The UI label used for this field
-     * 
-     * @since 2008.2
-     */
-    setLabel(label: string): nlobjField;
-
-    /**
-     * Sets the display type for this field and optionally the break type. This 
-     * method is only supported on scripted fields via the UI Object API.
-     * 
-     * @param type The layout type for this field. Use any of the following 
-     * layout types:
-     * 
-     * - outside - This makes the field appear outside (above or below based on 
-     * form default) the normal field layout area
-     * - outsidebelow - This makes the field appear below the normal field 
-     * layout area
-     * - outsideabove - This makes the field appear above the normal field 
-     * layout area
-     * - startrow - This makes the field appear first in a horizontally aligned 
-     * field group in normal field layout flow
-     * - midrow - This makes the field appear in the middle of a horizonatally 
-     * aligned field group in normal field layout flow
-     * - endrow - This makes the field appear last in a horizonatally aligned 
-     * field group in normal field layout flow
-     * - normal - (default)
-     * 
-     * @param breaktype The layout break type. Use any of the following break 
-     * types:
-     * - startcol - This starts a new column (also disables automatic field 
-     * balancing if set for any field)
-     * - startrow - For outside fields, this places the field on a new row
-     * - none - (default)
-     * 
-     * @since 2008.2
-     */
-    setLayoutType(
-        type:
-            'outside' | 'outsidebelow' | 'outsideabove' | 'startrow' |
-            'midrow' | 'endrow' | 'normal',
-        breaktype:
-            'startcol' | 'startrow' | 'none'
-    ): nlobjField;
-
-    /**
-     * Sets the text that gets displayed in lieu of the field value for URL 
-     * fields.
-     * 
-     * @param text The displayed value (in lieu of URL)
-     * 
-     * @since 2008.2
-     */
-    setLinkText(text: string): nlobjField;
-
-    /**
-     * Sets the field to mandatory. The method is only supported on scripted 
-     * fields via the UI Object API.
-     * 
-     * @param mandatory If true, then the field will be defined as mandatory
-     * 
-     * @since 2008.2
-     */
-    setMandatory(mandatory: boolean): nlobjField;
-
-    /**
-     * Sets the max length for this field (only valid for text, rich text, 
-     * long text, and textarea fields). This method is only supported on 
-     * scripted fields via the UI Object API.
-     * 
-     * @param maxlength The max length for this field
-     * 
-     * @since 2008.2
-     */
-    setMaxLength(maxlength: number): nlobjField;
-
-    /**
-     * Sets the number of empty field spaces before/above this field. 
-     * This method is only supported on scripted fields via the UI Object API.
-     * 
-     * @param padding The number of empty vertical spaces (rows) before this field
-     * 
-     * @since 2008.2
-     */
-    setPadding(padding: string): nlobjField;
-
-    /**
-     * If **Rich Text Editing** is enabled, you can use this method to set the 
-     * height of the rich text field only. You can set a separate height for the
-     * text area using 
-     * [setDisplaySize(width, height)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3141934).
-     * When setting the height, the minimum value is 100 pixels and the maximum 
-     * value is 500 pixels.
-     * 
-     * For information on enabling the Rich Text Editor, 
-     * see [Setting Preferences for Appearance](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3141934).
-     * 
-     * @param height The height of the field (pixels).
-     * 
-     * @since 2015.1
-     */
-    setRichTextHeight(height?: number): nlobjField;
-
-    /**
-     * If Rich Text Editing is enabled, you can use this method to set the width
-     *  of the rich text field only. You can set a separate width of the text 
-     * area using 
-     * [setDisplaySize(width, height)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3141934). 
-     * When setting the width, the minimum value is 250 pixels and the maximum 
-     * value is 800 pixels.
-     *
-     * For information on enabling the Rich Text Editor, 
-     * see [Setting Preferences for Appearance](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N479574.html)
-     * 
-     * @param width The width of the field (pixels).
-     * 
-     * @since 2015.1
-     */
-    setRichTextWidth(width?: number): nlobjField;
-}
-
 /*
    --------------------------------------------------
 
@@ -3527,209 +3218,6 @@ declare function nlapiSetMatrixValue(
     firefieldchanged?: boolean,
     synchronous?: boolean
 ): void;
-
-/**
- * Primary object used to encapsulate a NetSuite sublist. This object is 
- * **read-only** except for instances created via the UI Object API using
- * Suitelets or beforeLoad user event scripts.
- * 
- * To add a sublist, you must first create a custom form using
- * [nlapiCreateForm(title, hideNavbar)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
- * which returns an 
- * [nlobjForm](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
- * object.
- * 
- * After the form object is instantiated, you can add a new sublist to the form
- * using the nlobjForm
- * [.addSubList(name, type, label, tab)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3150667)
- * method, which returns a reference to nlobSublist.
- */
-declare interface nlobjSubList {
-    /**
-     * Adds a button to a sublist
-     * 
-     * @param name The internal ID name of the button. Internal ID names must be
-     * in lowercase and contain no spaces.
-     * 
-     * @param label The UI label for the button
-     * 
-     * @param script The onclick script function name
-     * 
-     * @since 2008.2
-     */
-    addButton(name?: string, label?: string, script?: string): nlobjButton;
-
-    /**
-     * Adds a field (column) to a sublist
-     * 
-     * @param name The internal ID name of the field. Internal ID names must be 
-     * in lowercase and contain no spaces.
-     * 
-     * @param type The field type for this field. Use any of the following 
-     * types:
-     * - text
-     * - email
-     * - phone
-     * - date
-     * - datetimetz - This field type lets you combine date and time values in one field. For example, you may want a single field to contain date and time “timestamp” data. After a user enters a date/time value, the data is rendered in the user's preferred date and time format, as well as the user's time zone. Also note that time values are stored in NetSuite down to the second.
-     * - currency
-     * - float
-     * - integer
-     * - checkbox
-     * - select
-     * - url
-     * - image - This field type is available **only** for fields appearing on list/staticlist sublists. You cannot specify an **image** field on a form.
-     * - timeofday
-     * - textarea
-     * - percent
-     * - radio - only supported for sublists of type list
-     * @param label The UI label for this field
-     * 
-     * @param source The internalId or scriptId of the source list for this
-     * field if it's a select (List/Record) field. In the NetSuite Help Center,
-     * see [List/Record Type IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
-     * for the internal IDs of all supported list/record types.
-     * 
-     * @since 2008.2
-     */
-    addField(
-        name: string,
-        type: string,
-        label: string,
-        source?: number | string
-    ): nlobjField;
-
-    /**
-     * Adds a "Mark All" and an "Unmark All" button to a sublist. Only valid on
-     * scriptable sublists of type **LIST**. Requires a check box column to
-     * exist on the form, which will be automatically checked/unchecked
-     * depending on what the end user does.
-     * 
-     * @since 2008.2
-     */
-    addMarkAllButtons(): void;
-
-    /**
-     * Adds a Refresh button to sublists of type `list` or `staticlist` to
-     * auto-refresh the sublist if its contents are dynamic. In this case, the
-     * sublist is refreshed without having to reload the contents of the entire
-     * page.
-     * 
-     * @since 2009.1
-     */
-    addRefreshButton(): nlobjButton;
-
-    /**
-     * Returns the number of lines on a sublist
-     * 
-     * @return The integer value of the number of line items on a sublist
-     */
-    getLineItemCount(): number;
-
-    /**
-     * Returns string value of a sublist field. Note that you cannot set default
-     * line item values when the line is not in edit mode.
-     * 
-     * @param group The sublist internal ID (for example, use addressbook as the
-     * ID for the Address sublist). See
-     * [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
-     * for sublists that support SuiteScript, sublist internal IDs, and sublist
-     * field IDs.
-     * 
-     * @param fldnam The internal ID of the field (line item) whose value is
-     * being returned
-     * 
-     * @param linenum The line number for this field. Note the first line number
-     * on a sublist is 1 (not 0).
-     */
-    getLineItemValue(group: string, fldnam: string, linenum: number): string;
-
-    /**
-     * Designates a particular column as the totalling column, which is used to 
-     * calculate and display a running total for the sublist
-     * 
-     * @param field The internal ID name of the field on this sublist used to 
-     * calculate running total
-     * 
-     * @since 2010.1
-     */
-    setAmountField(field: string): void;
-
-    /**
-     * Sets the display style for this sublist. This method is only supported on
-     * scripted or staticlist sublists via the UI Object API.
-     * 
-     * @param type The display type for this sublist. Use either of the
-     * following two values:
-     * - hidden
-     * - normal - (default)
-     * 
-     * @since 2008.2
-     */
-    setDisplayType(type?: 'hidden' | 'normal'): void;
-
-    /**
-     * Adds inline help text to this sublist. This method is only supported on 
-     * sublists via the UI Object API.
-     * 
-     * @param help Inline help text used for this sublist
-     * 
-     * @since 2008.2
-     */
-    setHelpText(help: string): void;
-
-    /**
-     * Sets the label for this sublist. This method is only supported on
-     * sublists via the UI Object API.
-     * 
-     * @param label The UI label for this sublist
-     * 
-     * @since 2008.2
-     */
-    setLabel(label: string): void;
-
-    /**
-     * Sets the value of a cell in a sublist field.
-     * 
-     * @param name The internal ID name of the line item field being set
-     * 
-     * @param linenum The line number for this field. Note the first line number
-     * on a sublist is 1 (not 0).
-     * 
-     * @param value The value the field is being set to
-     * 
-     * @since 2008.2
-     */
-    setLineItemValue(name: string, linenum: number, value: string): void;
-
-    /**
-     * Sets values for multiple lines (Array of nlobjSearchResult objects or 
-     * name/value pair Arrays) in a sublist.
-     * 
-     * @param values An Array of Arrays containing name/value pairs containing 
-     * column values for multiple rows -or- an Array of
-     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
-     * objects containing the results of a search with columns matching the 
-     * fields on the sublist. Note that several special fields: recordtype, id, 
-     * and fieldname_display (UI display value for select fields) are 
-     * automatically added for each search result.
-     * 
-     * @since 2008.2
-     */
-    setLineItemValues(values: { string: string }[] | nlobjSearchResult[]): void;
-
-    /**
-     * Use this method to designate that a certain field on a sublist must 
-     * contain a unique value. This method is available on inlineeditor and 
-     * editor sublists only.
-     * 
-     * @param name The internal ID of the sublist field that you want to make 
-     * unique
-     * 
-     * @since 2009.2
-     */
-    setUniqueField(name: string): nlobjField;
-}
 
 /*
    --------------------------------------------------
@@ -5391,6 +4879,1999 @@ declare function nlapiCreateAssistant(
     hideHeader?: boolean
 ): nlobjAssistant;
 
+/**
+ * Primary object used to encapsulate all properties of a scriptable multi-step 
+ * NetSuite assistant. All data and state for an assistant is tracked
+ * automatically throughout the user's session up until completion of the
+ * assistant.
+ * 
+ * For examples showing how to build and run an assistant in your NetSuite
+ * account,
+ * see [Building a NetSuite Assistant with UI Objects](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html).
+ */
+declare interface nlobjAssistant {
+
+    /**
+     * Use this method to add a field to an assistant and return the field 
+     * object.
+     * 
+     * @param name  The internal ID for this field
+     * 
+     * @param type The field type. Any of the following field types can be 
+     * specified:
+     * - text
+     * - email
+     * - radio - See [Working with Radio Buttons](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879)
+     * for details on this field type.
+     * - label - This is a field type that has no values. In 
+     * [Working with Radio Buttons](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879),
+     * see the first code sample that shows how to set this field type.
+     * - phone
+     * - date
+     * - currency
+     * - float
+     * - integer
+     * - checkbox
+     * - select - Note that if you want to add your own (custom) options on a select field, you must set the source parameter to NULL. Then, when a value is specified, the value will populate the options from the source.
+     * - url - See [Create a Form with a URL Field](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N2969820.html)
+     * for an example how to use this type.
+     * - timeofday
+     * - textarea
+     * - multiselect
+     * - image
+     * - inlinehtml
+     * - password
+     * - help
+     * - percent
+     * - longtext
+     * - richtext
+     * 
+     * @param label The UI label for this field
+     * 
+     * @param source  The internalId or scriptId of the source list for this
+     * field if it is a select (List/Record) field. In the NetSuite Help Center,
+     *  see List/Record Type IDs for the internal IDs of all supported 
+     * list/record types.
+     * 
+     * @param group If you are adding the field to a field group, specify the 
+     * internal ID of the field group
+     * 
+     * @since 2009.2
+     */
+    addField(
+        name: string,
+        type:
+            'text' | 'email' | 'radio' | 'label' | 'phone' | 'date' |
+            'currency' | 'float' | 'integer' | 'checkbox' | 'select' | 'url' |
+            'timeofday' | 'textarea' | 'multiselect' | 'image' |
+            'inlinehtml' | 'password' | 'help' | 'percent' | 'longtext' |
+            'richtext',
+        label?: string,
+        source?: string,
+        group?: string
+    ): nlobjField;
+
+    /**
+     * Use this method to add a field group to an assistant page. Note that when
+     * a field group is added to an assistant, by default it is collapsible.
+     * Also, by default, it will appear as uncollapsed when the page loads. If 
+     * you want to change these behaviors, you will use the
+     * [nlobjFieldGroup.setCollapsible(collapsible, hidden)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3143883.html#bridgehead_N3144022)
+     * method.
+     * @param name The internal ID for the field group
+     * @param label The UI label for the field group
+     */
+    addFieldGroup(name: string, label: string): nlobjFieldGroup;
+
+    /**
+     * Use this method to add a step to an assistant.
+     * 
+     * @param name The internal ID for this step (for example, 'entercontacts').
+     * 
+     * @param label The UI label for the step (for example, 'Enter Contacts'). 
+     * By default, the step will appear vertically in the left panel of the 
+     * assistant (see figure).
+     * 
+     * @since 2009.2
+     */
+    addStep(name: string, label: string): nlobjAssistantStep;
+
+    /**
+     * Use this method to add a sublist to an assistant page and return an
+     * [nlobjSubList](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3161033.html)
+     * object. Note that only inlineeditor sublists can be added to assistant
+     * pages.
+     * 
+     * @param name The internal ID for the sublist
+     * 
+     * @param type The sublist type. Currently, only a value of **inlineeditor**
+     * can be set.
+     * 
+     * @param label The UI label for the sublist
+     * 
+     * @since 2009.2
+     */
+    addSubList(name: string, type: string, label: string): nlobjSubList;
+
+    /**
+     * Use this method to get all fields in an assistant. Regardless of which 
+     * page or step the fields have been added to, all fields will be returned. 
+     * Also note that where you call this method matters. If you call 
+     * `getAllFields()` early in your script, and then add ten more fields at 
+     * the end of your script, `getAllFields()` will return only those fields that
+     * were added prior to the call.
+     * 
+     * @returns String[] of all fields in a custom assistant
+     * 
+     * @since 2009.2
+     */
+    getAllFields(): string[];
+
+    /**
+     * Use this method to get all field groups on an assistant page. Also note
+     * that where you call this method matters. If you call
+     * `getAllFieldGroups()` early in your script, and then add three more field
+     * groups at the end of your script, `getAllFieldGroups()` will return only
+     * those field groups that were added prior to the call.
+     * 
+     * @returns String[] of all field groups in the assistant
+     * 
+     * @since 2009.2
+     */
+    getAllFieldGroups(): string[];
+
+    /**
+     * Use this method to return an array of all the assistant steps for this
+     * assistant.
+     * 
+     * @since 2009.2
+     */
+    getAllSteps(): nlobjAssistantStep[];
+
+    /**
+     * Use this method to get all sublist names that appear on an assistant 
+     * page. Also note that where you call this method matters. If you call 
+     * `getAllSubLists()` early in your script, and then add three more sublists
+     * at the end of your script, `getAllSubLists()` will return only those
+     * sublists that were added prior to the call.
+     * 
+     * @returns String[] of all sublists in an assistant
+     * 
+     * @since 2009.2
+     */
+    getAllSubLists(): string[];
+
+    /**
+     * Use this method to get the current step that was set via 
+     * `nlobjAssistant.setCurrentStep(step)`. After getting the current step, 
+     * you can add fields, field groups, and sublists to the step.
+     * 
+     * @since 2009.2
+     */
+    getCurrentStep(): nlobjAssistantStep;
+
+    /**
+     * Use this method to return a field on an assistant page.
+     * 
+     * @param name The internal ID of the field
+     * 
+     * @since 2009.2
+     */
+    getField(name: string): nlobjField;
+
+    /**
+     * Use this method to return a field group on an assistant page.
+     * 
+     * @param name The internal ID for the field group
+     * 
+     * @since 2009.2
+     */
+    getFieldGroup(name: string): nlobjFieldGroup;
+
+    /**
+     * Use this method to get the last submitted action that was performed by
+     * the user. Typically you will use
+     * [getNextStep()](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3131132)
+     * to determine the next step (based on the last action).
+     * 
+     * Possible assistant submit actions that can be specified are:
+     * 
+     * - **next** - means that the user has clicked the Next button in the 
+     * assistant
+     * 
+     * - **back** - means that the user has clicked the Back button
+     * 
+     * - **cancel** - means that the user has clicked the Cancel button
+     * 
+     * - **finish** - means that the user has clicked the Finish button. By
+     * default, inline text then appears on the finish page saying 
+     * “Congratulations! You have completed the <assistant title>” - where 
+     * <assistant title> is the title set in 
+     * [nlapiCreateAssistant(title, hideHeader)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3056901) or 
+     * nlobjAssistant.[setTitle(title)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3133383).
+     * 
+     * - **jump** - if
+     * nlobjAssistant.[setOrdered(ordered)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132764)
+     * has been set to false (meaning that steps can be completed in random
+     * order), then **jump** is used to get the user's last action in a 
+     * non-sequential process.
+     * 
+     * @returns The last submit action (as a string)
+     * 
+     * @since 2009.2
+     */
+    getLastAction(): string;
+
+    /**
+     * Use this method to get the step the last submitted action came from.
+     * 
+     * @since 2009.2
+     */
+    getLastStep(): nlobjAssistantStep;
+
+    /**
+     * Use this method to return the next logical step corresponding to the
+     * user's last submitted action. You should only call this method after you
+     * have successfully captured all the information from the last step and are
+     * ready to move on to the next step. You would use the return value to set
+     * the current step prior to continuing.
+     * 
+     * @returns Returns the next logical step based on the user's last submit
+     * action, assuming there were no errors. Typically you will call
+     * [setCurrentStep(step)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132050)
+     * using the returned step if the submit was successful.
+     * 
+     * @since 2009.2
+     */
+    getNextStep(): nlobjAssistantStep;
+
+    /**
+     * Use this method to return an 
+     * [nlobjAssistantStep](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3137928.html)
+     * object on an assistant page.
+     * 
+     * @param name The internal ID of the step
+     * 
+     * @since 2009.2
+     */
+    getStep(name: string): nlobjAssistantStep;
+
+    /**
+     * Use this method to get the total number of steps in an assistant.
+     * 
+     * @returns The total number of steps in an assistant. Value returned as an
+     * integer.
+     * 
+     * @since 2009.2
+     */
+    getStepCount(): number;
+
+    /**
+     * Use this method to return a sublist on an assistant page.
+     * 
+     * @param name The internal ID for the sublist
+     * 
+     * @since 2009.2
+     */
+    getSubList(name: string): nlobjSubList;
+
+    /**
+     * Use this method to determine if an assistant has an error message to
+     * display for the current step.
+     * 
+     * @returns Returns true if 
+     * [setError(html)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132234)
+     * was called
+     * 
+     * @since 2009.2
+     */
+    hasError(): boolean;
+
+    /**
+     * Use this method to determine when all steps in an assistant are completed.
+     * 
+     * @returns Returns true if all steps in the assistant have been completed 
+     * or if 
+     * [setFinished(html)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3132508)
+     * has been called.
+     */
+    isFinished(): boolean;
+
+    /**
+     * Use this method to manage redirects in an assistant
+     * 
+     * @param response The response object
+     * 
+     * @since 2009.2
+     */
+    sendRedirect(response: nlobjResponse): void;
+
+    /**
+     * Use this method to mark a step as the current step. In the UI, the step
+     * will be highlighted when the user is on that step (see figure).
+     * 
+     * @param step The name of the step object
+     * 
+     * @since 2009.2
+     */
+    setCurrentStep(step: nlobjAssistantStep): void;
+
+    /**
+     * Use this method to set an error message for the current step. If you
+     * choose, you can use HTML tags to format the message.
+     * 
+     * @param html Error message text
+     * 
+     * @since 2009.2
+     */
+    setError(html: string): void;
+
+    /**
+     * Use this method to set values for fields on an assistant page.
+     * 
+     * @param values An associative array containing name/value pairs that map
+     * field names to field values
+     * 
+     * @since 2009.2
+     */
+    setFieldValues(values: { [key: string]: string }): void;
+
+    /**
+     * Use this method to mark the last page in an assistant. Set the rich text
+     * to display a completion message on the last page.
+     * 
+     * @param html The text to display when the assistant has finished. For
+     * example, “Congratulations! You have successfully set up your account.”
+     * 
+     * @since 2009.2
+     */
+    setFinished(html: string): void;
+
+    /**
+     * Use this method to display steps without numbers.
+     * 
+     * @param hasStepNumber Set to false to turn step numbering off
+     * 
+     * @since 2010.1
+     */
+    setNumbered(hasStepNumber?: boolean): void;
+
+    /**
+     * Use this method to enforce a sequential ordering of assistant steps. If 
+     * steps are ordered, users must complete the current step before the 
+     * assistant will allow them to proceed to the next step. From a display 
+     * perspective, ordered steps will always appear in the left panel of the 
+     * assistant (see first figure). Note that by default, steps in an assistant
+     * are ordered.
+     * 
+     * If steps are unordered, they can be completed in any order. Additionally,
+     * unordered steps are always displayed horizontally under the assistant
+     * title (see second figure).
+     * 
+     * @param ordered A value of `true` means steps must be completed 
+     * sequentially, and that they will appear vertically in the left panel of
+     * the assistant. A value of `false` means steps do not need to be completed
+     * sequentially, and they will appear horizontally, directly below the
+     * assistant title.
+     * 
+     * @since 2009.2
+     */
+    setOrdered(ordered: boolean): void;
+
+    /**
+     * Use this method to set the scriptId for a global client script you want
+     * to run on an assistant page.
+     * 
+     * @param script The scriptId of the global client script
+     * 
+     * @since 2009.2
+     */
+    setScript(script: string | number): void;
+
+    /**
+     * Use this method to show/hide the **Add to Shortcuts** link that appears
+     * in the top-right corner of an assistant page. Note that if you do not
+     * call this method in your script, the default is to show the Add to
+     * Shortcuts link at the top of all assistant pages. Therefore, it is
+     * recommended that you use this method only if you want to hide this link.
+     * 
+     * @param show A value of false means that the Add to Shortcuts link does
+     * not appear on the assistant. A value of true means that it will appear.
+     * 
+     * @since 2009.2
+     */
+    setShortcut(show: boolean): void;
+
+    /**
+     * Use this method to set the splash screen for an assistant page.
+     * 
+     * @param title The title of the splash screen
+     * 
+     * @param text1 Text for the splash screen
+     * 
+     * @param text2 If you want splash content to have a two-column appearance, 
+     * provide content in the text2 parameter.
+     * 
+     * @since 2009.2
+     */
+    setSplash(title: string, text1: string, text2?: string): void;
+
+    /**
+     * Use this method to set the title for the assistant. If you have already 
+     * defined the title using 
+     * [nlapiCreateAssistant(title, hideHeader)](), you do not need to call the 
+     * `setTitle(title)` method. Also note that the title you provide using 
+     * `setTitle(title)` will override the title specified in the 
+     * `nlapiCreateAssistant()` function.
+     * 
+     * @param title Assistant title
+     * 
+     * @since 2009.2
+     */
+    setTitle(title: string): void;
+}
+
+/**
+ * Primary object used to encapulate a step within a custom NetSuite assistant.
+ * 
+ * For information on working with nlobjAssistantStep objects, as well as
+ * information on building an assistant using other UI objects, see 
+ * [Building a NetSuite Assistant with UI Objects](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html).
+ */
+declare interface nlobjAssistantStep {
+
+    /**
+     * Use this method to get all fields entered by the user during the step.
+     * 
+     * @returns String[] of all fields entered by the user during the step
+     * 
+     * @since - 2009.2
+     */
+    getAllFields(): string[];
+
+    /**
+     * Use this method to get all sublist fields entered by the user during this step.
+     * 
+     * @param group The sublist internal ID
+     * 
+     * @returns String[] of all sublist fields entered by the user during the 
+     * step
+     * 
+     * @since 2009.2
+     */
+    getAllLineItemFields(group: string): string[];
+
+    /**
+     * Use this method to get all sublists entered by the user during this step.
+     * 
+     * @returns String[] of all sublists entered by the user during this step
+     * 
+     * @since 2009.2
+     */
+    getAllLineItems(): string[];
+
+    /**
+     * Use this method to get the value of a field entered by the user during 
+     * this step.
+     * 
+     * @param name The internal ID of the field whose value is being returned
+     * 
+     * @returns The internal ID (string) value for the field
+     * 
+     * @since 2009.2
+     */
+    getFieldValue(name: string): string;
+
+    /**
+     * Use this method to get the selected values of a multi-select field as an
+     * Array.
+     * 
+     * @param name The name of the multi-select field
+     * 
+     * @returns String[] of field IDs. Returns `null` if field is not on the
+     * record. Note the values returned are **read-only**.
+     * 
+     * @since 2009.2
+     */
+    getFieldValues(name): string[] | null;
+
+    /**
+     * Use the method to get the number of lines previously entered by the user 
+     * in this step.
+     * 
+     * @param group The sublist internal ID
+     * 
+     * @returns The integer value of the number of line items on a sublist. 
+     * Note that -1 is returned if the sublist does not exist.
+     * 
+     * @since 2009.2
+     */
+    getLineItemCount(group: string): number;
+
+    /**
+     * Use this method to get the value of a line item (sublist) field entered 
+     * by the user during this step.
+     * 
+     * @param group The sublist internal ID
+     * 
+     * @param name The name of the sublist field whose value is being returned
+     * 
+     * @param line The line number for this field. Note the first line number 
+     * on a sublist is **1** (not 0).
+     * 
+     * @returns The string value of the sublist field
+     * 
+     * @since 2009.2
+     */
+    getLineItemValue(group: string, name: string, line: number): string;
+
+    /**
+     * Use this method to get a step number. The number returned represents 
+     * where this step appears sequentially in the assistant.
+     * 
+     * @returns The index of this step in the assistant page (1-based)
+     * 
+     * @since 2009.2
+     */
+    getStepNumber(): number;
+
+
+    /**
+     * Use this method to set help text for an assistant step.
+     * 
+     * @param help The help text for the step
+     * 
+     * @since 2009.2
+     */
+    setHelpText(help: string):
+
+        // the return was misspelled
+        // as **nlobjAssistantSte**
+        // and there was no doc link.
+        // I am assuming that they
+        // meant 
+        // **nlobjAssistantStep**
+        nlobjAssistantStep;
+
+    /**
+     * Use this method to set the label for an assistant step. Note that you can
+     * also create a label for a step when the step is first added to the
+     * assistant. Do this using nlobjAssistant
+     * [.addStep(name, label)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3129563).
+     * 
+     * @param label The UI label for this step
+     * 
+     * @since 2009.2
+     */
+    setLabel(label: string): nlobjAssistantStep;
+}
+
+/**
+ * Primary object used to encapsulate custom buttons. Note that custom buttons 
+ * only appear in the UI when the record is in Edit mode. Custom buttons do not 
+ * appear in View mode. Also note that in SuiteScript, buttons are typically 
+ * added to a record or form in **beforeLoad** user event scripts.
+ */
+declare interface nlobjButton {
+
+    /**
+     * Disables the button. When using this API, the assumption is that you have
+     * already defined the button's UI label when you created the button using
+     * nlobjForm
+     * [.addButton(name, label, script)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147271).
+     * The `setDisabled()` method grays-out the button's appearance in the UI.
+     * 
+     * @param disabled If set to true, the button will still appear on the form,
+     * however, the button label will be grayed-out.
+     * 
+     * @since 2008.2
+     */
+    setDisabled(disabled: boolean): nlobjButton;
+
+    /**
+     * Sets the UI label for the button. When using this API, the assumption is 
+     * that you have already defined the button's UI label when you created the
+     * button using nlobjForm
+     * [.addButton(name, label, script)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147271).
+     * You can set `setLabel()` to trigger based on the execution context. For
+     * example, based on the user viewing a page, you can use `setLabel()` to
+     * re-label a button's UI label so that the label is meaningful to that
+     * particular user.
+     * 
+     * This API is supported on standard NetSuite buttons as well as on custom
+     * buttons. For a list of standard buttons that support this API, see
+     * [Button IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param label The UI label for the custom button
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): nlobjButton;
+
+    /**
+     * Sets the button as hidden in the UI. This API is supported on custom
+     * buttons and on some standard NetSuite buttons. For a list of standard
+     * buttons that support this API, see 
+     * [Button IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param visible Defaults to true if not set. If set to false,
+     * the button will be hidden in the UI.
+     * 
+     * @since 2010.2
+     */
+    setVisible(visible?: boolean): nlobjButton;
+}
+
+/**
+ * Primary object used to encapsulate list columns. To add a column, you must
+ * first create a custom list using 
+ * [nlapiCreateList(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057216),
+ * which returns an
+ * [nlobjList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html)
+ * object.
+ * 
+ * After the list object is instantiated, you can add a standard column using 
+ * the nlobjList.
+ * [addColumn(name, type, label, align)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html#bridgehead_N3153672)
+ * method.
+ * 
+ * You can also add an “Edit | View” column using the nlobjList.
+ * [addEditColumn(column, showView, showHrefCol)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html#bridgehead_N3153855)
+ * method. Both methods return an `nlobjColumn` object.
+ */
+declare interface nlobjColumn {
+
+    /**
+     * Adds a URL parameter (optionally defined per row) to this column's URL.
+     * Should only be called after calling
+     * [setURL(url, dynamic)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html#bridgehead_N3140260)
+     * 
+     * @param param The parameter name added to the URL
+     * 
+     * @param value The parameter value added to the URL - or - a column in the 
+     * data source that returns the parameter value for each row
+     * 
+     * @param dynamic If true, then the parameter value is actually an alias 
+     * that is calculated per row
+     * 
+     * @since 2008.2
+     */
+    addParamToURL(param: string, value: string, dynamic?: boolean): void;
+
+    /**
+     * The UI label used for this column
+     * 
+     * @param label Sets the UI label for this column
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): void;
+
+    /**
+     * Sets the base URL (optionally defined per row) for this column
+     * 
+     * @param url The base URL or a column in the data source that returns the 
+     * base URL for each row
+     * 
+     * @param dynamic If true, then the URL is actually an alias that is 
+     * calculated per row
+     * 
+     * @since 2008.2
+     */
+    setURL(url: string, dynamic?: boolean): void;
+}
+
+/**
+ * Primary object used to encapsulate a NetSuite field.
+ * 
+ * @link [to docs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+ */
+declare interface nlobjField {
+
+    /**
+     * Adds a select option to a SELECT field
+     * 
+     * @param value The internal ID of this select option
+     * 
+     * @param text The UI label for this option
+     * 
+     * @param selected If true, then this option is selected by default
+     * 
+     * @since 2008.2
+     */
+    addSelectOption(value: string, text: string, selected?: boolean): void;
+
+    /**
+     * Returns field UI label
+     * 
+     * @returns String value of the field's UI label
+     * 
+     * @since 2009.1
+     */
+    getLabel(): string;
+
+    /**
+     * Returns the field internal ID
+     * 
+     * @returns String value of a field's internal ID
+     * 
+     * @since 2009.1
+     */
+    getName(): string;
+
+    /**
+     * Use this API to obtain a list of available options on a select field. 
+     * This API can be used on both standard and custom select fields. 
+     * Only the first 1,000 available options will be returned by this API.
+     *
+     * This method can only be used in server contexts against a record object. 
+     * Also note that a call to this method may return different results for the
+     *  same field for different roles.
+     *
+     * If you attempt to get select options on a field that is not a select 
+     * field, or if you reference a field that does not exist on the form, null 
+     * is returned.
+     * 
+     * @param filter A search string to filter the select options that are 
+     * returned. For example, if there are 50 select options available, and 10 
+     * of the options contains 'John', e.g. “John Smith” or “Shauna Johnson”, 
+     * only those 10 options will be returned.
+     * 
+     * @param filteroperator Supported operators are **contains** | **is** | 
+     * **startswith**. If not specified, defaults to the **contains** operator.
+     * 
+     * @returns An array of 
+     * [nlobjSelectOption](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3126295.html)
+     * objects. These objects represent the key-value pairs representing a 
+     * select option (for example: **87, Abe Simpson** ).
+     * 
+     * @since 2009.1
+     */
+    getSelectOptions(
+        filter?: string,
+        filteroperator?: string
+    ): nlobjSelectOption[];
+
+    /**
+     * Returns the field type - for example, text, date, currency, select, 
+     * checkbox, etc.
+     * 
+     * @returns String value of field's SuiteScript type
+     * 
+     * @since 2009.1
+     */
+    getType(): string;
+
+    /**
+     * Sets the alias used to set the value for this field. By default the alias
+     *  is equal to the field's name. The method is only supported on scripted 
+     * fields via the UI Object API.
+     * 
+     * @param alias The value used to override the alias
+     * 
+     * @since 2008.2
+     */
+    setAlias(alias: string): nlobjField;
+
+    /**
+     * Use this method to set the layout type for a field and optionally the 
+     * break type. This method is only supported on scripted fields that have 
+     * been created using the UI Object API.
+     * 
+     * @param breaktype The break type used to add a break in flow layout for 
+     * this field. Available types are:
+     * - startcol - This starts a new column (also disables automatic field 
+     * balancing if set for any field)
+     * - startrow - For outside fields, this places the field on a new row. The 
+     * startrow breaktype 
+     * is only used for fields with a layout type of outside. 
+     * See [setLayoutType(type, breaktype)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3143169).
+     * - none - (default)
+     * 
+     * @since 2009.2
+     */
+    setBreakType(breaktype: 'startcol' | 'startrow' | 'none'): nlobjField;
+
+    /**
+     * Sets the default value for this field. This method is only supported on 
+     * scripted fields via the UI object API.
+     * 
+     * @param value The default value for this field. Note that if you pass an 
+     * empty string, the field will default to a blank field in the UI.
+     * 
+     * @since 2008.2
+     */
+    setDefaultValue(value: string): nlobjField;
+
+    /**
+     * Sets the height and width for the field. Only supported on multi-selects,
+     *  long text, rich text, and fields that get rendered as INPUT (type=text) 
+     * fields. This API is not supported on list/record fields. This method is 
+     * only supported on scripted fields via the UI object API.
+     * 
+     * @param width The width of the field (cols for textarea, characters for 
+     * all others)
+     * 
+     * @param height The height of the field (rows for textarea and multiselect 
+     * fields)
+     * 
+     * @since 2008.2
+     */
+    setDisplaySize(width: number, height: number): nlobjField;
+
+    /**
+     * Sets the display type for this field.
+     *
+     * Be aware that this method cannot be used in **client** scripts. 
+     * In other words, if you use 
+     * [nlapiGetField(fldnam)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3039111.html#bridgehead_N3039511)
+     * in a client script to return a 
+     * field object that has been added to a form, you cannot use setDisplayType
+     *  to set the field's display type. The nlobjField object returned from 
+     * nlapiGetField(fldnam) is **read-only**.
+     * 
+     * @param type The display type for this field. 
+     * 
+     * Allowed display types:
+     * - inline - This makes the field display as inline text
+     * - hidden - This hides the field on the form.
+     * - readonly - This disables the field but it is still selectable and 
+     * scrollable (for textarea fields)
+     * - entry - This makes the sublist field appear as a data entry input field
+     *  (for non checkbox, select fields)
+     * - disabled - This disables the field from user-changes
+     * - normal - (default) This makes the field appear as a normal input field 
+     * (for non-sublist fields)
+     * 
+     * @since 2008.2
+     */
+    setDisplayType(
+        type: 'inline' | 'hidden' | 'readonly' | 'entry' | 'disabled' | 'normal'
+    ): nlobjField;
+
+
+    /**
+     * Use this method to set help text for this field.
+     * 
+     * @param help Help text for the field. When the field label is clicked,
+     * a field help popup will open to display the help text.
+     * 
+     * @param inline If not set, defaults to false. 
+     * This means that field help will appear only in a field help popup box 
+     * when the field label is clicked. 
+     * If set to true, field help will display in a field help popup box, as 
+     * well as inline below the field.
+     * 
+     * @since 2009.2
+     */
+    setHelpText(help: string, inline?: boolean): nlobjField;
+
+    /**
+     * Sets the UI label for this field. The method is available only on 
+     * scripted fields via the UI object API.
+     * 
+     * @param label The UI label used for this field
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): nlobjField;
+
+    /**
+     * Sets the display type for this field and optionally the break type. This 
+     * method is only supported on scripted fields via the UI Object API.
+     * 
+     * @param type The layout type for this field. Use any of the following 
+     * layout types:
+     * 
+     * - outside - This makes the field appear outside (above or below based on 
+     * form default) the normal field layout area
+     * - outsidebelow - This makes the field appear below the normal field 
+     * layout area
+     * - outsideabove - This makes the field appear above the normal field 
+     * layout area
+     * - startrow - This makes the field appear first in a horizontally aligned 
+     * field group in normal field layout flow
+     * - midrow - This makes the field appear in the middle of a horizonatally 
+     * aligned field group in normal field layout flow
+     * - endrow - This makes the field appear last in a horizonatally aligned 
+     * field group in normal field layout flow
+     * - normal - (default)
+     * 
+     * @param breaktype The layout break type. Use any of the following break 
+     * types:
+     * - startcol - This starts a new column (also disables automatic field 
+     * balancing if set for any field)
+     * - startrow - For outside fields, this places the field on a new row
+     * - none - (default)
+     * 
+     * @since 2008.2
+     */
+    setLayoutType(
+        type:
+            'outside' | 'outsidebelow' | 'outsideabove' | 'startrow' |
+            'midrow' | 'endrow' | 'normal',
+        breaktype:
+            'startcol' | 'startrow' | 'none'
+    ): nlobjField;
+
+    /**
+     * Sets the text that gets displayed in lieu of the field value for URL 
+     * fields.
+     * 
+     * @param text The displayed value (in lieu of URL)
+     * 
+     * @since 2008.2
+     */
+    setLinkText(text: string): nlobjField;
+
+    /**
+     * Sets the field to mandatory. The method is only supported on scripted 
+     * fields via the UI Object API.
+     * 
+     * @param mandatory If true, then the field will be defined as mandatory
+     * 
+     * @since 2008.2
+     */
+    setMandatory(mandatory: boolean): nlobjField;
+
+    /**
+     * Sets the max length for this field (only valid for text, rich text, 
+     * long text, and textarea fields). This method is only supported on 
+     * scripted fields via the UI Object API.
+     * 
+     * @param maxlength The max length for this field
+     * 
+     * @since 2008.2
+     */
+    setMaxLength(maxlength: number): nlobjField;
+
+    /**
+     * Sets the number of empty field spaces before/above this field. 
+     * This method is only supported on scripted fields via the UI Object API.
+     * 
+     * @param padding The number of empty vertical spaces (rows) before this field
+     * 
+     * @since 2008.2
+     */
+    setPadding(padding: string): nlobjField;
+
+    /**
+     * If **Rich Text Editing** is enabled, you can use this method to set the 
+     * height of the rich text field only. You can set a separate height for the
+     * text area using 
+     * [setDisplaySize(width, height)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3141934).
+     * When setting the height, the minimum value is 100 pixels and the maximum 
+     * value is 500 pixels.
+     * 
+     * For information on enabling the Rich Text Editor, 
+     * see [Setting Preferences for Appearance](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3141934).
+     * 
+     * @param height The height of the field (pixels).
+     * 
+     * @since 2015.1
+     */
+    setRichTextHeight(height?: number): nlobjField;
+
+    /**
+     * If Rich Text Editing is enabled, you can use this method to set the width
+     *  of the rich text field only. You can set a separate width of the text 
+     * area using 
+     * [setDisplaySize(width, height)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html#bridgehead_N3141934). 
+     * When setting the width, the minimum value is 250 pixels and the maximum 
+     * value is 800 pixels.
+     *
+     * For information on enabling the Rich Text Editor, 
+     * see [Setting Preferences for Appearance](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N479574.html)
+     * 
+     * @param width The width of the field (pixels).
+     * 
+     * @since 2015.1
+     */
+    setRichTextWidth(width?: number): nlobjField;
+}
+
+/**
+ * Primary object used to encapsulate a field group on a custom NetSuite 
+ * assistant page and on nlobjForm objects.
+ * 
+ * You can create an assistant by calling 
+ * [nlapiCreateAssistant(title, hideHeader)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3056901), 
+ * which returns a reference to the 
+ * [nlobjAssistant](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html)
+ * object. On the assistantobject, call addFieldGroup to instantiate a new
+ * nlobjFieldGroup object.
+ * 
+ * To learn more about field groups, see
+ * [Building a NetSuite Assistant](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html)
+ * with UI Objects.
+ */
+declare interface nlobjFieldGroup {
+
+    /**
+     * Use this method to define whether a field group can be collapsed. You can
+     * also use this method to define if the field group will display as
+     * collapsed or expanded when the page first loads.
+     * 
+     * @param collapsible A value of true means that the field group can be
+     * collapsed. A value of false means that the field group cannot be
+     * collapsed - the field group displays as a static group that cannot be
+     * opened or closed.
+     * 
+     * @param hidden If not set, defaults to false. This means that when the
+     * page loads, the field group will not appear collapsed. Note: If you set 
+     * the collapsible parameter to false (meaning the field group is not
+     * collapsible), then any value you specify for hidden will be ignored.
+     * 
+     * @returns 2009.2
+     */
+    setCollapsible(collapsible: boolean, hidden?: boolean): nlobjFieldGroup;
+
+    /**
+     * Use this method to create a UI label for a field group.
+     * 
+     * @param label The UI label for the field group
+     * 
+     * @since 2009.2
+     */
+    setLabel(label: string): nlobjFieldGroup;
+
+    /**
+     * Use this method to conditionally show or hide the border of a field 
+     * group. A field group border consists of the field group title and the 
+     * gray line that frames the group by default.
+     * 
+     * @param show Set to true to show a field group border. Set to false to 
+     * hide the border.
+     * 
+     * @since 2011.1
+     */
+    setShowBorder(show: boolean): void;
+
+    /**
+     * Use this method to determine how your field group is aligned. You can 
+     * choose to align it into a single column or allow NetSuite to auto-align 
+     * it.
+     * 
+     * @param column Set to true to place all fields in the field group into a 
+     * single column. Set to false to allow NetSuite to auto-align your field 
+     * group fields into one, two, or three columns, depending on the number of 
+     * fields and the width of your screen.
+     */
+    setSingleColumn(column: boolean): void;
+}
+
+/**
+ * Primary object used to encapsulate a NetSuite-looking form. Note that the 
+ * [nlapiCreateForm(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076)
+ * function returns a reference to this object.
+ */
+declare interface nlobjForm {
+
+    /**
+     * Adds a button to a form
+     * 
+     * @param name The internal ID name of the button. The internal ID must be
+     * in lowercase, contain no spaces, and include the prefix custpage if you
+     * are adding the button to an existing page. For example, if you add a
+     * button that appears as **Update Order**, the button internal ID should be
+     * something similar to **custpage_updateorder**.
+     * 
+     * @param label The UI label used for this button
+     * 
+     * @param script The onclick script used for this button
+     * 
+     * @since 2008.2
+     */
+    addButton(name: string, label: string, script?: string): nlobjButton;
+
+    /**
+     * Adds a field that lets you store credentials in NetSuite to be used when
+     * invoking services provided by third parties. For example, merchants need 
+     * to store credentials in NetSuite used to communicate with Payment Gateway
+     * providers when executing credit card transactions.
+     * 
+     * This method is supported in client and server scripts.
+     * 
+     * Additional things to note about this method:
+     * 
+     * - Credentials associated with this field are stored in encrypted form.
+     * 
+     * - No piece of SuiteScript holds a credential in clear text mode.
+     * 
+     * - NetSuite reports or forms will never provide to the end user the clear 
+     * text form of a credential.
+     * 
+     * - Any exchange of the clear text version of a credential with a third
+     * party must occur over SSL.
+     * 
+     * For no reason will NetSuite ever log the clear text value of a credential
+     * (for example, errors, debug message, alerts, system notes, and so on).
+     * 
+     * @param id The internal ID of the credential field.
+     * 
+     * @param label The UI label for the credential field.
+     * 
+     * @param website The domain the credentials can be sent to. For example,
+     * 'www.mysite.com'. This value can also be an array of strings representing
+     * a list of domains to which the credentials can be sent using
+     * `nlapiRequestUrlWithCredentials`. Note that although no exception is
+     * thrown if this parameter value is not passed,
+     * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544)
+     * will not work without it.
+     * 
+     * @param scriptId The scriptId of the script that is allowed to use this
+     * credential field. For example, 'customscript_my_script'. Note that
+     * although no exception is thrown if this parameter value is not passed,
+     * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544)
+     * will not work without it.
+     * 
+     * @param value If you choose, you can set an initial value for this field. This value is the handle to the credentials. If you do not want to set a value, you must pass in a null value or empty string.
+     * 
+     * @param entityMatch Controls whether use of 
+     * `nlapiRequestUrlWithCredentials` with this credential is restricted to 
+     * the same entity that originally entered the credential. An example where 
+     * you would not want this (you would set to false ) is with a credit card 
+     * processor, where the credential represents the company an employee is 
+     * working for and multiple entities will be expected to make secure calls 
+     * out to the processor (clerks, for example). An example where you might 
+     * want to set entityMatch to true is when each user of the remote call has 
+     * his or her own credentials.
+     * 
+     * @param tab The tab parameter can be used to specify either a tab or a 
+     * field group (if you have added nlobjFieldGroup objects to your form). If 
+     * tab is empty, then the field is added to the “main” section of the form.
+     * 
+     * @since 2012.1
+     */
+    addCredentialField(
+        id: string,
+        label: string,
+        website?: string,
+        scriptId?: string,
+        value?: string,
+        entityMatch?: boolean,
+        tab?: string
+    ): nlobjField;
+
+    /**
+     * Adds an 
+     * [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+     * object to a form and returns a reference to it
+     * 
+     * @param name The internal ID name of the field. The internal ID must be in
+     * lowercase, contain no spaces, and include the prefix custpage if you are
+     * adding the field to an existing page. For example, if you add a field
+     * that appears as Purchase Details, the field internal ID should be
+     * something similar to `custpage_purchasedetails` or 
+     * `custpage_purchase_details`.
+     * 
+     * @param type The field type for this field. Use any of the following
+     * enumerated field types:
+     * 
+     * - text
+     * 
+     * - radio - See
+     * [Working with Radio Buttons](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879)
+     * for details on adding this field type.
+     * 
+     * - label - This is a field type that has no values. It is used for placing
+     * a label next to another field. In
+     * [Working with Radio Buttons](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879),
+     * see the first code sample that shows how to set this field type and how
+     * it will render in the UI.
+     * 
+     * - email
+     * 
+     * - phone
+     * 
+     * - date
+     * 
+     * - datetimetz - This field type lets you combine date and time values in
+     * one field. For example, you may want a single field to contain date and
+     * time “timestamp” data. After a user enters a date/time value, the data is
+     * rendered in the user's preferred date and time format, as well as the
+     * user's time zone. Also note that time values are stored in NetSuite down
+     * to the second.
+     * 
+     * - currency
+     * 
+     * - float
+     * 
+     * - integer
+     * 
+     * - checkbox
+     * 
+     * - select
+     * 
+     * - url - See 
+     * [Create a Form with a URL Field](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2969820.html)
+     * for an example how to use this type.
+     * 
+     * - timeofday
+     * 
+     * - textarea
+     * 
+     * - multiselect
+     * 
+     * - image - This field type is available **only** for fields appearing on
+     * list/staticlist sublists. You cannot specify an image field on a form.
+     * 
+     * - inlinehtml
+     * 
+     * - password
+     * 
+     * - help
+     * 
+     * - percent
+     * 
+     * - longtext
+     * 
+     * Important Long text fields created with SuiteScript have a character
+     * limit of 100,000. Long text fields created with Suitebuilder have a
+     * character limit of 1,000,000.  
+     * 
+     * - richtext
+     * 
+     * - file - This field type is available only for Suitelets and will appear
+     * on the main tab of the Suitelet page. Setting the field type to **file** 
+     * adds a file upload widget to the page and changes the form encoding type
+     * for the form to multipart/form-data. See
+     * [Uploading Files to the File Cabinet Using SuiteScript](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html#bridgehead_N3089140)
+     * for an example of creating a **file** field type, and then later
+     * retrieving this file using the nlobjRequest.
+     * [getFile(id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3106730.html#bridgehead_N3107266)
+     * method.
+     * 
+     * @param label The UI label for this field (this is the value displayed for
+     * help fields)
+     * 
+     * @param sourceOrRadio The internalId or scriptId of the source list for
+     * this field if it is a select (List/Record) or multi-select field. See
+     * [List/Record Type IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
+     * for the internal IDs of all supported list/record types.
+     * 
+     * @param tab The tab parameter can be used to specify either a tab or a 
+     * field group (if you have added nlobjFieldGroup objects to your form). If
+     * tab is empty, then the field is added to the “main” section of the form.
+     * 
+     * @since 2008.2
+     */
+    addField(
+        name: string,
+        type: 'text' | 'radio' | 'label' | 'email' | 'phone' | 'date' |
+            'datetimetz' | 'currency' | 'float' | 'integer' | 'checkbox' |
+            'select' | 'url' | 'timeofday' | 'textarea' | 'multiselect' |
+            'image' | 'inlinehtml' | 'password' | 'help' | 'percent' |
+            'longtext' | 'file',
+        label?: string,
+        sourceOrRadio?: number | string,
+        tab?: string
+    ): nlobjField;
+
+    /**
+     * Adds a field group to the form.
+     * 
+     * @param name Provide an internal ID for the field group.
+     * 
+     * @param label  The UI label for the field group
+     * 
+     * @param tab Specify the tab you the field group to appear on. If no tab is
+     * specified, the field group is placed on the “main” area of the form.
+     * 
+     * @since 2011.1
+     */
+    addFieldGroup(name: string, label: string, tab: string): nlobjFieldGroup;
+
+    /**
+     * Adds a navigation cross-link to the form
+     * 
+     * @param type The type of navbar link to add. Possible values include:
+     * 
+     * - breadcrumb - appears on top left corner after system bread crumbs
+     * 
+     * - crosslink - appears on top right corner
+     * 
+     * @param title The text displayed in the link
+     * 
+     * @param url The URL used for this link
+     * 
+     * @since 2008.2
+     */
+    addPageLink(
+        type: 'breadcrumb' | 'crosslink',
+        title: string,
+        url: string
+    ): void;
+
+    /**
+     * Adds a reset button to a form
+     * 
+     * @param label The UI label used for this button. If no label is provided,
+     * the label defaults to **Reset**.
+     * 
+     * @since 2008.2
+     */
+    addResetButton(label?: string): nlobjButton;
+
+    /**
+     * Adds an nlobjSubList object to a form and returns a reference to it. Note
+     * that sorting (in the UI) is not supported on static sublists created
+     * using the `addSubList()` method if the row count exceeds 25.
+     * 
+     * @param name The internal ID name of the sublist. The internal ID must be
+     * in lowercase, contain no spaces, and include the prefix `custpage` if you
+     * are adding the sublist to an existing page. For example, if you add a
+     * sublist that appears on the UI as Purchase Details, the sublist internal
+     * ID should be something equivalent to `custpage_purchasedetails` or
+     * `custpage_purchase_details`.
+     * 
+     * @param type The sublist type. Use any of the following types:
+     * 
+     * - `editor` - An edit sublist with non-inline form fields (similar to the Address sublist)
+     * 
+     * - `inlineeditor` - An edit sublist with inline fields (similar to the Item sublist)
+     * 
+     * - `list` - A list sublist with editable fields (similar to the Billable Items sublist)
+     * 
+     * - `staticlist` - A read-only segmentable list sublist (similar to the search results sublist)
+     * 
+     * @param label The UI label for this sublist
+     * @param tab The tab under which to display this sublist. If empty, the
+     * sublist is added to the main tab.
+     */
+    addSubList(
+        name: string,
+        type: 'editor' | 'inlineeditor' | 'list' | 'staticlist',
+        label: string,
+        tab?: string
+    ): nlobjSubList;
+
+    /**
+     * Adds a submit button to a form
+     * 
+     * @param label The UI label for this button. If no label is provided, the
+     * label defaults to Save.
+     * 
+     * @since 2008.2
+     */
+    addSubmitButton(label?: string): nlobjButton;
+
+    /**
+     * Adds a subtab to a form and returns an nlobjTab object reference to it.
+     * 
+     * @param name The internal ID name of the subtab. The internal ID must be 
+     * in lowercase, contain no spaces, and include the prefix `custpage` if you
+     * are adding the subtab to an existing page. For example, if you add a
+     * subtab that appears on the UI as **Purchase Details**, the subtab
+     * internal ID should be something similar to `custpage_purchasedetails` or 
+     * `custpage_purchase_details`.
+     * 
+     * @param label The UI label of the subtab
+     * 
+     * @param tab The tab under which to display this subtab. If empty, it is
+     * added to the main tab.
+     * 
+     * @since 2008.2
+     */
+    addSubTab(name: string, label: string, tab?: string): nlobjTab;
+
+    /**
+     * Adds a tab to a form and returns an nlobjTab object reference to the tab
+     * 
+     * @param name The internal ID name of the tab. The internal ID must be in
+     * lowercase, contain no spaces, and include the prefix `custpage` if you 
+     * are adding the tab to an existing page. For example, if you add a tab 
+     * that appears on the UI as **Purchase Details**, the tab internal ID
+     * should be something equivalent to `custpage_purchasedetails` or 
+     * `custpage_purchase_details`.
+     * 
+     * @param label The UI label of the tab
+     * 
+     * @since 2008.2
+     */
+    addTab(name: string, label: string): nlobjTab;
+
+    /**
+     * Returns an 
+     * [nlobjButton](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139249.html)
+     * object by name
+     * 
+     * @param name The internal ID of the button. Internal IDs must be in 
+     * lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getButton(name: string): nlobjButton;
+
+    /**
+     * Returns an nlobjField object by name
+     * 
+     * @param name The internal ID name of the field. Internal ID names must be
+     * in lowercase and contain no spaces.
+     * 
+     * @param radio If this is a radio field, specify which radio field to return
+     * based on the radio value.
+     */
+    getField(name: string, radio?: string): nlobjField;
+
+    /**
+     * Returns an nlobjSubList object by name
+     * 
+     * @param name The internal ID name of the sublist. Internal ID names must 
+     * be in lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getSubList(name: string): nlobjSubList;
+
+    /**
+     * Returns an 
+     * [nlobjTab](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163084.html)
+     * object by name
+     * 
+     * @param name The internal ID name of the tab. Internal ID names must be in
+     * lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getSubTab(name: string): nlobjTab;
+
+    /**
+     * Returns an nlobjTab object by name
+     * 
+     * @param name The internal ID name of the tab. Internal ID names must be in
+     * lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    getTab(name: string): nlobjTab;
+
+    /**
+     * Returns an array of nlobjTab objects containing all the tabs in a form.
+     * 
+     * @since 2012.2
+     */
+    getTabs(): nlobjTab[];
+
+    /**
+     * Inserts a field (nlobjField) in front of another field and returns a
+     * reference to it
+     * 
+     * @param field [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
+     * object to insert
+     * 
+     * @param nextfld The name of the field you are inserting in front of
+     * 
+     * @since 2008.2
+     */
+    insertField(field: nlobjField, nextfld: string): nlobjField;
+
+    /**
+     * Inserts a sublist (nlobjSubList) in front of another sublist/subtab and
+     * returns a reference to it
+     * 
+     * @param sublist [nlobjSubList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3161033.html)
+     * object to insert
+     * 
+     * @param nextsub The internal ID name of the sublist/subtab you are
+     * inserting in front of
+     * 
+     * @since 2008.2
+     */
+    insertSubList(sublist: nlobjSubList, nextsub: string): nlobjSubList;
+
+    /**
+     * Inserts a subtab (nlobjTab) in front of another sublist/subtab and
+     * returns a reference to it
+     * 
+     * @param subtab The internal ID name of the subtab. Internal ID names must 
+     * be in lowercase and contain no spaces.
+     * 
+     * @param nextsub The name of the sublist/subtab you are inserting in front 
+     * of
+     * 
+     * @since 2008.2
+     */
+    insertSubTab(subtab: string, nextsub: string): nlobjTab;
+
+    /**
+     * Inserts a tab (nlobjTab) in front of another tab and returns a reference 
+     * to it
+     * @param tab [nlobjTab](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163084.html)
+     * object to insert
+     * 
+     * @param nexttab The tab name for the tab you are inserting in front of
+     * 
+     * @since 2008.2
+     */
+    insertTab(tab: nlobjTab, nexttab: string): nlobjTab;
+
+    /**
+     * Removes an 
+     * [nlobjButton](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139249.html)
+     * object. This method can be used on custom buttons and certain built-in
+     * NetSuite buttons. For a list of built-in buttons that support this 
+     * method, see the list of buttons in the section 
+     * [Button IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
+     * in the NetSuite Help Center.
+     * 
+     * @param name The internal ID of the button to be removed. Internal IDs 
+     * must be in lowercase and contain no spaces.
+     * 
+     * @since 2008.2
+     */
+    removeButton(name: string): void;
+
+    /**
+     * Sets the values of multiple fields on the current form. This API can be 
+     * used in beforeLoad scripts to initialize field scripts on new records or 
+     * non-stored fields. (See User 
+     * [Event beforeLoad Operations](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2962434.html#bridgehead_N2962507)
+     * in the NetSuite Help Center for information on beforeLoad user event
+     * triggers.)
+     * 
+     * @param values An associative array containing name/value pairs, which
+     * maps field names to field values
+     * 
+     * @since 2008.2
+     */
+    setFieldValues(values: { [key: string]: string }): void;
+
+    /**
+     * Sets the Client SuiteScript file used for this form
+     * 
+     * @param script The scriptId or internal ID for the global client script
+     * used to enable Client SuiteScript on this form
+     * 
+     * @since 2008.2
+     */
+    setScript(script: number | string): void;
+
+    /**
+     * Sets the title for this form
+     * 
+     * @param title The title used for this form
+     * 
+     * @since 2008.2
+     */
+    setTitle(title: string): void;
+}
+
+/**
+ * Primary object used to encapsulate a list page. Note that the
+ * [nlapiCreateList(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057216)
+ * function returns a reference to this object.
+ */
+declare interface nlobjList {
+
+    /**
+     * Adds an nlobjButton object to the footer of the page
+     * 
+     * @param name The internal ID name of the button. Internal ID names must be
+     * in lowercase and contain no spaces. For example, if you add a button that
+     * appears on the UI as Update Order, the internal ID should be something
+     * equivalent to updateorder.
+     * 
+     * @param label The UI label used for this button
+     * 
+     * @param script The onclick button script function name
+     * 
+     * @since 2008.2
+     */
+    addButton(name: string, label: string, script?: string): void;
+
+    /**
+     * Adds an
+     * [nlobjColumn](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html)
+     * object to a list and returns a reference to this column
+     * 
+     * @param name The internal ID name of this column. Note that internal ID
+     * names must be in lowercase and contain no spaces.
+     * 
+     * @param type The field type for this column. Use any of the following
+     * field types:
+     * 
+     * - text
+     * 
+     * - email
+     * 
+     * - phone
+     * 
+     * - date
+     * 
+     * - currency
+     * 
+     * - float
+     * 
+     * - integer
+     * 
+     * - select
+     * 
+     * - url
+     * 
+     * - timeofday
+     * 
+     * - textarea
+     * 
+     * - percent
+     * 
+     * - inlinehtml
+     * 
+     * @param label The UI label for this column
+     * @param align The layout justification for this column. Possible values include:
+     * 
+     * - center
+     * 
+     * - right
+     * 
+     * - left (default)
+     * 
+     * @since 2008.2
+     */
+    addColumn(
+        name: string,
+        type:
+            'text' | 'email' | 'phone' | 'date' | 'currency' | 'float' |
+            'integer' | 'select' | 'url' | 'timeofday' | 'textarea' |
+            'percent' | 'inlinehtml',
+        label: string,
+        align?: 'center' | 'left' | 'right'
+    ): nlobjColumn;
+
+
+    /**
+     * Adds an Edit or Edit/View column to Portlets (created with the
+     * [nlobjPortlet]()
+     * object) and Suitelet and Portlet lists (created with the
+     * [nlobjList]()
+     * object). Note that the Edit or Edit/View column will be added to the left
+     * of a previously existing column.
+     * 
+     * @param column An 
+     * [nlobjColumn]()
+     * object to the left of which the Edit/View column will be added
+     * 
+     * @param showView If true then an Edit/View column will be added. Otherwise
+     * only an Edit column will be added.
+     * 
+     * @param showHrefCol If set, this value must be included in row data 
+     * provided for the list and will be used to determine whether the URL for
+     * this link is clickable (specify T for clickable, F for non-clickable)
+     * 
+     * @since 2008.1
+     */
+    addEditColumn(
+        column: nlobjColumn,
+        showView?: boolean,
+        showHrefCol?: boolean
+    ): nlobjColumn;
+
+    /**
+     * Adds a navigation cross-link to the list page
+     * 
+     * @param type The type of navbar link to add. Use any of the following 
+     * types:
+     * 
+     * - breadcrumb - appears on top-left corner after system bread crumbs
+     * 
+     * - crosslink - appears on top-right corner
+     * 
+     * @param title The UI text displayed in the link
+     * 
+     * @param url The URL used for this link
+     * 
+     * @since 2008.2
+     */
+    addPageLink(type: string, title: string, url: string): void;
+
+    /**
+     * Adds a row (Array of name/value pairs or nlobjSearchResult) to this
+     * portlet.
+     * 
+     * @param row An Array of rows containing name/value pairs containing the 
+     * values for corresponding 
+     * [nlobjColumn](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html)
+     * objects in this list -or- an 
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html).
+     * Note that several special fields: recordtype, id, and fieldname_display
+     * (UI display value for select fields) are automatically added for each
+     * search result.
+     * 
+     * @since 2008.2
+     */
+    addRow(row: nlobjSearchResult | { [key: string]: string }): void;
+
+    /**
+     * Adds multiple rows (Array of nlobjSearchResult objects or name/value pair
+     * Arrays) to a portlet.
+     * 
+     * @param rows An Array of Arrays containing name/value pairs containing
+     * column values for multiple rows -or- an Array of 
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+     * objects containing the results of a search with columns matching the
+     * columns on the list.
+     */
+    addRows(rows: nlobjSearchResult[] | { [key: string]: string }[]): void;
+
+    /**
+     * Sets the Client SuiteScript used for this page.
+     * 
+     * @param script scriptId or internal ID for global client script used to
+     * enable Client SuiteScript on page
+     * 
+     * @since 2008.2
+     */
+    setScript(script: string | number): void;
+
+    /**
+     * Sets the display style for this list
+     * @param style The display style value. Use any of the following styles:
+     * 
+     * - grid
+     * 
+     * - report
+     * 
+     * - plain
+     * 
+     * - normal
+     */
+    setStyle(style: 'grid' | 'report' | 'plain' | 'normal'): void;
+
+    /**
+     * Sets the title for this list
+     * 
+     * @param title The title for a list
+     * 
+     * @since 2008.2
+     */
+    setTitle(title: string): void;
+}
+
+// PORTLET
+
+/**
+ * Primary object used to encapsulate a NetSuite sublist. This object is 
+ * **read-only** except for instances created via the UI Object API using
+ * Suitelets or beforeLoad user event scripts.
+ * 
+ * To add a sublist, you must first create a custom form using
+ * [nlapiCreateForm(title, hideNavbar)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
+ * which returns an 
+ * [nlobjForm](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object.
+ * 
+ * After the form object is instantiated, you can add a new sublist to the form
+ * using the nlobjForm
+ * [.addSubList(name, type, label, tab)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3150667)
+ * method, which returns a reference to nlobSublist.
+ */
+declare interface nlobjSubList {
+    /**
+     * Adds a button to a sublist
+     * 
+     * @param name The internal ID name of the button. Internal ID names must be
+     * in lowercase and contain no spaces.
+     * 
+     * @param label The UI label for the button
+     * 
+     * @param script The onclick script function name
+     * 
+     * @since 2008.2
+     */
+    addButton(name?: string, label?: string, script?: string): nlobjButton;
+
+    /**
+     * Adds a field (column) to a sublist
+     * 
+     * @param name The internal ID name of the field. Internal ID names must be 
+     * in lowercase and contain no spaces.
+     * 
+     * @param type The field type for this field. Use any of the following 
+     * types:
+     * - text
+     * - email
+     * - phone
+     * - date
+     * - datetimetz - This field type lets you combine date and time values in one field. For example, you may want a single field to contain date and time “timestamp” data. After a user enters a date/time value, the data is rendered in the user's preferred date and time format, as well as the user's time zone. Also note that time values are stored in NetSuite down to the second.
+     * - currency
+     * - float
+     * - integer
+     * - checkbox
+     * - select
+     * - url
+     * - image - This field type is available **only** for fields appearing on list/staticlist sublists. You cannot specify an **image** field on a form.
+     * - timeofday
+     * - textarea
+     * - percent
+     * - radio - only supported for sublists of type list
+     * @param label The UI label for this field
+     * 
+     * @param source The internalId or scriptId of the source list for this
+     * field if it's a select (List/Record) field. In the NetSuite Help Center,
+     * see [List/Record Type IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
+     * for the internal IDs of all supported list/record types.
+     * 
+     * @since 2008.2
+     */
+    addField(
+        name: string,
+        type: string,
+        label: string,
+        source?: number | string
+    ): nlobjField;
+
+    /**
+     * Adds a "Mark All" and an "Unmark All" button to a sublist. Only valid on
+     * scriptable sublists of type **LIST**. Requires a check box column to
+     * exist on the form, which will be automatically checked/unchecked
+     * depending on what the end user does.
+     * 
+     * @since 2008.2
+     */
+    addMarkAllButtons(): void;
+
+    /**
+     * Adds a Refresh button to sublists of type `list` or `staticlist` to
+     * auto-refresh the sublist if its contents are dynamic. In this case, the
+     * sublist is refreshed without having to reload the contents of the entire
+     * page.
+     * 
+     * @since 2009.1
+     */
+    addRefreshButton(): nlobjButton;
+
+    /**
+     * Returns the number of lines on a sublist
+     * 
+     * @return The integer value of the number of line items on a sublist
+     */
+    getLineItemCount(): number;
+
+    /**
+     * Returns string value of a sublist field. Note that you cannot set default
+     * line item values when the line is not in edit mode.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the
+     * ID for the Address sublist). See
+     * [Using the SuiteScript Records Browser](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html)
+     * for sublists that support SuiteScript, sublist internal IDs, and sublist
+     * field IDs.
+     * 
+     * @param fldnam The internal ID of the field (line item) whose value is
+     * being returned
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     */
+    getLineItemValue(group: string, fldnam: string, linenum: number): string;
+
+    /**
+     * Designates a particular column as the totalling column, which is used to 
+     * calculate and display a running total for the sublist
+     * 
+     * @param field The internal ID name of the field on this sublist used to 
+     * calculate running total
+     * 
+     * @since 2010.1
+     */
+    setAmountField(field: string): void;
+
+    /**
+     * Sets the display style for this sublist. This method is only supported on
+     * scripted or staticlist sublists via the UI Object API.
+     * 
+     * @param type The display type for this sublist. Use either of the
+     * following two values:
+     * - hidden
+     * - normal - (default)
+     * 
+     * @since 2008.2
+     */
+    setDisplayType(type?: 'hidden' | 'normal'): void;
+
+    /**
+     * Adds inline help text to this sublist. This method is only supported on 
+     * sublists via the UI Object API.
+     * 
+     * @param help Inline help text used for this sublist
+     * 
+     * @since 2008.2
+     */
+    setHelpText(help: string): void;
+
+    /**
+     * Sets the label for this sublist. This method is only supported on
+     * sublists via the UI Object API.
+     * 
+     * @param label The UI label for this sublist
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): void;
+
+    /**
+     * Sets the value of a cell in a sublist field.
+     * 
+     * @param name The internal ID name of the line item field being set
+     * 
+     * @param linenum The line number for this field. Note the first line number
+     * on a sublist is 1 (not 0).
+     * 
+     * @param value The value the field is being set to
+     * 
+     * @since 2008.2
+     */
+    setLineItemValue(name: string, linenum: number, value: string): void;
+
+    /**
+     * Sets values for multiple lines (Array of nlobjSearchResult objects or 
+     * name/value pair Arrays) in a sublist.
+     * 
+     * @param values An Array of Arrays containing name/value pairs containing 
+     * column values for multiple rows -or- an Array of
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+     * objects containing the results of a search with columns matching the 
+     * fields on the sublist. Note that several special fields: recordtype, id, 
+     * and fieldname_display (UI display value for select fields) are 
+     * automatically added for each search result.
+     * 
+     * @since 2008.2
+     */
+    setLineItemValues(values: { string: string }[] | nlobjSearchResult[]): void;
+
+    /**
+     * Use this method to designate that a certain field on a sublist must 
+     * contain a unique value. This method is available on inlineeditor and 
+     * editor sublists only.
+     * 
+     * @param name The internal ID of the sublist field that you want to make 
+     * unique
+     * 
+     * @since 2009.2
+     */
+    setUniqueField(name: string): nlobjField;
+}
+
+/**
+ * Primary object used to encapsulate tabs and subtabs. Note that to add a tab
+ * or subtab, you must first create a custom form using
+ * [nlapiCreateForm(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
+ * which returns an
+ * [nlobjForm](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object.
+ * 
+ * After the form object is instantiated, you can add a new tab or subtab to the
+ * form using the nlobjForm.
+ * [addTab(name, label)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3151233) 
+ * or nlobjForm.
+ * [addSubTab(name, label, tab)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3151039)
+ * methods, which both return a reference to `nlobjTab`.
+ */
+declare interface nlobjTab {
+
+    /**
+     * Sets the tab UI label
+     * 
+     * @param label The UI label used for this tab or subtab
+     * 
+     * @since 2008.2
+     */
+    setLabel(label: string): nlobjTab;
+
+    /**
+     * Sets the inline help used for this tab or subtab
+     * 
+     * @param help Inline help used for this tab or subtab
+     * 
+     * @since 2008.2
+     */
+    setHelpText(help: string): nlobjTab;
+}
+
+// TEMPLATE RENDERER
+
 /*
    --------------------------------------------------
 
@@ -6334,788 +7815,6 @@ declare interface nlobjResponse {
 }
 
 /**
- * Primary object used to encapsulate a list page. Note that the
- * [nlapiCreateList(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057216)
- * function returns a reference to this object.
- */
-declare interface nlobjList {
-
-    /**
-     * Adds an nlobjButton object to the footer of the page
-     * 
-     * @param name The internal ID name of the button. Internal ID names must be
-     * in lowercase and contain no spaces. For example, if you add a button that
-     * appears on the UI as Update Order, the internal ID should be something
-     * equivalent to updateorder.
-     * 
-     * @param label The UI label used for this button
-     * 
-     * @param script The onclick button script function name
-     * 
-     * @since 2008.2
-     */
-    addButton(name: string, label: string, script?: string): void;
-
-    /**
-     * Adds an
-     * [nlobjColumn](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html)
-     * object to a list and returns a reference to this column
-     * 
-     * @param name The internal ID name of this column. Note that internal ID
-     * names must be in lowercase and contain no spaces.
-     * 
-     * @param type The field type for this column. Use any of the following
-     * field types:
-     * 
-     * - text
-     * 
-     * - email
-     * 
-     * - phone
-     * 
-     * - date
-     * 
-     * - currency
-     * 
-     * - float
-     * 
-     * - integer
-     * 
-     * - select
-     * 
-     * - url
-     * 
-     * - timeofday
-     * 
-     * - textarea
-     * 
-     * - percent
-     * 
-     * - inlinehtml
-     * 
-     * @param label The UI label for this column
-     * @param align The layout justification for this column. Possible values include:
-     * 
-     * - center
-     * 
-     * - right
-     * 
-     * - left (default)
-     * 
-     * @since 2008.2
-     */
-    addColumn(
-        name: string,
-        type:
-            'text' | 'email' | 'phone' | 'date' | 'currency' | 'float' |
-            'integer' | 'select' | 'url' | 'timeofday' | 'textarea' |
-            'percent' | 'inlinehtml',
-        label: string,
-        align?: 'center' | 'left' | 'right'
-    ): nlobjColumn;
-
-
-    /**
-     * Adds an Edit or Edit/View column to Portlets (created with the
-     * [nlobjPortlet]()
-     * object) and Suitelet and Portlet lists (created with the
-     * [nlobjList]()
-     * object). Note that the Edit or Edit/View column will be added to the left
-     * of a previously existing column.
-     * 
-     * @param column An 
-     * [nlobjColumn]()
-     * object to the left of which the Edit/View column will be added
-     * 
-     * @param showView If true then an Edit/View column will be added. Otherwise
-     * only an Edit column will be added.
-     * 
-     * @param showHrefCol If set, this value must be included in row data 
-     * provided for the list and will be used to determine whether the URL for
-     * this link is clickable (specify T for clickable, F for non-clickable)
-     * 
-     * @since 2008.1
-     */
-    addEditColumn(
-        column: nlobjColumn,
-        showView?: boolean,
-        showHrefCol?: boolean
-    ): nlobjColumn;
-
-    /**
-     * Adds a navigation cross-link to the list page
-     * 
-     * @param type The type of navbar link to add. Use any of the following 
-     * types:
-     * 
-     * - breadcrumb - appears on top-left corner after system bread crumbs
-     * 
-     * - crosslink - appears on top-right corner
-     * 
-     * @param title The UI text displayed in the link
-     * 
-     * @param url The URL used for this link
-     * 
-     * @since 2008.2
-     */
-    addPageLink(type: string, title: string, url: string): void;
-
-    /**
-     * Adds a row (Array of name/value pairs or nlobjSearchResult) to this
-     * portlet.
-     * 
-     * @param row An Array of rows containing name/value pairs containing the 
-     * values for corresponding 
-     * [nlobjColumn](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html)
-     * objects in this list -or- an 
-     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html).
-     * Note that several special fields: recordtype, id, and fieldname_display
-     * (UI display value for select fields) are automatically added for each
-     * search result.
-     * 
-     * @since 2008.2
-     */
-    addRow(row: nlobjSearchResult | { [key: string]: string }): void;
-
-    /**
-     * Adds multiple rows (Array of nlobjSearchResult objects or name/value pair
-     * Arrays) to a portlet.
-     * 
-     * @param rows An Array of Arrays containing name/value pairs containing
-     * column values for multiple rows -or- an Array of 
-     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
-     * objects containing the results of a search with columns matching the
-     * columns on the list.
-     */
-    addRows(rows: nlobjSearchResult[] | { [key: string]: string }[]): void;
-
-    /**
-     * Sets the Client SuiteScript used for this page.
-     * 
-     * @param script scriptId or internal ID for global client script used to
-     * enable Client SuiteScript on page
-     * 
-     * @since 2008.2
-     */
-    setScript(script: string | number): void;
-
-    /**
-     * Sets the display style for this list
-     * @param style The display style value. Use any of the following styles:
-     * 
-     * - grid
-     * 
-     * - report
-     * 
-     * - plain
-     * 
-     * - normal
-     */
-    setStyle(style: 'grid' | 'report' | 'plain' | 'normal'): void;
-
-    /**
-     * Sets the title for this list
-     * 
-     * @param title The title for a list
-     * 
-     * @since 2008.2
-     */
-    setTitle(title: string): void;
-}
-
-/**
- * Primary object used to encapsulate list columns. To add a column, you must
- * first create a custom list using 
- * [nlapiCreateList(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057216),
- * which returns an
- * [nlobjList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html)
- * object.
- * 
- * After the list object is instantiated, you can add a standard column using 
- * the nlobjList.
- * [addColumn(name, type, label, align)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html#bridgehead_N3153672)
- * method.
- * 
- * You can also add an “Edit | View” column using the nlobjList.
- * [addEditColumn(column, showView, showHrefCol)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html#bridgehead_N3153855)
- * method. Both methods return an `nlobjColumn` object.
- */
-declare interface nlobjColumn {
-
-    /**
-     * Adds a URL parameter (optionally defined per row) to this column's URL.
-     * Should only be called after calling
-     * [setURL(url, dynamic)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139838.html#bridgehead_N3140260)
-     * 
-     * @param param The parameter name added to the URL
-     * 
-     * @param value The parameter value added to the URL - or - a column in the 
-     * data source that returns the parameter value for each row
-     * 
-     * @param dynamic If true, then the parameter value is actually an alias 
-     * that is calculated per row
-     * 
-     * @since 2008.2
-     */
-    addParamToURL(param: string, value: string, dynamic?: boolean): void;
-
-    /**
-     * The UI label used for this column
-     * 
-     * @param label Sets the UI label for this column
-     * 
-     * @since 2008.2
-     */
-    setLabel(label: string): void;
-
-    /**
-     * Sets the base URL (optionally defined per row) for this column
-     * 
-     * @param url The base URL or a column in the data source that returns the 
-     * base URL for each row
-     * 
-     * @param dynamic If true, then the URL is actually an alias that is 
-     * calculated per row
-     * 
-     * @since 2008.2
-     */
-    setURL(url: string, dynamic?: boolean): void;
-}
-
-/**
- * Primary object used to encapsulate a NetSuite-looking form. Note that the 
- * [nlapiCreateForm(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076)
- * function returns a reference to this object.
- */
-declare interface nlobjForm {
-
-    /**
-     * Adds a button to a form
-     * 
-     * @param name The internal ID name of the button. The internal ID must be
-     * in lowercase, contain no spaces, and include the prefix custpage if you
-     * are adding the button to an existing page. For example, if you add a
-     * button that appears as **Update Order**, the button internal ID should be
-     * something similar to **custpage_updateorder**.
-     * 
-     * @param label The UI label used for this button
-     * 
-     * @param script The onclick script used for this button
-     * 
-     * @since 2008.2
-     */
-    addButton(name: string, label: string, script?: string): nlobjButton;
-
-    /**
-     * Adds a field that lets you store credentials in NetSuite to be used when
-     * invoking services provided by third parties. For example, merchants need 
-     * to store credentials in NetSuite used to communicate with Payment Gateway
-     * providers when executing credit card transactions.
-     * 
-     * This method is supported in client and server scripts.
-     * 
-     * Additional things to note about this method:
-     * 
-     * - Credentials associated with this field are stored in encrypted form.
-     * 
-     * - No piece of SuiteScript holds a credential in clear text mode.
-     * 
-     * - NetSuite reports or forms will never provide to the end user the clear 
-     * text form of a credential.
-     * 
-     * - Any exchange of the clear text version of a credential with a third
-     * party must occur over SSL.
-     * 
-     * For no reason will NetSuite ever log the clear text value of a credential
-     * (for example, errors, debug message, alerts, system notes, and so on).
-     * 
-     * @param id The internal ID of the credential field.
-     * 
-     * @param label The UI label for the credential field.
-     * 
-     * @param website The domain the credentials can be sent to. For example,
-     * 'www.mysite.com'. This value can also be an array of strings representing
-     * a list of domains to which the credentials can be sent using
-     * `nlapiRequestUrlWithCredentials`. Note that although no exception is
-     * thrown if this parameter value is not passed,
-     * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544)
-     * will not work without it.
-     * 
-     * @param scriptId The scriptId of the script that is allowed to use this
-     * credential field. For example, 'customscript_my_script'. Note that
-     * although no exception is thrown if this parameter value is not passed,
-     * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544)
-     * will not work without it.
-     * 
-     * @param value If you choose, you can set an initial value for this field. This value is the handle to the credentials. If you do not want to set a value, you must pass in a null value or empty string.
-     * 
-     * @param entityMatch Controls whether use of 
-     * `nlapiRequestUrlWithCredentials` with this credential is restricted to 
-     * the same entity that originally entered the credential. An example where 
-     * you would not want this (you would set to false ) is with a credit card 
-     * processor, where the credential represents the company an employee is 
-     * working for and multiple entities will be expected to make secure calls 
-     * out to the processor (clerks, for example). An example where you might 
-     * want to set entityMatch to true is when each user of the remote call has 
-     * his or her own credentials.
-     * 
-     * @param tab The tab parameter can be used to specify either a tab or a 
-     * field group (if you have added nlobjFieldGroup objects to your form). If 
-     * tab is empty, then the field is added to the “main” section of the form.
-     * 
-     * @since 2012.1
-     */
-    addCredentialField(
-        id: string,
-        label: string,
-        website?: string,
-        scriptId?: string,
-        value?: string,
-        entityMatch?: boolean,
-        tab?: string
-    ): nlobjField;
-
-    /**
-     * Adds an 
-     * [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
-     * object to a form and returns a reference to it
-     * 
-     * @param name The internal ID name of the field. The internal ID must be in
-     * lowercase, contain no spaces, and include the prefix custpage if you are
-     * adding the field to an existing page. For example, if you add a field
-     * that appears as Purchase Details, the field internal ID should be
-     * something similar to `custpage_purchasedetails` or 
-     * `custpage_purchase_details`.
-     * 
-     * @param type The field type for this field. Use any of the following
-     * enumerated field types:
-     * 
-     * - text
-     * 
-     * - radio - See
-     * [Working with Radio Buttons](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879)
-     * for details on adding this field type.
-     * 
-     * - label - This is a field type that has no values. It is used for placing
-     * a label next to another field. In
-     * [Working with Radio Buttons](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3149879),
-     * see the first code sample that shows how to set this field type and how
-     * it will render in the UI.
-     * 
-     * - email
-     * 
-     * - phone
-     * 
-     * - date
-     * 
-     * - datetimetz - This field type lets you combine date and time values in
-     * one field. For example, you may want a single field to contain date and
-     * time “timestamp” data. After a user enters a date/time value, the data is
-     * rendered in the user's preferred date and time format, as well as the
-     * user's time zone. Also note that time values are stored in NetSuite down
-     * to the second.
-     * 
-     * - currency
-     * 
-     * - float
-     * 
-     * - integer
-     * 
-     * - checkbox
-     * 
-     * - select
-     * 
-     * - url - See 
-     * [Create a Form with a URL Field](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2969820.html)
-     * for an example how to use this type.
-     * 
-     * - timeofday
-     * 
-     * - textarea
-     * 
-     * - multiselect
-     * 
-     * - image - This field type is available **only** for fields appearing on
-     * list/staticlist sublists. You cannot specify an image field on a form.
-     * 
-     * - inlinehtml
-     * 
-     * - password
-     * 
-     * - help
-     * 
-     * - percent
-     * 
-     * - longtext
-     * 
-     * Important Long text fields created with SuiteScript have a character
-     * limit of 100,000. Long text fields created with Suitebuilder have a
-     * character limit of 1,000,000.  
-     * 
-     * - richtext
-     * 
-     * - file - This field type is available only for Suitelets and will appear
-     * on the main tab of the Suitelet page. Setting the field type to **file** 
-     * adds a file upload widget to the page and changes the form encoding type
-     * for the form to multipart/form-data. See
-     * [Uploading Files to the File Cabinet Using SuiteScript](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3087039.html#bridgehead_N3089140)
-     * for an example of creating a **file** field type, and then later
-     * retrieving this file using the nlobjRequest.
-     * [getFile(id)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3106730.html#bridgehead_N3107266)
-     * method.
-     * 
-     * @param label The UI label for this field (this is the value displayed for
-     * help fields)
-     * 
-     * @param sourceOrRadio The internalId or scriptId of the source list for
-     * this field if it is a select (List/Record) or multi-select field. See
-     * [List/Record Type IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
-     * for the internal IDs of all supported list/record types.
-     * 
-     * @param tab The tab parameter can be used to specify either a tab or a 
-     * field group (if you have added nlobjFieldGroup objects to your form). If
-     * tab is empty, then the field is added to the “main” section of the form.
-     * 
-     * @since 2008.2
-     */
-    addField(
-        name: string,
-        type: 'text' | 'radio' | 'label' | 'email' | 'phone' | 'date' |
-            'datetimetz' | 'currency' | 'float' | 'integer' | 'checkbox' |
-            'select' | 'url' | 'timeofday' | 'textarea' | 'multiselect' |
-            'image' | 'inlinehtml' | 'password' | 'help' | 'percent' |
-            'longtext' | 'file',
-        label?: string,
-        sourceOrRadio?: number | string,
-        tab?: string
-    ): nlobjField;
-
-    /**
-     * Adds a field group to the form.
-     * 
-     * @param name Provide an internal ID for the field group.
-     * 
-     * @param label  The UI label for the field group
-     * 
-     * @param tab Specify the tab you the field group to appear on. If no tab is
-     * specified, the field group is placed on the “main” area of the form.
-     * 
-     * @since 2011.1
-     */
-    addFieldGroup(name: string, label: string, tab: string): nlobjFieldGroup;
-
-    /**
-     * Adds a navigation cross-link to the form
-     * 
-     * @param type The type of navbar link to add. Possible values include:
-     * 
-     * - breadcrumb - appears on top left corner after system bread crumbs
-     * 
-     * - crosslink - appears on top right corner
-     * 
-     * @param title The text displayed in the link
-     * 
-     * @param url The URL used for this link
-     * 
-     * @since 2008.2
-     */
-    addPageLink(
-        type: 'breadcrumb' | 'crosslink',
-        title: string,
-        url: string
-    ): void;
-
-    /**
-     * Adds a reset button to a form
-     * 
-     * @param label The UI label used for this button. If no label is provided,
-     * the label defaults to **Reset**.
-     * 
-     * @since 2008.2
-     */
-    addResetButton(label?: string): nlobjButton;
-
-    /**
-     * Adds an nlobjSubList object to a form and returns a reference to it. Note
-     * that sorting (in the UI) is not supported on static sublists created
-     * using the `addSubList()` method if the row count exceeds 25.
-     * 
-     * @param name The internal ID name of the sublist. The internal ID must be
-     * in lowercase, contain no spaces, and include the prefix `custpage` if you
-     * are adding the sublist to an existing page. For example, if you add a
-     * sublist that appears on the UI as Purchase Details, the sublist internal
-     * ID should be something equivalent to `custpage_purchasedetails` or
-     * `custpage_purchase_details`.
-     * 
-     * @param type The sublist type. Use any of the following types:
-     * 
-     * - `editor` - An edit sublist with non-inline form fields (similar to the Address sublist)
-     * 
-     * - `inlineeditor` - An edit sublist with inline fields (similar to the Item sublist)
-     * 
-     * - `list` - A list sublist with editable fields (similar to the Billable Items sublist)
-     * 
-     * - `staticlist` - A read-only segmentable list sublist (similar to the search results sublist)
-     * 
-     * @param label The UI label for this sublist
-     * @param tab The tab under which to display this sublist. If empty, the
-     * sublist is added to the main tab.
-     */
-    addSubList(
-        name: string,
-        type: 'editor' | 'inlineeditor' | 'list' | 'staticlist',
-        label: string,
-        tab?: string
-    ): nlobjSubList;
-
-    /**
-     * Adds a submit button to a form
-     * 
-     * @param label The UI label for this button. If no label is provided, the
-     * label defaults to Save.
-     * 
-     * @since 2008.2
-     */
-    addSubmitButton(label?: string): nlobjButton;
-
-    /**
-     * Adds a subtab to a form and returns an nlobjTab object reference to it.
-     * 
-     * @param name The internal ID name of the subtab. The internal ID must be 
-     * in lowercase, contain no spaces, and include the prefix `custpage` if you
-     * are adding the subtab to an existing page. For example, if you add a
-     * subtab that appears on the UI as **Purchase Details**, the subtab
-     * internal ID should be something similar to `custpage_purchasedetails` or 
-     * `custpage_purchase_details`.
-     * 
-     * @param label The UI label of the subtab
-     * 
-     * @param tab The tab under which to display this subtab. If empty, it is
-     * added to the main tab.
-     * 
-     * @since 2008.2
-     */
-    addSubTab(name: string, label: string, tab?: string): nlobjTab;
-
-    /**
-     * Adds a tab to a form and returns an nlobjTab object reference to the tab
-     * 
-     * @param name The internal ID name of the tab. The internal ID must be in
-     * lowercase, contain no spaces, and include the prefix `custpage` if you 
-     * are adding the tab to an existing page. For example, if you add a tab 
-     * that appears on the UI as **Purchase Details**, the tab internal ID
-     * should be something equivalent to `custpage_purchasedetails` or 
-     * `custpage_purchase_details`.
-     * 
-     * @param label The UI label of the tab
-     * 
-     * @since 2008.2
-     */
-    addTab(name: string, label: string): nlobjTab;
-
-    /**
-     * Returns an 
-     * [nlobjButton](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139249.html)
-     * object by name
-     * 
-     * @param name The internal ID of the button. Internal IDs must be in 
-     * lowercase and contain no spaces.
-     * 
-     * @since 2008.2
-     */
-    getButton(name: string): nlobjButton;
-
-    /**
-     * Returns an nlobjField object by name
-     * 
-     * @param name The internal ID name of the field. Internal ID names must be
-     * in lowercase and contain no spaces.
-     * 
-     * @param radio If this is a radio field, specify which radio field to return
-     * based on the radio value.
-     */
-    getField(name: string, radio?: string): nlobjField;
-
-    /**
-     * Returns an nlobjSubList object by name
-     * 
-     * @param name The internal ID name of the sublist. Internal ID names must 
-     * be in lowercase and contain no spaces.
-     * 
-     * @since 2008.2
-     */
-    getSubList(name: string): nlobjSubList;
-
-    /**
-     * Returns an 
-     * [nlobjTab](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163084.html)
-     * object by name
-     * 
-     * @param name The internal ID name of the tab. Internal ID names must be in
-     * lowercase and contain no spaces.
-     * 
-     * @since 2008.2
-     */
-    getSubTab(name: string): nlobjTab;
-
-    /**
-     * Returns an nlobjTab object by name
-     * 
-     * @param name The internal ID name of the tab. Internal ID names must be in
-     * lowercase and contain no spaces.
-     * 
-     * @since 2008.2
-     */
-    getTab(name: string): nlobjTab;
-
-    /**
-     * Returns an array of nlobjTab objects containing all the tabs in a form.
-     * 
-     * @since 2012.2
-     */
-    getTabs(): nlobjTab[];
-
-    /**
-     * Inserts a field (nlobjField) in front of another field and returns a
-     * reference to it
-     * 
-     * @param field [nlobjField](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3140379.html)
-     * object to insert
-     * 
-     * @param nextfld The name of the field you are inserting in front of
-     * 
-     * @since 2008.2
-     */
-    insertField(field: nlobjField, nextfld: string): nlobjField;
-
-    /**
-     * Inserts a sublist (nlobjSubList) in front of another sublist/subtab and
-     * returns a reference to it
-     * 
-     * @param sublist [nlobjSubList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3161033.html)
-     * object to insert
-     * 
-     * @param nextsub The internal ID name of the sublist/subtab you are
-     * inserting in front of
-     * 
-     * @since 2008.2
-     */
-    insertSubList(sublist: nlobjSubList, nextsub: string): nlobjSubList;
-
-    /**
-     * Inserts a subtab (nlobjTab) in front of another sublist/subtab and
-     * returns a reference to it
-     * 
-     * @param subtab The internal ID name of the subtab. Internal ID names must 
-     * be in lowercase and contain no spaces.
-     * 
-     * @param nextsub The name of the sublist/subtab you are inserting in front 
-     * of
-     * 
-     * @since 2008.2
-     */
-    insertSubTab(subtab: string, nextsub: string): nlobjTab;
-
-    /**
-     * Inserts a tab (nlobjTab) in front of another tab and returns a reference 
-     * to it
-     * @param tab [nlobjTab](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163084.html)
-     * object to insert
-     * 
-     * @param nexttab The tab name for the tab you are inserting in front of
-     * 
-     * @since 2008.2
-     */
-    insertTab(tab: nlobjTab, nexttab: string): nlobjTab;
-
-    /**
-     * Removes an 
-     * [nlobjButton](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3139249.html)
-     * object. This method can be used on custom buttons and certain built-in
-     * NetSuite buttons. For a list of built-in buttons that support this 
-     * method, see the list of buttons in the section 
-     * [Button IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
-     * in the NetSuite Help Center.
-     * 
-     * @param name The internal ID of the button to be removed. Internal IDs 
-     * must be in lowercase and contain no spaces.
-     * 
-     * @since 2008.2
-     */
-    removeButton(name: string): void;
-
-    /**
-     * Sets the values of multiple fields on the current form. This API can be 
-     * used in beforeLoad scripts to initialize field scripts on new records or 
-     * non-stored fields. (See User 
-     * [Event beforeLoad Operations](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2962434.html#bridgehead_N2962507)
-     * in the NetSuite Help Center for information on beforeLoad user event
-     * triggers.)
-     * 
-     * @param values An associative array containing name/value pairs, which
-     * maps field names to field values
-     * 
-     * @since 2008.2
-     */
-    setFieldValues(values: { [key: string]: string }): void;
-
-    /**
-     * Sets the Client SuiteScript file used for this form
-     * 
-     * @param script The scriptId or internal ID for the global client script
-     * used to enable Client SuiteScript on this form
-     * 
-     * @since 2008.2
-     */
-    setScript(script: number | string): void;
-
-    /**
-     * Sets the title for this form
-     * 
-     * @param title The title used for this form
-     * 
-     * @since 2008.2
-     */
-    setTitle(title: string): void;
-}
-
-/**
- * Primary object used to encapsulate tabs and subtabs. Note that to add a tab
- * or subtab, you must first create a custom form using
- * [nlapiCreateForm(title, hideNavbar)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3057076),
- * which returns an
- * [nlobjForm](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
- * object.
- * 
- * After the form object is instantiated, you can add a new tab or subtab to the
- * form using the nlobjForm.
- * [addTab(name, label)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3151233) 
- * or nlobjForm.
- * [addSubTab(name, label, tab)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3151039)
- * methods, which both return a reference to `nlobjTab`.
- */
-declare interface nlobjTab {
-
-    /**
-     * Sets the tab UI label
-     * 
-     * @param label The UI label used for this tab or subtab
-     * 
-     * @since 2008.2
-     */
-    setLabel(label: string): nlobjTab;
-
-    /**
-     * Sets the inline help used for this tab or subtab
-     * 
-     * @param help Inline help used for this tab or subtab
-     * 
-     * @since 2008.2
-     */
-    setHelpText(help: string): nlobjTab;
-}
-
-/**
  * Primary object used to encapsulate files (media items) in the NetSuite file
  * cabinet. For an example that shows how to use several the of File object
  * methods to upload a file to the NetSuite file cabinet and also attach the
@@ -7398,269 +8097,6 @@ declare interface nlobjError {
      * @since 2008.2
      */
     getUserEvent(): string;
-}
-
-/**
- * Primary object used to encapsulate a field group on a custom NetSuite 
- * assistant page and on nlobjForm objects.
- * 
- * You can create an assistant by calling 
- * [nlapiCreateAssistant(title, hideHeader)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3056572.html#bridgehead_N3056901), 
- * which returns a reference to the 
- * [nlobjAssistant](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html)
- * object. On the assistantobject, call addFieldGroup to instantiate a new
- * nlobjFieldGroup object.
- * 
- * To learn more about field groups, see
- * [Building a NetSuite Assistant](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html)
- * with UI Objects.
- */
-declare interface nlobjFieldGroup {
-
-    /**
-     * Use this method to define whether a field group can be collapsed. You can
-     * also use this method to define if the field group will display as
-     * collapsed or expanded when the page first loads.
-     * 
-     * @param collapsible A value of true means that the field group can be
-     * collapsed. A value of false means that the field group cannot be
-     * collapsed - the field group displays as a static group that cannot be
-     * opened or closed.
-     * 
-     * @param hidden If not set, defaults to false. This means that when the
-     * page loads, the field group will not appear collapsed. Note: If you set 
-     * the collapsible parameter to false (meaning the field group is not
-     * collapsible), then any value you specify for hidden will be ignored.
-     * 
-     * @returns 2009.2
-     */
-    setCollapsible(collapsible: boolean, hidden?: boolean): nlobjFieldGroup;
-
-    /**
-     * Use this method to create a UI label for a field group.
-     * 
-     * @param label The UI label for the field group
-     * 
-     * @since 2009.2
-     */
-    setLabel(label: string): nlobjFieldGroup;
-
-    /**
-     * Use this method to conditionally show or hide the border of a field 
-     * group. A field group border consists of the field group title and the 
-     * gray line that frames the group by default.
-     * 
-     * @param show Set to true to show a field group border. Set to false to 
-     * hide the border.
-     * 
-     * @since 2011.1
-     */
-    setShowBorder(show: boolean): void;
-
-    /**
-     * Use this method to determine how your field group is aligned. You can 
-     * choose to align it into a single column or allow NetSuite to auto-align 
-     * it.
-     * 
-     * @param column Set to true to place all fields in the field group into a 
-     * single column. Set to false to allow NetSuite to auto-align your field 
-     * group fields into one, two, or three columns, depending on the number of 
-     * fields and the width of your screen.
-     */
-    setSingleColumn(column: boolean): void;
-}
-
-/**
- * Primary object used to encapulate a step within a custom NetSuite assistant.
- * 
- * For information on working with nlobjAssistantStep objects, as well as
- * information on building an assistant using other UI objects, see 
- * [Building a NetSuite Assistant with UI Objects](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3012526.html).
- */
-declare interface nlobjAssistantStep {
-
-    /**
-     * Use this method to get all fields entered by the user during the step.
-     * 
-     * @returns String[] of all fields entered by the user during the step
-     * 
-     * @since - 2009.2
-     */
-    getAllFields(): string[];
-
-    /**
-     * Use this method to get all sublist fields entered by the user during this step.
-     * 
-     * @param group The sublist internal ID
-     * 
-     * @returns String[] of all sublist fields entered by the user during the 
-     * step
-     * 
-     * @since 2009.2
-     */
-    getAllLineItemFields(group: string): string[];
-
-    /**
-     * Use this method to get all sublists entered by the user during this step.
-     * 
-     * @returns String[] of all sublists entered by the user during this step
-     * 
-     * @since 2009.2
-     */
-    getAllLineItems(): string[];
-
-    /**
-     * Use this method to get the value of a field entered by the user during 
-     * this step.
-     * 
-     * @param name The internal ID of the field whose value is being returned
-     * 
-     * @returns The internal ID (string) value for the field
-     * 
-     * @since 2009.2
-     */
-    getFieldValue(name: string): string;
-
-    /**
-     * Use this method to get the selected values of a multi-select field as an
-     * Array.
-     * 
-     * @param name The name of the multi-select field
-     * 
-     * @returns String[] of field IDs. Returns `null` if field is not on the
-     * record. Note the values returned are **read-only**.
-     * 
-     * @since 2009.2
-     */
-    getFieldValues(name): string[] | null;
-
-    /**
-     * Use the method to get the number of lines previously entered by the user 
-     * in this step.
-     * 
-     * @param group The sublist internal ID
-     * 
-     * @returns The integer value of the number of line items on a sublist. 
-     * Note that -1 is returned if the sublist does not exist.
-     * 
-     * @since 2009.2
-     */
-    getLineItemCount(group: string): number;
-
-    /**
-     * Use this method to get the value of a line item (sublist) field entered 
-     * by the user during this step.
-     * 
-     * @param group The sublist internal ID
-     * 
-     * @param name The name of the sublist field whose value is being returned
-     * 
-     * @param line The line number for this field. Note the first line number 
-     * on a sublist is **1** (not 0).
-     * 
-     * @returns The string value of the sublist field
-     * 
-     * @since 2009.2
-     */
-    getLineItemValue(group: string, name: string, line: number): string;
-
-    /**
-     * Use this method to get a step number. The number returned represents 
-     * where this step appears sequentially in the assistant.
-     * 
-     * @returns The index of this step in the assistant page (1-based)
-     * 
-     * @since 2009.2
-     */
-    getStepNumber(): number;
-
-
-    /**
-     * Use this method to set help text for an assistant step.
-     * 
-     * @param help The help text for the step
-     * 
-     * @since 2009.2
-     */
-    setHelpText(help: string):
-
-        // the return was misspelled
-        // as **nlobjAssistantSte**
-        // and there was no doc link.
-        // I am assuming that they
-        // meant 
-        // **nlobjAssistantStep**
-        nlobjAssistantStep;
-
-    /**
-     * Use this method to set the label for an assistant step. Note that you can
-     * also create a label for a step when the step is first added to the
-     * assistant. Do this using nlobjAssistant
-     * [.addStep(name, label)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3127246.html#bridgehead_N3129563).
-     * 
-     * @param label The UI label for this step
-     * 
-     * @since 2009.2
-     */
-    setLabel(label: string): nlobjAssistantStep;
-}
-
-/**
- * Primary object used to encapsulate custom buttons. Note that custom buttons 
- * only appear in the UI when the record is in Edit mode. Custom buttons do not 
- * appear in View mode. Also note that in SuiteScript, buttons are typically 
- * added to a record or form in **beforeLoad** user event scripts.
- */
-declare interface nlobjButton {
-
-    /**
-     * Disables the button. When using this API, the assumption is that you have
-     * already defined the button's UI label when you created the button using
-     * nlobjForm
-     * [.addButton(name, label, script)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147271).
-     * The `setDisabled()` method grays-out the button's appearance in the UI.
-     * 
-     * @param disabled If set to true, the button will still appear on the form,
-     * however, the button label will be grayed-out.
-     * 
-     * @since 2008.2
-     */
-    setDisabled(disabled: boolean): nlobjButton;
-
-    /**
-     * Sets the UI label for the button. When using this API, the assumption is 
-     * that you have already defined the button's UI label when you created the
-     * button using nlobjForm
-     * [.addButton(name, label, script)](https://system.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147271).
-     * You can set `setLabel()` to trigger based on the execution context. For
-     * example, based on the user viewing a page, you can use `setLabel()` to
-     * re-label a button's UI label so that the label is meaningful to that
-     * particular user.
-     * 
-     * This API is supported on standard NetSuite buttons as well as on custom
-     * buttons. For a list of standard buttons that support this API, see
-     * [Button IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
-     * in the NetSuite Help Center.
-     * 
-     * @param label The UI label for the custom button
-     * 
-     * @since 2008.2
-     */
-    setLabel(label: string): nlobjButton;
-
-    /**
-     * Sets the button as hidden in the UI. This API is supported on custom
-     * buttons and on some standard NetSuite buttons. For a list of standard
-     * buttons that support this API, see 
-     * [Button IDs](https://system.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3265696.html)
-     * in the NetSuite Help Center.
-     * 
-     * @param visible Defaults to true if not set. If set to false,
-     * the button will be hidden in the UI.
-     * 
-     * @since 2010.2
-     */
-    setVisible(visible?: boolean): nlobjButton;
 }
 
 /**
