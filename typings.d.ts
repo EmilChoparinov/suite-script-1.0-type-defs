@@ -6629,7 +6629,292 @@ declare interface nlobjList {
     setTitle(title: string): void;
 }
 
-// PORTLET
+/**
+ * Primary object used to encapsulate scriptable dashboard portlets. Using
+ * SuiteScript you can create a LIST, FORM, HTML, or LINKS type of portlet.
+ */
+declare interface nlobjPortlet {
+
+    /**
+     * Adds an nlobjColumn object to a list and returns a reference to this
+     * column. Note that this API is only available if the portlet type is a
+     * LIST type. (In the NetSuite Help Center, see Portlet Scripts for portlet
+     * type definitions. This section also shows how to define your portlet type
+     * on the portlet Script record page in the NetSuite UI.)
+     * 
+     * @param name The internal ID name of this column. Internal ID names must
+     * be in lowercase and contain no spaces.
+     * 
+     * @param type The field type for this column. Use any of the following
+     * field types:
+     * 
+     * - text
+     * 
+     * - email
+     * 
+     * - phone
+     * 
+     * - date
+     * 
+     * - currency
+     * 
+     * - float
+     * 
+     * - integer
+     * 
+     * - checkbox
+     * 
+     * - select
+     * 
+     * - url
+     * 
+     * - timeofday
+     * 
+     * - textarea
+     * 
+     * - percent
+     * 
+     * - inlinehtml
+     * @param label The UI label for this column
+     * 
+     * @param just The layout justification for this column. Use any of the
+     * following layout types:
+     * 
+     * - center
+     * 
+     * - right
+     * 
+     * - left - (default)
+     * 
+     * @since 2008.2
+     */
+    addColumn(
+        name: string,
+        type:
+            'text' | 'email' | 'phone' | 'date' | 'currency' | 'float' |
+            'integer' | 'checkbox' | 'select' | 'url' | 'timeofday' |
+            'textarea' | 'percent' | 'inlinehtml',
+        label: string,
+        just?:
+            'center' | 'right' | 'left'
+    ): nlobjColumn;
+
+    /**
+     * Adds an Edit or Edit|View column to LIST portlets (see figure). This
+     * method can also be used with nlobjList when creating Suitelet lists and
+     * portlet lists. Note that the Edit or Edit|View column will be added to
+     * the left of a previously existing column.
+     * 
+     * @param column An 
+     * [nlobjColumn]() 
+     * object to the left of which the Edit|View column will be added
+     * 
+     * @param showView If true then an Edit|View column will be added. Otherwise
+     * only an Edit column will be added.
+     * 
+     * @param showHrefCol If set, this value must be included in row data
+     * provided for the list and will be used to determine whether the URL for
+     * this link is clickable (specify T for clickable, F for non-clickable)
+     * 
+     * @since 2008.1
+     */
+    addEditColumn(
+        column: nlobjColumn,
+        showView?: boolean,
+        showHrefCol?: string
+    ): nlobjColumn;
+
+    /**
+     * Adds an nlobjField object to a portlet and returns a reference to it.
+     * 
+     * This API is only available if the portlet type is FORM. (In the NetSuite
+     * Help Center, see 
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html)
+     * for portlet type definitions. This section also shows how to define your
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * 
+     * @param name The internal ID name of this field. Internal ID names must be
+     * in lowercase and contain no spaces.
+     * 
+     * @param type 
+     * @param label The UI label for this field
+     * 
+     * @param source The internalId or scriptId of the source list for this
+     * field if it's a select (List/Record) field, or radio value for radio
+     * fields. In the NetSuite Help Center, see 
+     * [List/Record Type IDs](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3148193)
+     * for the internal IDs of all supported list/record types.
+     * 
+     * @since 2008.2
+     */
+    addField(
+        name: string,
+        type:
+            'text' | 'email' | 'phone' | 'date' | 'currency' | 'float' |
+            'integer' | 'checkbox' | 'select' | 'url' | 'timeofday' |
+            'textarea' | 'percent' | 'inlinehtml',
+        label: string,
+        source?: string | number
+    ): nlobjField;
+
+    /**
+     * Adds a line (containing text or basic HTML) with optional indenting and
+     * URL to a LINKS portlet.
+     * 
+     * This API is only available if the portlet type is LINKS.
+     * (In the NetSuite Help Center, see 
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html)
+     * for portlet type definitions. This section also shows how to define your
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * 
+     * @param text Content written to this line (can contain basic HTML
+     * formatting)
+     * 
+     * @param url URL if this line should be clickable (if NULL then line will
+     * not be clickable)
+     * 
+     * @param indent Indent level used for this line. Valid values are 0 to 5.
+     * 
+     * @since 2008.2
+     */
+    addLine(
+        text: string,
+        url?: string,
+        indent?: number
+    ): void;
+
+    /**
+     * Adds a row (nlobjSearchResult) or Array of name/value pairs) to a
+     * **LIST** portlet.
+     * 
+     * This API is only available if the portlet type is **LIST**. (In the 
+     * NetSuite Help Center, see
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html)
+     * for portlet type definitions. This section also shows how to define your
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * 
+     * @param row An Array of rows containing name/value pairs containing the
+     * values for corresponding `nlobjColumn` objects in this list -or- an
+     * `nlobjSearchResult`. Note that several special fields: recordtype, id, and
+     * fieldname_display (display value for select fields) are automatically
+     * added for each search result.
+     * 
+     * @since 2008.2
+     */
+    addRow(row: { [key: string]: string } | nlobjSearchResult): void;
+
+    /**
+     * Adds multiple rows (Array of nlobjSearchResult objects or name/value pair
+     * Arrays) to a **LIST** portlet.
+     * 
+     * This API is only available if the portlet type is **LIST**. (In the 
+     * NetSuite Help Center, see
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html)
+     * for portlet type definitions. This section also shows how to define your
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * 
+     * @param rows An Array of Arrays containing name/value pairs containing
+     * column values for multiple rows -or- an Array of 
+     * [nlobjSearchResult]()
+     * objects containing the results of a search with columns matching the
+     * columns on the list.
+     * 
+     * @since 2008.2
+     */
+    addRows(rows: { [key: string]: string} | nlobjSearchResult[]): void;
+
+    /**
+     * Sets the entire content of an HTML portlet (content will be placed inside
+     * <TD>...</TD> tags).
+     * 
+     * This API is only available if the portlet type is HTML. (In the NetSuite
+     * Help Center, see 
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html)
+     * for portlet type definitions. This section also shows how to define your
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * @param html Raw HTML containing the contents of an HTML portlet. The
+     * content must start and end with a TD tag.
+     * 
+     * @since 2008.2
+     */
+    setHtml(html: string): void;
+
+    /**
+     * Sets the regular interval when a **FORM** portlet automatically refreshes
+     * itself.
+     * 
+     * This API is only available if the portlet type is **FORM**. (In the
+     * NetSuite Help Center, see
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html)
+     * for portlet type definitions. This section also shows how to define your
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * 
+     * @param n Number of seconds. In production mode, this value must be at
+     * least 60 seconds. An error is raised if this value is less than zero, and
+     * in production if it is less than 60.
+     * 
+     * @since 2011.1
+     */
+    setRefreshInterval(n: number): void;
+
+    /**
+     * Sets the client-side script for a FORM portlet. For example, you can use 
+     * this method to call a script to implement client-side validation, 
+     * dynamically calculate field totals, and change data based on the value of 
+     * another field. Note that you can only set one script. Setting another 
+     * script implicitly removes the previous script.
+     * 
+     * This API is only available if the portlet type is **FORM**. (In the 
+     * NetSuite Help Center, see 
+     * [Portlet Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N2989989.html) 
+     * for portlet type definitions. This section also shows how to define your 
+     * portlet type on the portlet Script record page in the NetSuite UI.)
+     * @param scriptid The script internalId or custom scriptId of a
+     * record-level client script. Scripts of this type are deployed globally
+     * and run against an entire record type. For more information, see
+     * [Form-level and Record-level Client Scripts](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N2960161.html).
+     * 
+     * @since 2011.1
+     */
+    setScript(scriptid: string | number): void;
+
+    /**
+     * @param url The URL that the FORM will be POST-ed to when the user clicks
+     * this submit button
+     * 
+     * @param label The UI label used for displaying this button. If a value is
+     * not specified, the default value is **Save**.
+     * 
+     * @param target The target attribute of the portlet's FORM element, if it
+     * is different from the portlet's own embedded iframe. Supported values
+     * include standard HTML target attributes such as '_top', '_parent', and
+     * '_blank', frame names, and the special NetSuite-specific identifier
+     * '_hidden'.
+     * 
+     * Setting the target to '_hidden' allows submission to a backend that
+     * returns results to a hidden child iframe within the portlet's embedded
+     * iframe, so that these results do not replace portlet content. For
+     * example, a custom form portlet could submit to a backend suitelet, and if
+     * the suitelet returns an error, it is displayed in the hidden child iframe
+     * and does not change other portlet contents.
+     * 
+     * @since 2008.2
+     */
+    setSubmitButton(
+        url: string, 
+        label?: string,
+        target?: string
+    ): nlobjButton;
+
+    /**
+     * Sets the portlet title
+     * 
+     * @param title The title used for this portlet
+     * 
+     * @since 2008.2
+     */
+    setTitle(title: string): void;
+}
 
 /**
  * Primary object used to encapsulate a NetSuite sublist. This object is 
