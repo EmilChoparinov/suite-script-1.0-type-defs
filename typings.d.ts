@@ -1,6 +1,7 @@
 // TODO: DECLARE {} OF HEADER FIELDS
 // DECLARE ALL ANY TYPES
 // FIND OUT getFile(id) TYPE FOR nlobjRequest OBJECT
+// FIND OUT WHAT Node IS
 /*
    -----------------------------------------------------------------------------
 
@@ -8295,9 +8296,9 @@ declare function nlapiGetDateTimeValue(
  * @since 2013.2
  */
 declare function nlapiGetLineItemDateTimeValue(
-    type: string, 
-    fieldId: string, 
-    lineNum: number, 
+    type: string,
+    fieldId: string,
+    lineNum: number,
     timeZone?: string | number
 ): string;
 
@@ -8328,9 +8329,9 @@ declare function nlapiGetLineItemDateTimeValue(
  * @since 2013.2
  */
 declare function nlapiSetCurrentLineItemDateTimeValue(
-    type: string, 
-    fieldId: string, 
-    dateTime: string, 
+    type: string,
+    fieldId: string,
+    dateTime: string,
     timeZone?: string | number
 ): void;
 
@@ -8358,8 +8359,8 @@ declare function nlapiSetCurrentLineItemDateTimeValue(
  * @since 2013.2
  */
 declare function nlapiSetDateTimeValue(
-    fieldId: string, 
-    dateTime: string, 
+    fieldId: string,
+    dateTime: string,
     timeZone?: string | number
 ): void;
 
@@ -8393,10 +8394,10 @@ declare function nlapiSetDateTimeValue(
  * @since 2013.2
  */
 declare function nlapiSetLineItemDateTimeValue(
-    type: string, 
-    fieldId: string, 
-    lineNum: number, 
-    dateTime: string, 
+    type: string,
+    fieldId: string,
+    lineNum: number,
+    dateTime: string,
     timeZone?: string | number
 ): void;
 
@@ -8432,8 +8433,8 @@ declare function nlapiSetLineItemDateTimeValue(
  * @since 2009.1
  */
 declare function nlapiExchangeRate(
-    sourceCurrency: string | number, 
-    targetCurrency: string | number, 
+    sourceCurrency: string | number,
+    targetCurrency: string | number,
     effectiveDate?: string | number
 ): number;
 
@@ -8452,6 +8453,23 @@ declare function nlapiFormatCurrency(str: string): string;
    --------------------------------------------------
 */
 
+/**
+ * Encodes, encrypts, or obfuscates a clear text string.
+ * 
+ * @param s The string to encode, obfuscate or encrypt.
+ * 
+ * @param algorithm The algorithm to use. See table for options.
+ * 
+ * @param key The secret key that is used for AES encryption. Only applicable 
+ * when using the aes algorithm. This string can be a 128–bit, 192–bit, or 
+ * 256–bit hex key.
+ */
+declare function nlapiEncrypt(
+    s: string,
+    algorithm: 'sha1' | 'aes' | 'base64' | 'xor',
+    key?: string
+): string;
+
 /*
    --------------------------------------------------
 
@@ -8460,6 +8478,139 @@ declare function nlapiFormatCurrency(str: string): string;
    --------------------------------------------------
 */
 
+/**
+ * Prepares a String for use in XML by escaping XML markup (for example, angle 
+ * brackets, quotation marks, and ampersands)
+ * 
+ * @param text String being escaped
+ */
+declare function nlapiEscapeXML(text: string): string;
+
+/**
+ * XPath expression used to query node
+ * @param node XML node being queried
+ * 
+ * @param xpath XPath expression used to query node
+ */
+declare function nlapiSelectNode(node: Node, xpath: string): Node;
+
+/**
+ * Selects an array of nodes from an XML document using an XPath expression
+ * 
+ * @param node XML node being queried
+ * 
+ * @param xpath XPath expression used to query node
+ */
+declare function nlapiSelectNodes(node: Node, xpath: string): Node[];
+
+/**
+ * Selects a value from an XML document using an XPath expression
+ * 
+ * @param node XML node being queried
+ * 
+ * @param xpath XPath expression used to query node
+ */
+declare function nlapiSelectValue(node: Node, xpath: string): string;
+
+/**
+ * Selects an array of values from an XML document using an XPath expression
+ * 
+ * @param node XML node being queried
+ * 
+ * @param path XPath expression used to query node
+ */
+declare function nlapiSelectValues(node: Node, path: string): string[];
+
+/**
+ * Parses a String into a W3C XML document. This API is useful if you want to 
+ * navigate/query a structured XML document more effectively using either the 
+ * Document API or NetSuite built-in XPath functions.
+ * 
+ * @param text String being converted
+ */
+declare function nlapiStringToXML(text: string): Document;
+
+/**
+ * Validates a supplied XML document against a supplied XML Schema (XSD 
+ * Document).
+ * 
+ * The supplied XML Document and XSD Document must be passed in the form of a 
+ * W3C Document object. Use nlapiStringToXML(text) to convert both documents 
+ * before calling nlapiValidateXML. The location of your source XML Document and 
+ * XDS Document does not matter; the validation is performed with the Document 
+ * objects stored in memory.
+ * 
+ * @param xmlDocument XML Document being validated.
+ * 
+ * @param schemaDocument XML Schema (in the form of an XSD Document) being 
+ * validated against.
+ * 
+ * @param schemaFolderId Only required if the passed XML Schema uses <import> or 
+ * <include> tags that reference child schemas by file path (as opposed to 
+ * references by URL. To use this parameter, upload the child schema(s) to a 
+ * folder in the NetSuite file cabinet. Then pass the folder internal ID as the 
+ * schemaFolderId argument. Note that SuiteScript ignores this argument if it is 
+ * passed, but not needed.
+ * 
+ * - SSS_XML_DOES_NOT_CONFORM_TO_SCHEMA — Thrown when the validation fails. See 
+ * [XML Validation Output](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3062490.html#bridgehead_3897197502) 
+ * for additional information.
+ * 
+ * - SSS_XML_SCHEMA_MISSING_DEPENDECY_FOLDER_ID — Thrown when an invalid 
+ * `schemaFolderId` argument is passed; also thrown when `schemaFolderId` is 
+ * required but missing.
+ * 
+ * @since 2014.1
+ */
+declare function nlapiValidateXML(
+    xmlDocument: Document,
+    schemaDocument: Document,
+    schemaFolderId?: string
+): void;
+
+/**
+ * Converts (serializes) an XML document into a String. This API is useful if 
+ * you want to serialize and store a Document in a custom field (for example).
+ * 
+ * @param xml XML document being serialized
+ */
+declare function nlapiXMLToString(xml: Document): string;
+
+/**
+ * Use this API in conjunction with the Big Faceless Report Generator built by 
+ * Big Faceless Organization (BFO). The BFO Report Generator is a third-party 
+ * library used for converting XML to PDF documents. Using nlapiXMLToPDF in 
+ * combination with the BFO report library, SuiteScript developers can now 
+ * generate PDF reports from Suitelets.
+ * 
+ * - The nlapiXMLToPDF API passes XML to the BFO tag library (which is stored by 
+ * NetSuite), and returns a PDF nlobjFile object. Note that there is a 10MB 
+ * limitation to the size of the file that can be created.
+ * 
+ * - The following list includes some of the output styles that can be generated 
+ * using nlapiXMLToPDF and BFO tags:
+ * 
+ * - Consolidated data from multiple transactions into one (for example, a 
+ * virtual consolidated invoice)
+ * 
+ * - Highly tailored transaction output with images
+ * 
+ * - Product labels with bar codes
+ * 
+ * - Pallet labels with bar codes (custom records)
+ * 
+ * - Custom-formatted product catalogs with images
+ * 
+ * - Proposals
+ * 
+ * @param xmlstring XML
+ * 
+ * @throws ERROR_PARSING_XML (thrown as a user error when XML is badly formed)
+ * 
+ * @since 2009.1
+ */
+declare function nlapiXMLToPDF(xmlstring: string): nlobjFile;
+
 /*
    --------------------------------------------------
 
@@ -8467,7 +8618,10 @@ declare function nlapiFormatCurrency(str: string): string;
 
    --------------------------------------------------
 */
-
+declare function nlapiCreateFile(name, type, contents)
+declare function nlapiDeleteFile(id)
+declare function nlapiLoadFile(id)
+declare function nlapiSubmitFile(file)
 /*
    --------------------------------------------------
 
