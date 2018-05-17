@@ -4880,6 +4880,77 @@ declare function nlapiCreateAssistant(
 ): nlobjAssistant;
 
 /**
+ * Creates an 
+ * [nlobjForm](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object which can be used to generate an entry form page. This API is
+ * available to Suitelets only.
+ *  
+ * @param title The title for the form
+ * 
+ * @param hideNavbar Set to true if the navigation bar should be hidden on the
+ * Suitelet. Setting to true enables “popup page” use cases in which the popup
+ * can be created with the 
+ * [UI Objects](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3126890.html)
+ * API rather than HTML.
+ * 
+ * When hideNavbar is set to false, the standard NetSuite navigation appears on 
+ * the form or popup. Note that this navigation bar contains links to pages that
+ * require users to be logged in to access.
+ * 
+ * @returns An 
+ * [nlobjForm](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html)
+ * object
+ */
+declare function nlapiCreateForm(
+    title: string, hideNavbar?: boolean
+): nlobjForm;
+
+/**
+ * Creates an nlobjList object used to generate an internal standalone list.
+ * This API is available to **Suitelets only**.
+ * 
+ * @param title The title for the list
+ * @param hideNavbar Set to true if the navigation bar should be hidden on the
+ * Suitelet. Setting to true enables “popup page” use cases in which the popup
+ * can be created with the UI Objects API rather than HTML.
+ * 
+ * When hideNavbar is set to false, the standard NetSuite navigation appears on
+ * the form or popup. Note that this navigation bar contains links to pages that
+ * require users to be logged in to access.
+ * 
+ * @returns An 
+ * [nlobjList](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3153351.html)
+ * object
+ */
+declare function nlapiCreateList(
+    title: string, hideNavbar?: boolean
+): nlobjList;
+
+/**
+ * Use this function to produce HTML and PDF printed forms that utilize advanced 
+ * PDF/HTML template capabilities. This API returns an 
+ * [nlobjTemplateRenderer](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163411.html) 
+ * object. This object includes methods that pass in a template as string to be 
+ * interpreted by FreeMarker, and render interpreted content in your choice of 
+ * two different formats: as HTML output to an 
+ * [nlobjResponse](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3109660.html) 
+ * object, or as XML string that can be passed to 
+ * [nlapiXMLToPDF(xmlstring)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3062490.html#bridgehead_N3066595) 
+ * to produce a PDF.
+ * 
+ * This function is available when the Advanced PDF/HTML Templates feature is 
+ * enabled. For information about this feature, see 
+ * [Advanced PDF/HTML Templates](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_4453550706.html).
+ * 
+ * @returns An 
+ * [nlobjTemplateRenderer](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3163411.html) 
+ * object
+ * 
+ * @since 2013.1
+ */
+declare function nlapiCreateTemplateRenderer(): nlobjTemplateRenderer;
+
+/**
  * Primary object used to encapsulate all properties of a scriptable multi-step 
  * NetSuite assistant. All data and state for an assistant is tracked
  * automatically throughout the user's session up until completion of the
