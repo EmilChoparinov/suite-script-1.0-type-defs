@@ -8211,6 +8211,195 @@ declare function nlapiStringToDate(str: string, format?: string): Date | number;
    --------------------------------------------------
 */
 
+/**
+ * This API returns the value of a datetime field on the currently selected line 
+ * of a sublist. If timeZone is passed in, the datetime value is converted to 
+ * that time zone and then returned. If timeZone is not passed in, the datetime 
+ * value is returned in the default time zone.
+ * 
+ * @param type The internal sublist ID
+ * 
+ * @param fieldId The internal field ID. This field ID must point to a datetime 
+ * formatted field.
+ * 
+ * @param timeZone If a string is passed in, it must match one of the Olson 
+ * Values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table (values are case-insensitive). If an integer is passed in, it must 
+ * match one of the Key values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table.
+ * 
+ * @returns The string value of a Date/Time field on the currently selected 
+ * line.
+ * 
+ * @throws SSS_INVALID_ARG_TYPE
+ * 
+ * @since 2013.2
+ */
+declare function nlapiGetCurrentLineItemDateTimeValue(
+    type: string, fieldId: string, timeZone?: string | number
+): string;
+
+/**
+ * This API returns the value of a datetime field. If timeZone is passed in, the 
+ * datetime value is converted to that time zone and then returned. If timeZone 
+ * is not passed in, the datetime value is returned in the default time zone.
+ * 
+ * @param fieldId The internal field ID. This field ID must point to a datetime 
+ * formatted field.
+ * 
+ * @param timeZone If a string is passed in, it must match one of the Olson 
+ * Values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table (values are case-insensitive). If an integer is passed in, it must 
+ * match one of the Key values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table.
+ * 
+ * @throws SSS_INVALID_ARG_TYPE
+ * 
+ * @since 2013.2
+ */
+declare function nlapiGetDateTimeValue(
+    fieldId: string, timeZone?: string | number
+): string;
+
+
+/**
+ * This API returns the value of a datetime field on a sublist. If timeZone is 
+ * passed in, the datetime value is converted to that time zone and then 
+ * returned. If timeZone is not passed in, the datetime value is returned in the 
+ * default time zone.
+ * 
+ * @param type The internal sublist ID
+ * 
+ * @param fieldId The internal field ID. The field ID passed in must point to a 
+ * datetime formatted field.
+ * 
+ * @param lineNum The line number for this field. Note the first line number on 
+ * a sublist is 1 (not 0).
+ * 
+ * @param timeZone If a string is passed in, it must match one of the Olson 
+ * Values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table (values are case-insensitive). If an integer is passed in, it must 
+ * match one of the Key values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table.
+ * 
+ * @returns The string value of a datetime field on a sublist.
+ * 
+ * @throws SSS_INVALID_ARG_TYPE
+ * 
+ * @since 2013.2
+ */
+declare function nlapiGetLineItemDateTimeValue(
+    type: string, 
+    fieldId: string, 
+    lineNum: number, 
+    timeZone?: string | number
+): string;
+
+/**
+ * This API sets the value of a datetime field on the currently selected line of 
+ * a sublist. If timeZone is passed in, the datetime value is converted to that 
+ * time zone and then set. If timeZone is not passed in, the datetime value is 
+ * set in the default time zone.
+ * 
+ * @param type The internal sublist ID
+ * 
+ * @param fieldId The internal field ID. The field ID passed in must point to a 
+ * datetime formatted field.
+ * 
+ * @param dateTime The date and time in format mm/dd/yyyy hh:mm:ss am|pm (for 
+ * example, ‘09/25/2013 06:00:01 am’).
+ * 
+ * @param timeZone If a string is passed in, it must match one of the Olson 
+ * Values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table (values are case-insensitive). If an integer is passed in, it must 
+ * match one of the Key values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table. 
+ * 
+ * @throws SSS_INVALID_ARG_TYPE
+ * 
+ * @since 2013.2
+ */
+declare function nlapiSetCurrentLineItemDateTimeValue(
+    type: string, 
+    fieldId: string, 
+    dateTime: string, 
+    timeZone?: string | number
+): void;
+
+/**
+ * This API sets the value of a datetime field. If timeZone is passed in, the 
+ * datetime value is converted from that time zone and then set. If timeZone is 
+ * not passed in, the datetime value is set in the default time zone.
+ * 
+ * @param fieldId The internal field ID. The field ID passed in must point to a 
+ * datetime formatted field.
+ * 
+ * @param dateTime The date and time in format mm/dd/yyyy hh:mm:ss am|pm (for 
+ * example, ‘09/25/2013 06:00:01 am’).
+ * 
+ * @param timeZone If a string is passed in, it must match one of the Olson 
+ * Values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table (values are case-insensitive). If an integer is passed in, it must 
+ * match one of the Key values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table.
+ * 
+ * @throws SSS_INVALID_ARG_TYPE
+ * 
+ * @since 2013.2
+ */
+declare function nlapiSetDateTimeValue(
+    fieldId: string, 
+    dateTime: string, 
+    timeZone?: string | number
+): void;
+
+/**
+ * This API sets the value of a datetime field on a sublist. If timeZone is 
+ * passed in, the datetime value is converted to that time zone and then set. 
+ * If timeZone is not passed in, the datetime value is set in the default time 
+ * zone.
+ * 
+ * @param type The internal sublist ID
+ * 
+ * @param fieldId The internal field ID. The field ID passed in must point to a 
+ * datetime formatted field.
+ * 
+ * @param lineNum The line number for this field. Note the first line number on 
+ * a sublist is 1 (not 0).
+ * 
+ * @param dateTime The date and time in format mm/dd/yyyy hh:mm:ss am|pm (for 
+ * example, ‘09/25/2013 06:00:01 am’).
+ * 
+ * @param timeZone If a string is passed in, it must match one of the Olson 
+ * Values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table (values are case-insensitive). If an integer is passed in, it must 
+ * match one of the Key values listed in the 
+ * [Olson Values](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_3727261949.html) 
+ * table.
+ * 
+ * @throws SSS_INVALID_ARG_TYPE
+ * 
+ * @since 2013.2
+ */
+declare function nlapiSetLineItemDateTimeValue(
+    type: string, 
+    fieldId: string, 
+    lineNum: number, 
+    dateTime: string, 
+    timeZone?: string | number
+): void;
+
 /*
    --------------------------------------------------
 
