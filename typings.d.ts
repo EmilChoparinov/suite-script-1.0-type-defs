@@ -7295,6 +7295,114 @@ declare interface nlobjTemplateRenderer {
 */
 
 /**
+ * Requests an HTTP(s) URL (internal or external). Note a timeout occurs if the 
+ * initial connection takes > 5 seconds and/or the request takes > 45 to 
+ * respond.
+ * 
+ * `nlapiRequestURL` automatically encodes binary content using base64 
+ * representation, since JavaScript is a character-based language with no 
+ * support for binary types. This means you can take the contents returned and 
+ * save them in the NetSuite file cabinet as a file or stream them directly to a 
+ * response.
+ * 
+ * 
+ * @param url The HTTP(s) URL being requested - (fully qualified unless NetSuite 
+ * page)
+ * 
+ * @param postdata Body used for a POST request. It can either be an object of 
+ * form parameters or a string. If set to null, then a GET request is used.
+ * 
+ * @param headers An object of header and header value pairs. Be aware that 
+ * certain headers cannot be set manually. If a script attempts to set a value 
+ * for any of these headers, the value is discarded. These headers include the 
+ * following: Connection, Content-Length, Host, Trailer, Transfer-Encoding, 
+ * Upgrade, and Via.
+ * 
+ * @param callback A callback function called when the request is completed (
+ * **client SuiteScript only**). `IMPORTANT`: There is NO **callback** parameter 
+ * when you use `nlapiRequestURL` in a server-side call. In a server-side call, 
+ * **httpMethod** becomes the fourth parameter for this API, as in: 
+ * 
+ * ```js
+ * nlapiRequestURL(url, postdata, headers, httpMethod)
+ * ```
+ * 
+ * @param httpMethod Specify the appropriate http method to use for your
+ * integration. `IMPORTANT`: When using nlapiRequestURL in a server-side script, 
+ * **httpMethod** becomes the fourth parameter. In other words, the function 
+ * signature in a server-side script is 
+ * 
+ * ```js
+ * nlapiRequestURL(url, postdata, headers, httpMethod).
+ * ```
+ * 
+ * Supported http methods are HEAD, DELETE and PUT. This parameter allows for 
+ * easier integration with external RESTful services using the standard REST 
+ * functions. Note that if the httpMethod parameter is empty or not specified, 
+ * this behavior is followed: the method is POST if postdata is not empty. The 
+ * method is GET if it is.
+ * 
+ * Be aware that the httpMethod parameter overrides, so you can specify GET and 
+ * specify postdata, NetSuite will do a GET and ignore the postdata.
+ * 
+ * @returns nlobjResponse object (or void if a callback function has been
+ * specified)
+ * 
+ * @throws SSS_CONNECTION_CLOSED (with “Connection Closed” message) — if the 
+ * connection is closed because the server associated with the URL is 
+ * unresponsive
+ * 
+ * @throws SSS_CONNECTION_TIME_OUT — if the initial connection exceeds the 5 
+ * second timeout period
+ * 
+ * @throws SSS_INVALID_HOST_CERT — if the client and server could not negotiate 
+ * the desired level of security. The connection is no longer usable.
+ * 
+ * @throws SSS_INVALID_URL (with “Invalid URL — Connection Closed” message) — if 
+ * the connection is closed due to an invalid URL, including those containing 
+ * white space
+ * 
+ * @throws SSS_REQUEST_TIME_EXCEEDED — if the request exceeds the 45 second 
+ * timeout period
+ * 
+ * @throws SSS_UNKNOWN_HOST — if the IP address of a host could not be 
+ * determined.
+ * 
+ * @throws SSS_UNSUPPORTED_ENCODING — if the character encoding is not 
+ * supported
+ */
+declare function nlapiRequestURL(
+    url: string,
+    postdata?: string | any,
+    headers?: any,
+    callback?: () => void,
+    httpMethod?: string
+): nlobjResponse | void;
+
+declare function nlapiRequestURLWithCredentials(
+    credentials: string[],
+    url: string,
+    postdata,
+    headers,
+    httpsMethod
+)
+
+declare function nlapiResolveURL(
+    type,
+    identifier,
+    id,
+    displayMode
+)
+
+declare function nlapiSetRedirectURL(
+    type,
+    identifier,
+    id,
+    editmode,
+    parameters
+)
+
+/**
  * Primary object used for scripting web responses in Suitelets. Note that the 
  * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142)
  * function returns a reference to this object.
@@ -7755,6 +7863,100 @@ declare interface nlobjRequest {
      * @since 2008.1
      */
     getURL(): string;
+}
+
+/**
+ * The `nlobjCredentialBuilder` object encapsulates a request string that can be 
+ * passed to 
+ * [nlapiRequestURLWithCredentials(credentials, url, postdata, headers, 
+ * httpsMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059544). 
+ * Six methods are included that perform various string transformations: three 
+ * hash methods for SHA-1, SHA-256, and MD5 hashing, two encoding methods for 
+ * Base64 and UTF8 encoding, a character replacement method, and an appending 
+ * method.
+ */
+declare class nlobjCredentialBuilder {
+
+    /**
+     * 
+     * @param requestString include an embedded GUID 
+     * (globally unique string).
+     * @param domainString URL’s host name. Host name must exactly match the 
+     * host name in your URL. For example, if your URL is 
+     * `https://payment.ns.com/process.money?passwd={GUID}`, the host name passed 
+     * in must be ‘payment.ns.com’.
+     */
+    constructor(requestString: string, domainString: string);
+
+    /**
+     * Appends an nlobjCredentialBuilder object to another 
+     * `nlobjCredentialBuilder` object.
+     * 
+     * @param credentialBuilder `nlobjCredentialBuilder` object to be appended.
+     * 
+     * @returns An `nlobjCredentialBuilder` object.
+     * 
+     * @since 2013.2
+     */
+    append(credentialBuilder: nlobjCredentialBuilder): nlobjCredentialBuilder;
+
+    /**
+     * Encodes an nlobjCredentialBuilder object per the base64 scheme.
+     * 
+     * @returns An `nlobjCredentialBuilder` object.
+     * 
+     * @since 2013.2
+     */
+    base64() : nlobjCredentialBuilder;
+
+    /**
+     * Hashes an nlobjCredentialBuilder object with the MD5 hash function.
+     * 
+     * @returns An `nlobjCredentialBuilder` object.
+     * 
+     * @since 2015.1
+     */
+    md5(): nlobjCredentialBuilder;
+
+    /**
+     * Replaces all instances of `string1` with `string2`.
+     * 
+     * @param string1 string to be replaced
+     * 
+     * @param string2 string to be replaced with
+     * 
+     * @returns An `nlobjCredentialBuilder` object.
+     * 
+     * @since 2013.2
+     */
+    replace(string1: string, string2: string): nlobjCredentialBuilder;
+
+    /**
+     * Hashes an nlobjCredentialBuilder object with the SHA-1 hash function.
+     * 
+     * @returns An nlobjCredentialBuilder object.
+     * 
+     * @since 2013.2
+     */
+    sha1(): nlobjCredentialBuilder;
+
+    /**
+     * Hashes an nlobjCredentialBuilder object with the SHA-256 hash function.
+     * 
+     * @returns An `nlobjCredentialBuilder` object.
+     * 
+     * @since 2013.2
+     */
+    sha256(): nlobjCredentialBuilder;
+
+    /**
+     * Encodes an nlobjCredentialBuilder object per the UTF-8 scheme.
+     * 
+     * @returns An `nlobjCredentialBuilder` object.
+     * 
+     * @since 2013.2
+     */
+    utf8(): nlobjCredentialBuilder;
 }
 
 /*
