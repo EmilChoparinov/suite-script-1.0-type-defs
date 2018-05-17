@@ -1,3 +1,6 @@
+// TODO: DECLARE {} OF HEADER FIELDS
+// DECLARE ALL ANY TYPES
+// FIND OUT getFile(id) TYPE FOR nlobjRequest OBJECT
 /*
    -----------------------------------------------------------------------------
 
@@ -637,7 +640,7 @@ declare function nlapiTransformRecord(
     type: string,
     id: number,
     transformType: string,
-    transformValues?: {}
+    transformValues?: any
 ): nlobjRecord;
 
 /**
@@ -3260,7 +3263,7 @@ declare function nlapiSetMatrixValue(
  */
 declare function nlapiCreateSearch(
     type: string,
-    filters?: nlobjSearchFilter | nlobjSearchFilter[] | {}[],
+    filters?: nlobjSearchFilter | nlobjSearchFilter[] | any[],
     columns?: nlobjSearchColumn | nlobjSearchColumn[]
 ): nlobjSearch;
 
@@ -3398,7 +3401,7 @@ declare function nlapiSearchGlobal(keywords: string): nlobjSearchResult[];
 declare function nlapiSearchRecord(
     type?: string,
     id?: number | string,
-    filters?: nlobjSearchFilter | nlobjSearchFilter[] | {}[],
+    filters?: nlobjSearchFilter | nlobjSearchFilter[] | any[],
     columns?: nlobjSearchColumn | nlobjSearchColumn[]
 ): nlobjSearchResult[];
 
@@ -3604,7 +3607,7 @@ declare interface nlobjSearch {
      * 
      * @since 2012.2
      */
-    getFilterExpression(): {}[];
+    getFilterExpression(): any[];
 
     /**
      * Gets the filters for the search.
@@ -3753,7 +3756,7 @@ declare interface nlobjSearch {
      * 
      * @since 2012.2
      */
-    setFilterExpression(filterExpression: {}[]): void;
+    setFilterExpression(filterExpression: any[]): void;
 
     /**
      * Sets the filters for this search, overwriting any prior filters. If null
@@ -4218,7 +4221,7 @@ declare class nlobjSearchColumn {
 declare function nlapiScheduleScript(
     scriptId: string | number,
     deployId?: string | number,
-    params?: {}): 'INQUEUE' | 'INPROGRESS' | 'SCHEDULED'
+    params?: any): 'INQUEUE' | 'INPROGRESS' | 'SCHEDULED'
 
 /**
  * Creates a recovery point saving the state of the script's execution. When
@@ -7291,6 +7294,469 @@ declare interface nlobjTemplateRenderer {
    --------------------------------------------------
 */
 
+/**
+ * Primary object used for scripting web responses in Suitelets. Note that the 
+ * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142)
+ * function returns a reference to this object.
+ * 
+ * When creating Suitelets you will pass request and response arguments to your 
+ * user-defined function (see example). With the response object instantiated, 
+ * you can then call any nlobjResponse method.
+ * 
+ * See 
+ * [Supported File Types](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3264137.html)
+ * in the NetSuite Help Center for a list of allcontent/media types that can be 
+ * returned through the nlobjResponse object.
+ */
+declare interface nlobjResponse {
+    /**
+     * Adds a header to the response. If this header has already been set, this 
+     * will add a new header to the response. Note that all user-defined headers
+     * must be prefixed with **Custom-Header** otherwise an `SSS_INVALID_ARG`
+     * error will be thrown ()
+     * 
+     * @param name The name of the header
+     * 
+     * @param value The value used to set header
+     * 
+     * @throws SSS_INVALID_ARG
+     * 
+     * @since 2008.2
+     */
+    addHeader(name: string, value: string): void;
+
+    /**
+     * Returns an Array containing all the headers returned in the response.
+     * Only available in the return value of a call to 
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @returns String[] of headers
+     * 
+     * @since 2008.2
+     */
+    getAllHeaders(): string[];
+
+    /**
+     * Returns the body returned by the server. Only available in the return
+     * value of a call to
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @returns The string value of the body
+     */
+    getBody(): string;
+
+    /**
+     * Returns the response code returned by the server. Only available in the
+     * return value of a call to
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @returns The string value of the response code
+     */
+    getCode(): string;
+
+    /**
+     * Returns the 
+     * [nlobjError](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3086264.html)
+     * thrown during request. Only available in the return value of call to 
+     * `nlapiRequestURL` in Client SuiteScript.
+     * 
+     * @returns 2008.2
+     */
+    getError(): nlobjError;
+
+    /**
+     * Returns the value for a header returned in the response. Only available
+     * in the return value of a call to 
+     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
+     * 
+     * @param name The header name
+     * 
+     * @returns The string value of the header
+     * 
+     * @since 2008.2
+     */
+    getHeader(name: string): string;
+
+    /**
+     * Returns an Array containing all the values for a header returned in the
+     * response. This is only available in the return value of a call to 
+     * `nlapiRequestURL`.
+     * 
+     * @param name The header name
+     * 
+     * @returns String[] of header values
+     * 
+     * @since 2008.2
+     */
+    getHeaders(name: string): string[];
+
+    /**
+     * Generates, and renders, a PDF directly to a response. Use renderPDF to
+     * generate PDFs without first importing a file to the file cabinet. This 
+     * method is useful if your script does not have NetSuite file cabinet
+     * permissions.
+     * 
+     * The renderPDF method uses the Big Faceless Report Generator built by Big
+     * Faceless Organization (BFO). The BFO Report Generator is a third-party
+     * library used for converting XML to PDF documents. The renderPDF method
+     * passes XML to the BFO tag library (which is stored by NetSuite), and
+     * renders a PDF directly to a response. Note that the xmlString argument is
+     * the same input string as that passed to BFO by
+     * [nlapiXMLToPDF(xmlstring)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3062490.html#bridgehead_N3066595).
+     * 
+     * For details on BFO, available tags, and BFO examples, see the following links:
+     * 
+     * - http://faceless.org/products/report/docs/userguide.pdf
+     * 
+     * - http://faceless.org/products/report/docs/tags/
+     * 
+     * @param xmlString Content of your PDF, passed to renderPDF as a string.
+     * 
+     * @since 2014.2
+     */
+    renderPDF(xmlString: string): void;
+
+    /**
+     * Sets CDN caching for a shorter period of time or a longer period of time.
+     * There is no ability to invalidate individual assets, so SSP Application
+     * can set its TTL (Time To Live) in CDN and fall into one of four
+     * categories:
+     * 
+     * - **Unique** — This asset is not cached.
+     * 
+     * - **Short** — This asset may change frequently, so cache it for five
+     * minutes.
+     * 
+     * - **Medium** — This asset may or may not change frequently, so cache it
+     * for two hours.
+     * 
+     * - **Long** — This asset is not expected to change frequently, so cache it
+     *  for seven days.
+     * 
+     * @param type Constant value to represent the caching duration:
+     *
+     * - CACHE_DURATION_UNIQUE
+     * 
+     * - CACHE_DURATION_SHORT
+     * 
+     * - CACHE_DURATION_MEDIUM
+     * 
+     * - CACHE_DURATION_LONG
+     * 
+     * Note that when setting constant values, you do not use quotation marks.
+     * The syntax will be something similar to:
+     * 
+     * setCDNCacheable( response.CACHE_DURATION_SHORT);
+     * 
+     * @since 2013.1
+     */
+    setCDNCacheable(type:
+        'CACHE_CACHE_DURATION_UNIQUE' | 'CACHE_DURATION_SHORT' |
+        'CACHE_DURATION_MEDIUM' | 'CACHE_DURATION_LONG'
+    ): void;
+
+    /**
+     * Sets the content type for the custom responses (and an optional file name
+     * for binary output). This API is available in Suitelet scripts only.
+     * 
+     * @param type The content/file type. For a list of supported file types, 
+     * see 
+     * [Supported File Types]() 
+     * in the NetSuite Help Center.
+     * 
+     * @param name Set the name of the file being downloaded (for example 
+     * 'name.pdf')
+     * 
+     * @param disposition Content disposition to use for file downloads.
+     * Available values are **inline or attachment**. If a value is not
+     * specified, the parameter will default to **attachment**. What this means 
+     * is that instead of a new browser (or Acrobat) launching and rendering the
+     * content, you will instead be asked if you want to download and Save the
+     * file.
+     * 
+     * @since 2008.2
+     */
+    setContentType(
+        type: string,
+        name?: string,
+        disposition?: 'inline' | 'attachment'
+    ): void;
+
+    /**
+     * Sets the character encoding on nlobjResponse content. Available encoding types are:
+     * 
+     * - Unicode (UTF-8)
+     * 
+     * - Western (Windows 1252)
+     * 
+     * - Western (ISO-8859–1)
+     * 
+     * - Chinese Simplified (GB 18030)
+     * 
+     * - Chinese Simplified (GB 2312)
+     * 
+     * - Japanese (Shift-JIS)
+     * 
+     * - Western (Mac Roman)
+     * 
+     * - The default encoding type is Unicode (UTF-8).
+     * 
+     * Your browser character encoding settings must match the specified encoding to view the file contents correctly.
+     * 
+     * @param encodingType he type of encoding for the response. Use one of the following case sensitive values:
+     * 
+     * - UTF-8
+     * 
+     * - windows-1252
+     * 
+     * - ISO-8859-1
+     * 
+     * - GB18030
+     * 
+     * - GB2312 - GB2312 is not a valid argument when setting the encoding for
+     * a new file.  
+     * 
+     * - SHIFT_JIS
+     *
+     * - MacRoman
+     * 
+     * @since 2013.1
+     */
+    setEncoding(
+        encodingType:
+            'UTF-8' | 'windows-1252' | 'ISO-8859-1' | 'GB18030' | 'GB2312' |
+            'SHIFT_JIS' | 'MacRoman'
+    ): void;
+
+    /**
+     * Sets the value of a response header. Note that all user-defined headers
+     * must be prefixed with **Custom-Header** otherwise an SSS_INVALID_ARG or 
+     * SSS_INVALID_HEADER error will be thrown.
+     * 
+     * @param name The name of the header
+     * 
+     * @param value The value used to set header
+     * 
+     * @throws SSS_INVALID_ARG, SSS_INVALID_HEADER
+     * 
+     * @since 2008.2
+     */
+    setHeader(name: string, value: string): void;
+
+    /**
+     * Sets the redirect URL by resolving to a NetSuite resource. Note that all 
+     * parameters must be prefixed with **custparam** otherwise an 
+     * SSS_INVALID_ARG error will be thrown.
+     *
+     * Also note that all URLs must be internal unless the Suitelet is being
+     * executed in an “Available without Login” context. If this is the case,
+     * then within the “Available without Login” (externally available)
+     * Suitelet, you can set the type parameter to **EXTERNAL** and the
+     * identifier parameter to the external URL.
+     * 
+     * @param type The base type for this resource
+     *  
+     * - **RECORD** - Record Type
+     *  
+     * - **TASKLINK** - Task Link
+     *  
+     * - **SUITELET** - Suitelet
+     *  
+     * - **EXTERNAL** - Custom URL (external) and only available for external
+     * Suitelets (i.e. available without login)
+     * 
+     * @param identifier  The primary id for this resource (record type ID for
+     * RECORD, scriptId for SUITELET, taskId for tasklink, url for EXTERNAL)
+     * 
+     * @param id The secondary id for this resource (record type ID for RECORD,
+     * deploymentId for SUITELET)
+     * 
+     * @param editmode For RECORD calls, this determines whether to return a URL
+     * for the record in edit mode or view mode. If set to true, returns the URL
+     * to an existing record in edit mode, otherwise the record is returned in
+     * view mode.
+     * 
+     * @param parameters An associative array of additional URL parameters as
+     * name/value pairs
+     * 
+     * @throws SSS_INVALID_ARG
+     * 
+     * @since 2008.2
+     */
+    sendRedirect(
+        type: string,
+        identifier: string,
+        id?: string,
+        editmode?: string,
+        parameters?: { [key: string]: string }
+    ): void;
+
+    /**
+     * Write information (text/xml/html) to the response
+     * 
+     * @param output String or file being written
+     */
+    write(output: string | nlobjFile): void;
+
+    /**
+     * Write line information (text/xml/html) to the response
+     * 
+     * @param output String being written
+     * 
+     * @since 2008.2
+     */
+    writeLine(output: string): void;
+
+    /**
+     * Generates a page using a page element object (nlobjForm or nlobjList)
+     * 
+     * @param pageobject Standalone page object: nlobjForm or nlobjList
+     * 
+     * @since 2008.2
+     */
+    writePage(pageobject: nlobjList | nlobjForm): void;
+}
+
+/**
+ * Primary object used to encapsulate an HTTP GET or POST request. When creating
+ * Suitelets, you pass request and response arguments to your user-defined
+ * function (see example). With the request object instantiated, you can then
+ * call any nlobjRequest method.
+ */
+declare interface nlobjRequest {
+    /**
+     * Returns an Array containing all of the request headers and their values.
+     * 
+     * @returns Associative Array of header name/value pairs. This array
+     * typically includes two iterations of each name/value pair: one with the
+     * name represented in lower case, and one with the name in title case.
+     * 
+     * @since 2008.2
+     */
+    getAllHeaders(): any;
+
+    /**
+     * Returns an Object containing all the request parameters and their values
+     * 
+     * @returns String[] of parameter field names
+     * 
+     * @since 2008.2
+     */
+    getAllParameters(): string[];
+
+    /**
+     * Returns the body of the POST request
+     * 
+     * @returns The string value of the request body
+     * 
+     * @since 2008.1
+     */
+    getBody(): string;
+
+    /**
+     * Returns a file reference (nlobjFile object) added to a Suitelet page with 
+     * the nlobjForm.
+     * [addField(name, type, label, sourceOrRadio, tab)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3144618.html#bridgehead_N3147714) 
+     * method (where ‘file’ is passed in as the type argument).
+     * 
+     * @param id The id of the file
+     * 
+     * @since 2010.1
+     */
+    getFile(id: number): nlobjFile;
+
+    /**
+     * Returns the value of a request header.
+     * 
+     * @param name The name of the header. This input is handled in a
+     * case–insensitive manner.
+     * 
+     * @returns The header value as a string
+     * 
+     * @since 2008.2
+     */
+    getHeader(name: string): string;
+
+    /**
+     * Returns the number of lines in a sublist
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the 
+     * ID for the Address sublist). See 
+     * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html) for sublists that support 
+     * SuiteScript, sublist internal IDs, and sublist field IDs.
+     * 
+     * @since 2008.2
+     */
+    getLineItemCount(group: string): number;
+
+    /**
+     * Returns the value of a sublist line item.
+     * 
+     * @param group The sublist internal ID (for example, use addressbook as the 
+     * ID for the Address sublist). See 
+     * [Using the SuiteScript Records Browser](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3169730.html) for sublists that support 
+     * SuiteScript, sublist internal IDs, and sublist field IDs.
+     * 
+     * @param name The name of the field whose value is returned
+     * 
+     * @param line The line number for this field. Note the first line number on
+     * a sublist is 1 (not 0).
+     * 
+     * @returns The string value of the line item
+     * 
+     * @since 2008.2
+     */
+    getLineItemValue(group: string, name: string, line: number): string;
+
+    /**
+     * Returns the METHOD of the request.
+     * 
+     * @returns The string value of the request type. Request types include
+     * GET or POST.
+     * 
+     * @since 2008.1
+     */
+    getMethod(): 'GET' | 'PUT' | 'POST' | 'DELETE';
+
+    /**
+     * Returns the value of the request parameter
+     * 
+     * @param name The name of the request parameter whose value is returned
+     * 
+     * @returns The string value of the request parameter
+     * 
+     * @since 2008.2
+     */
+    getParameter(name: string): string;
+
+    /**
+     * Returns the values of a request parameter as an Array
+     * 
+     * @param name The name of the request parameter whose value is returned
+     * 
+     * @since 2008.2
+     */
+    getParameterValues(name: string): string[];
+
+    /**
+     * Returns the full URL of the request for SSP files
+     * 
+     * @returns The string value of the request URL for SSP files.
+     * 
+     * @since 2015.2
+     */
+    getSSPURL(): string;
+
+    /**
+     * Returns the full URL of the request
+     * 
+     * @returns The string value of the request URL
+     * 
+     * @since 2008.1
+     */
+    getURL(): string;
+}
+
 /*
    --------------------------------------------------
 
@@ -7900,329 +8366,6 @@ declare interface nlobjAssistant {
      * @since 2009.2
      */
     setTitle(title: string): void;
-}
-
-/**
- * Primary object used for scripting web responses in Suitelets. Note that the 
- * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142)
- * function returns a reference to this object.
- * 
- * When creating Suitelets you will pass request and response arguments to your 
- * user-defined function (see example). With the response object instantiated, 
- * you can then call any nlobjResponse method.
- * 
- * See 
- * [Supported File Types](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=chapter_N3264137.html)
- * in the NetSuite Help Center for a list of allcontent/media types that can be 
- * returned through the nlobjResponse object.
- */
-declare interface nlobjResponse {
-    /**
-     * Adds a header to the response. If this header has already been set, this 
-     * will add a new header to the response. Note that all user-defined headers
-     * must be prefixed with **Custom-Header** otherwise an `SSS_INVALID_ARG`
-     * error will be thrown ()
-     * 
-     * @param name The name of the header
-     * 
-     * @param value The value used to set header
-     * 
-     * @throws SSS_INVALID_ARG
-     * 
-     * @since 2008.2
-     */
-    addHeader(name: string, value: string): void;
-
-    /**
-     * Returns an Array containing all the headers returned in the response.
-     * Only available in the return value of a call to 
-     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
-     * 
-     * @returns String[] of headers
-     * 
-     * @since 2008.2
-     */
-    getAllHeaders(): string[];
-
-    /**
-     * Returns the body returned by the server. Only available in the return
-     * value of a call to
-     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
-     * 
-     * @returns The string value of the body
-     */
-    getBody(): string;
-
-    /**
-     * Returns the response code returned by the server. Only available in the
-     * return value of a call to
-     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
-     * 
-     * @returns The string value of the response code
-     */
-    getCode(): string;
-
-    /**
-     * Returns the 
-     * [nlobjError](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3086264.html)
-     * thrown during request. Only available in the return value of call to 
-     * `nlapiRequestURL` in Client SuiteScript.
-     * 
-     * @returns 2008.2
-     */
-    getError(): nlobjError;
-
-    /**
-     * Returns the value for a header returned in the response. Only available
-     * in the return value of a call to 
-     * [nlapiRequestURL(url, postdata, headers, callback, httpMethod)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3059035.html#bridgehead_N3059142).
-     * 
-     * @param name The header name
-     * 
-     * @returns The string value of the header
-     * 
-     * @since 2008.2
-     */
-    getHeader(name: string): string;
-
-    /**
-     * Returns an Array containing all the values for a header returned in the
-     * response. This is only available in the return value of a call to 
-     * `nlapiRequestURL`.
-     * 
-     * @param name The header name
-     * 
-     * @returns String[] of header values
-     * 
-     * @since 2008.2
-     */
-    getHeaders(name: string): string[];
-
-    /**
-     * Generates, and renders, a PDF directly to a response. Use renderPDF to
-     * generate PDFs without first importing a file to the file cabinet. This 
-     * method is useful if your script does not have NetSuite file cabinet
-     * permissions.
-     * 
-     * The renderPDF method uses the Big Faceless Report Generator built by Big
-     * Faceless Organization (BFO). The BFO Report Generator is a third-party
-     * library used for converting XML to PDF documents. The renderPDF method
-     * passes XML to the BFO tag library (which is stored by NetSuite), and
-     * renders a PDF directly to a response. Note that the xmlString argument is
-     * the same input string as that passed to BFO by
-     * [nlapiXMLToPDF(xmlstring)](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3062490.html#bridgehead_N3066595).
-     * 
-     * For details on BFO, available tags, and BFO examples, see the following links:
-     * 
-     * - http://faceless.org/products/report/docs/userguide.pdf
-     * 
-     * - http://faceless.org/products/report/docs/tags/
-     * 
-     * @param xmlString Content of your PDF, passed to renderPDF as a string.
-     * 
-     * @since 2014.2
-     */
-    renderPDF(xmlString: string): void;
-
-    /**
-     * Sets CDN caching for a shorter period of time or a longer period of time.
-     * There is no ability to invalidate individual assets, so SSP Application
-     * can set its TTL (Time To Live) in CDN and fall into one of four
-     * categories:
-     * 
-     * - **Unique** — This asset is not cached.
-     * 
-     * - **Short** — This asset may change frequently, so cache it for five
-     * minutes.
-     * 
-     * - **Medium** — This asset may or may not change frequently, so cache it
-     * for two hours.
-     * 
-     * - **Long** — This asset is not expected to change frequently, so cache it
-     *  for seven days.
-     * 
-     * @param type Constant value to represent the caching duration:
-     *
-     * - CACHE_DURATION_UNIQUE
-     * 
-     * - CACHE_DURATION_SHORT
-     * 
-     * - CACHE_DURATION_MEDIUM
-     * 
-     * - CACHE_DURATION_LONG
-     * 
-     * Note that when setting constant values, you do not use quotation marks.
-     * The syntax will be something similar to:
-     * 
-     * setCDNCacheable( response.CACHE_DURATION_SHORT);
-     * 
-     * @since 2013.1
-     */
-    setCDNCacheable(type:
-        'CACHE_CACHE_DURATION_UNIQUE' | 'CACHE_DURATION_SHORT' |
-        'CACHE_DURATION_MEDIUM' | 'CACHE_DURATION_LONG'
-    ): void;
-
-    /**
-     * Sets the content type for the custom responses (and an optional file name
-     * for binary output). This API is available in Suitelet scripts only.
-     * 
-     * @param type The content/file type. For a list of supported file types, 
-     * see 
-     * [Supported File Types]() 
-     * in the NetSuite Help Center.
-     * 
-     * @param name Set the name of the file being downloaded (for example 
-     * 'name.pdf')
-     * 
-     * @param disposition Content disposition to use for file downloads.
-     * Available values are **inline or attachment**. If a value is not
-     * specified, the parameter will default to **attachment**. What this means 
-     * is that instead of a new browser (or Acrobat) launching and rendering the
-     * content, you will instead be asked if you want to download and Save the
-     * file.
-     * 
-     * @since 2008.2
-     */
-    setContentType(
-        type: string,
-        name?: string,
-        disposition?: 'inline' | 'attachment'
-    ): void;
-
-    /**
-     * Sets the character encoding on nlobjResponse content. Available encoding types are:
-     * 
-     * - Unicode (UTF-8)
-     * 
-     * - Western (Windows 1252)
-     * 
-     * - Western (ISO-8859–1)
-     * 
-     * - Chinese Simplified (GB 18030)
-     * 
-     * - Chinese Simplified (GB 2312)
-     * 
-     * - Japanese (Shift-JIS)
-     * 
-     * - Western (Mac Roman)
-     * 
-     * - The default encoding type is Unicode (UTF-8).
-     * 
-     * Your browser character encoding settings must match the specified encoding to view the file contents correctly.
-     * 
-     * @param encodingType he type of encoding for the response. Use one of the following case sensitive values:
-     * 
-     * - UTF-8
-     * 
-     * - windows-1252
-     * 
-     * - ISO-8859-1
-     * 
-     * - GB18030
-     * 
-     * - GB2312 - GB2312 is not a valid argument when setting the encoding for
-     * a new file.  
-     * 
-     * - SHIFT_JIS
-     *
-     * - MacRoman
-     * 
-     * @since 2013.1
-     */
-    setEncoding(
-        encodingType:
-            'UTF-8' | 'windows-1252' | 'ISO-8859-1' | 'GB18030' | 'GB2312' |
-            'SHIFT_JIS' | 'MacRoman'
-    ): void;
-
-    /**
-     * Sets the value of a response header. Note that all user-defined headers
-     * must be prefixed with **Custom-Header** otherwise an SSS_INVALID_ARG or 
-     * SSS_INVALID_HEADER error will be thrown.
-     * 
-     * @param name The name of the header
-     * 
-     * @param value The value used to set header
-     * 
-     * @throws SSS_INVALID_ARG, SSS_INVALID_HEADER
-     * 
-     * @since 2008.2
-     */
-    setHeader(name: string, value: string): void;
-
-    /**
-     * Sets the redirect URL by resolving to a NetSuite resource. Note that all 
-     * parameters must be prefixed with **custparam** otherwise an 
-     * SSS_INVALID_ARG error will be thrown.
-     *
-     * Also note that all URLs must be internal unless the Suitelet is being
-     * executed in an “Available without Login” context. If this is the case,
-     * then within the “Available without Login” (externally available)
-     * Suitelet, you can set the type parameter to **EXTERNAL** and the
-     * identifier parameter to the external URL.
-     * 
-     * @param type The base type for this resource
-     *  
-     * - **RECORD** - Record Type
-     *  
-     * - **TASKLINK** - Task Link
-     *  
-     * - **SUITELET** - Suitelet
-     *  
-     * - **EXTERNAL** - Custom URL (external) and only available for external
-     * Suitelets (i.e. available without login)
-     * 
-     * @param identifier  The primary id for this resource (record type ID for
-     * RECORD, scriptId for SUITELET, taskId for tasklink, url for EXTERNAL)
-     * 
-     * @param id The secondary id for this resource (record type ID for RECORD,
-     * deploymentId for SUITELET)
-     * 
-     * @param editmode For RECORD calls, this determines whether to return a URL
-     * for the record in edit mode or view mode. If set to true, returns the URL
-     * to an existing record in edit mode, otherwise the record is returned in
-     * view mode.
-     * 
-     * @param parameters An associative array of additional URL parameters as
-     * name/value pairs
-     * 
-     * @throws SSS_INVALID_ARG
-     * 
-     * @since 2008.2
-     */
-    sendRedirect(
-        type: string,
-        identifier: string,
-        id?: string,
-        editmode?: string,
-        parameters?: { [key: string]: string }
-    ): void;
-
-    /**
-     * Write information (text/xml/html) to the response
-     * 
-     * @param output String or file being written
-     */
-    write(output: string | nlobjFile): void;
-
-    /**
-     * Write line information (text/xml/html) to the response
-     * 
-     * @param output String being written
-     * 
-     * @since 2008.2
-     */
-    writeLine(output: string): void;
-
-    /**
-     * Generates a page using a page element object (nlobjForm or nlobjList)
-     * 
-     * @param pageobject Standalone page object: nlobjForm or nlobjList
-     * 
-     * @since 2008.2
-     */
-    writePage(pageobject: nlobjList | nlobjForm): void;
 }
 
 /**
