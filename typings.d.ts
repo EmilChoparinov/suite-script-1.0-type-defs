@@ -8149,6 +8149,60 @@ declare function nlapiAddDays(d: Date, days: number): Date;
  */
 declare function nlapiAddMonths(d: Date, months: number): Date;
 
+/**
+ * Converts a Date object to a string, formats the string based on the format
+ * argument passed in, and then returns the formatted string.
+ * 
+ * @param d Date object being converted into a string
+ * 
+ * @param format Use one of the following arguments to determine the format of 
+ * the returned string. Note that this parameter has no impact on time zone — see 
+ * note above. If an argument is not passed in, the date format is used by 
+ * default.
+ * 
+ * - date — formats the string as a date, based on the Date Format selected in 
+ * Set Preferences.
+ * 
+ * - timeofday — formats the string as a time (hour and minutes), based on the 
+ * Time Format selected in Set Preferences.
+ * 
+ * - datetime — formats the string as a concatenation of date and time (hour and 
+ * minutes), based on the Date Format and Time Format selected in Set 
+ * Preferences
+ * 
+ * - datetimetz — formats the string as a concatenation of date and time (hour, 
+ * minutes and seconds), based on the Date Format and Time Format selected in 
+ * Set Preferences
+ * 
+ * @returns String format of the date that was passed
+ */
+declare function nlapiDateToString(d: Date, format?: string): string;
+
+/**
+ * Converts a string to a Date object, formats the date object based on the 
+ * format argument passed in, and then returns the formatted date object. Be 
+ * aware that leading zeroes in the month and day values are not supported.
+ * 
+ * @param str String being converted to a Date.
+ * 
+ * @param format Use one of the following arguments to indicate the format of 
+ * the returned Date object. Note that this parameter has no impact on time zone 
+ * — see note above.
+ * 
+ * - datetime — formats the Date object as a concatenation of date and time 
+ * (hour and minutes), based on the Date Format and Time Format selected in 
+ * Set Preferences. If you use this format type, your input string must not 
+ * include seconds.
+ * 
+ * - datetimetz — formats the Date object as a concatenation of date and time 
+ * (hour, minutes and seconds), based on the Date Format and Time Format 
+ * selected in Set Preferences. If you use this format type, your input string 
+ * must include seconds.
+ * 
+ * @returns Date object. Returns NaN if date includes a leading zero.
+ */
+declare function nlapiStringToDate(str: string, format?: string): Date | number;
+
 /*
    --------------------------------------------------
 
