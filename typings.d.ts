@@ -8408,6 +8408,42 @@ declare function nlapiSetLineItemDateTimeValue(
    --------------------------------------------------
 */
 
+/**
+ * Use this API to get the exchange rate between two currencies based on a 
+ * certain date. The exchange rate values you are getting are those that appear 
+ * in the Exchange Rate column of the Currency Exchange Rates record
+ * 
+ * @param sourceCurrency The currency internal ID or symbol. For example, you 
+ * can use either 1 (currency ID) or USD (currency symbol). If you have the 
+ * Multiple Currencies feature enabled in your account, you can see all currency 
+ * IDs and symbols by going to Lists > Accounting > Currencies (Administrator).
+ * 
+ * @param targetCurrency The currency internal ID or symbol.
+ * 
+ * @param effectiveDate If not supplied, then effectiveDate defaults to the 
+ * current date.
+ * 
+ * @returns The exchange rate (as a decimal number) in the same precision that 
+ * is displayed in the NetSuite UI.
+ * 
+ * @throws SSS_INVALID_CURRENCY_ID (if an invalid currency (from or to) is 
+ * specified)
+ * 
+ * @since 2009.1
+ */
+declare function nlapiExchangeRate(
+    sourceCurrency: string | number, 
+    targetCurrency: string | number, 
+    effectiveDate?: string | number
+): number;
+
+/**
+ * Formats a String into a currency field value
+ * 
+ * @param str String being formatted into currency
+ */
+declare function nlapiFormatCurrency(str: string): string;
+
 /*
    --------------------------------------------------
 
