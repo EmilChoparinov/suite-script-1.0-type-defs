@@ -7379,27 +7379,185 @@ declare function nlapiRequestURL(
     httpMethod?: string
 ): nlobjResponse | void;
 
+/**
+ * Supports the sending of credentials outside of NetSuite. This API securely 
+ * accesses a handle to credentials that users specify in a NetSuite credential 
+ * field.
+ * 
+ * Usage metering allowed for this API is 10 units.
+ * 
+ * Supported Script Types:
+ * - User Event
+ * 
+ * - Scheduled Script
+ * 
+ * - Portlet
+ * 
+ * - Suitelet
+ * 
+ * 
+ * @param credentials List of credential handles. This API does not know where 
+ * you have stored the data, it only knows the credentials to use by handle. 
+ * Therefore, if you have multiple credentials for a single call, you need a 
+ * list. The handles are 32 byte, globally unique strings (GUIDs).
+ * 
+ * @param url The HTTPS URL being requested - (fully qualified unless it is a 
+ * NetSuite page).
+ * 
+ * @param postdata  Body used for a POST request. It can be a string, an 
+ * `nlobjCredentialBuilder` object, an associative array of form parameter 
+ * pairs, or an associative array of form parameter and `nlobjCredentialBuilder` 
+ * object pairs. If set to null, then a GET request is used.
+ * 
+ * @param headers Can be an nlobjCredentialBuilder object, an associative array 
+ * of header and header value pairs, or an associative array of header and 
+ * nlobjCredentialBuilder object pairs. Be aware that certain headers cannot be 
+ * set manually. If a script attempts to set a value for any of these headers, 
+ * the value is discarded. These headers include the following: Connection, 
+ * Content-Length, Host, Trailer, Transfer-Encoding, Upgrade, and Via.
+ * 
+ * @param httpsMethod Specify the appropriate http method to use for your 
+ * integration. Supported http methods are HEAD, DELETE and PUT. This parameter 
+ * allows for easier integration with external RESTful services using the 
+ * standard REST functions. Note that if the httpsMethod parameter is empty or 
+ * not specified, this behavior is followed: the method is POST if postdata is 
+ * not empty. The method is GET if it is.
+ * 
+ * @since 2012.1
+ */
 declare function nlapiRequestURLWithCredentials(
     credentials: string[],
-    url: string,
-    postdata,
-    headers,
-    httpsMethod
+    url: string | nlobjCredentialBuilder,
+    postdata:
+        string | nlobjCredentialBuilder |
+        { [key: string]: string | nlobjCredentialBuilder },
+    headers
+        : nlobjCredentialBuilder |
+        { [key: string]: string | nlobjCredentialBuilder },
+    httpsMethod: 'HEAD' | 'DELETE' | 'PUT'
 )
 
+/**
+ * Creates a URL on-the-fly by passing URL parameters from within your 
+ * SuiteScript. For example, when creating a SuiteScript Portlet script, you may 
+ * want to create and display the record URLs for each record returned in a 
+ * search.
+ * 
+ * When creating the URL, you can use either the RECORD reference as retrieved 
+ * in a search result or a known TASKLINK. Each page in NetSuite has a unique 
+ * Tasklink Id associated with it for a record type. Refer to the SuiteScript 
+ * Reference Guide for a list of available NetSuite tasklinks.
+ * 
+ * This API is supported in client, user event, scheduled, portlet, Suitelet, 
+ * and RESTlet scripts.
+ * 
+ * @param type The base type for this resource. These types include:
+ * 
+ * - RECORD – Record Type
+ * 
+ * - TASKLINK – Task Link
+ * 
+ * - SUITELET – Suitelet
+ * 
+ * - RESTLET – RESTlet
+ * 
+ * @param identifier The primary id for this resource (recordType for RECORD,
+ * scriptId for SUITELET)
+ * 
+ * @param id The primary id for this resource (recordType for RECORD, scriptId 
+ * for SUITELET)
+ * 
+ * @param displayMode If the type argument is set to RECORD, set displayMode to 
+ * either VIEW or EDIT to return a URL for the record in EDIT mode or VIEW mode. 
+ * Note that even for RECORD calls, the displayMode argument is optional. The 
+ * default value is VIEW.
+ * 
+ * @returns Depending on the values specified for the type and displayMode 
+ * arguments, returns URL string to an internal NetSuite resource or an 
+ * external/internal URL to a Suitelet or RESTlet.
+ * 
+ * @throws  SSS_INVALID_URL_CATEGORY
+ * 
+ * @throws SSS_CATEGORY_ARG_REQD
+ * 
+ * @throws SSS_INVALID_TASK_ID
+ * 
+ * @throws SSS_TASK_ID_REQD
+ * 
+ * @throws SSS_INVALID_INTERNAL_ID
+ * 
+ * @throws SSS_INVALID_EDITMODE_ARG
+ */
 declare function nlapiResolveURL(
-    type,
-    identifier,
-    id,
-    displayMode
-)
+    type:
+        'RECORD' | 'TASKLINK' | 'SUITELET' | 'RESTLET',
+    identifier: string,
+    id?: string,
+    displayMode?: string | boolean
+): string;
 
+/**
+ * Sets the redirect URL by resolving to a NetSuite resource. Note that all 
+ * parameters must be prefixed with **custparam** otherwise an SSS_INVALID_ARG 
+ * error will be thrown.
+ * 
+ * This API is supported in beforeLoad and synchronous afterSubmit user events; 
+ * it is also supported in Suitelet scripts. Note that nlapiSetRedirectURL is 
+ * ignored in beforeSubmit and asynchronous afterSubmit user events.
+ * 
+ * You can use nlapiSetRedirectURL to customize navigation within NetSuite. In a 
+ * user event script, you can use nlapiSetRedirectURL to send the user to a 
+ * NetSuite page based on a specific user event. For example, under certain 
+ * conditions you may choose to redirect the user to another NetSuite page or 
+ * custom Suitelet to complete a workflow.
+ * 
+ * @param type The base type for this resource. The types include:
+ * 
+ * - **RECORD** : Record type - - Note that when you set type to RECORD, and the 
+ * third param ( id ) to null, the redirection is to the “create new” record 
+ * page, not an existing record page.
+ *
+ * - **TASKLINK** : Tasklink
+ *
+ * - **SUITELET** : Suitelet
+ * 
+ * - **EXTERNAL** : The URL of a Suitelet that is available externally (for 
+ * example, Suitelets that have been set to “Available without Login” on the 
+ * Script Deployment page)
+ * 
+ * @param identifier The primary id for this resource (recordType for RECORD, 
+ * scriptId for SUITELET, taskId for TASKLINK, url for EXTERNAL)
+ * 
+ * @param id The secondary id for this resource (recordId for RECORD, 
+ * deploymentId for SUITELET).
+ * 
+ * @param editmode For RECORD calls, this determines whether to return a URL for 
+ * the record in edit mode or view mode. If set to true, returns the URL to an 
+ * existing record in edit mode.
+ * 
+ * @param parameters An associative array of additional URL parameters.
+ * 
+ * @throws SSS_INVALID_ARG
+ *
+ * @throws SSS_INVALID_URL_CATEGORY
+ * 
+ * @throws SSS_CATEGORY_ARG_REQD
+ * 
+ * @throws SSS_INVALID_TASK_ID
+ * 
+ * @throws SSS_TASK_ID_REQD
+ * 
+ * @throws SSS_INVALID_INTERNAL_ID
+ * 
+ * @throws SSS_INVALID_EDITMODE_ARG
+ */
 declare function nlapiSetRedirectURL(
-    type,
-    identifier,
-    id,
-    editmode,
-    parameters
+    type:
+        'RECORD' | 'TASKLINK' | 'SUITELET' | 'EXTERNAL',
+    identifier: string,
+    id?: string,
+    editmode?: string,
+    parameters?: { [key: string]: string }
 )
 
 /**
@@ -7907,7 +8065,7 @@ declare class nlobjCredentialBuilder {
      * 
      * @since 2013.2
      */
-    base64() : nlobjCredentialBuilder;
+    base64(): nlobjCredentialBuilder;
 
     /**
      * Hashes an nlobjCredentialBuilder object with the MD5 hash function.
