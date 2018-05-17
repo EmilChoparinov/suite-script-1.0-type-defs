@@ -6821,7 +6821,7 @@ declare interface nlobjPortlet {
      * 
      * @since 2008.2
      */
-    addRows(rows: { [key: string]: string} | nlobjSearchResult[]): void;
+    addRows(rows: { [key: string]: string } | nlobjSearchResult[]): void;
 
     /**
      * Sets the entire content of an HTML portlet (content will be placed inside
@@ -6901,7 +6901,7 @@ declare interface nlobjPortlet {
      * @since 2008.2
      */
     setSubmitButton(
-        url: string, 
+        url: string,
         label?: string,
         target?: string
     ): nlobjButton;
@@ -7155,7 +7155,62 @@ declare interface nlobjTab {
     setHelpText(help: string): nlobjTab;
 }
 
-// TEMPLATE RENDERER
+declare interface nlobjTemplateRenderer {
+
+    /**
+     * Passes in raw string of template to be transformed by FreeMarker.
+     * 
+     * @param template raw string of template
+     * 
+     * @since 2013.1
+     */
+    setTemplate(template: string): void;
+
+    /**
+     * Binds nlobjRecord object to variable name used in template.
+     * 
+     * @param variable variable name that represents record
+     * 
+     * @param record NetSuite record
+     * 
+     * @since 2013.1
+     */
+    addRecord(variable: string, record: nlobjRecord): void;
+
+    /**
+     * Binds 
+     * [nlobjSearchResult](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3123296.html)
+     * object to variable name used in template.
+     * 
+     * @param variable variable name that represents search result
+     * 
+     * @param searchResult NetSuite search result
+     * 
+     * @since 2013.1
+     */
+    addSearchResults(variable: string, searchResult: nlobjSearchResult): void;
+
+    /**
+     * Returns template content interpreted by FreeMarker as XML string that can
+     * be passed to nlapiXMLToPDF(xmlstring) to produce PDF output.
+     * 
+     * @returns XML string of template interpreted by FreeMarker
+     * 
+     * @since 2013.1
+     */
+    renderToString(): string;
+
+    /**
+     * Renders HTML output to 
+     * [nlobjResponse](https://system.na3.netsuite.com/app/help/helpcenter.nl?fid=section_N3109660.html)
+     * object.
+     * 
+     * @returns HTML output to an HTTP response object
+     * 
+     * @since 2013.1
+     */
+    renderToResponse(): void;
+}
 
 /*
    --------------------------------------------------
